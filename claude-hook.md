@@ -232,6 +232,10 @@ Sub-agents are for specialized, token-intensive work - not routine tasks.
 - Classes > 7 public methods → consider decomposition
 - Functions > 30-50 lines → refactor for clarity
 
+### Ecosystem Conventions
+- Don't introduce patterns or idioms foreign to the language/ecosystem conventions
+- Examples: Rust-style Result/Option types in TypeScript, monadic error handling where exceptions are standard, custom implementations of what libraries already provide
+
 ### Communication
 - Acknowledge uncertainty directly ("I don't know" over confident guesses)
 - Avoid absolutes ("comprehensive", "absolutely right")
