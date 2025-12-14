@@ -19,10 +19,11 @@ ADRs can be amended, revised and reviewed. Use an ADR index and keep it up to da
 
 **Completion mode (where you just work through tasks) is fine**: Just maintain TodoWrite for transparency with your collaborators and declare your intentions clearly.
 
-**After compaction**: You may have lost context. Before jumping into work, verify you understand:
-- What we're working on and why
-- What decisions have been made
-- What the current state is
+**After compaction**: You may have lost context. Before jumping into work:
+- Check for persistent tracking files listed at session start
+- Read relevant `.claude/todo-*.md` files for context
+- Verify you understand what we're working on and why
+- Review any decisions already made
 
 **Push back when**: Something is unclear or conflicting. This is collaborative debate, not forced challenging. If you have genuine doubt or confusion about what's being asked, say so.
 
@@ -86,9 +87,66 @@ Use descriptive branch names:
 ### TodoWrite (Session-Scoped)
 Use TodoWrite to track active work during sessions:
 - Maintains current task list
-- Survives compaction events
-- Ephemeral - doesn't persist to files
-- Helps maintain focus and progress visibility
+- Provides real-time visibility to collaborators
+- Shallow context (just titles and status)
+- Best for: active session tasks, quick progress tracking
+
+### Persistent Tracking Files (Cross-Session)
+For complex, multi-session work, create tracking files in `.claude/`:
+
+```
+.claude/
+├── todo-adr-NNN-description.md   # ADR implementation tracking
+├── todo-pr-NNN.md                # PR work/review tracking
+├── todo-issue-NNN.md             # Issue resolution tracking
+```
+
+**When to create:**
+- Starting ADR implementation that spans sessions
+- Complex PR with multiple review cycles
+- Multi-step issue resolution
+
+**What to include:**
+- Phase breakdowns with checkboxes
+- Implementation decisions made
+- Remaining work with context
+- Links to related ADRs/PRs/issues
+
+**How it works:**
+- Files listed at session start (via hook)
+- Read when resuming related work
+- Update and commit alongside implementation
+
+**Cleanup:**
+When all items in a tracking file are complete, recommend deleting it:
+- "All items in `.claude/todo-adr-081-*.md` are complete - I recommend deleting it to keep the tracking list clean. Git history preserves it if needed."
+- Don't let completed files accumulate
+- Clean tracking list = clear signal of active work
+
+**Example:** `.claude/todo-adr-081-source-lifecycle.md`
+```markdown
+# ADR-081 Implementation: Source Lifecycle
+
+## Completed
+- [x] Phase 1: Pre-ingestion Garage storage
+- [x] Phase 2a: Source node offset tracking
+  - Added `garage_key`, `content_hash` to Source nodes
+  - Added `char_offset_start`, `char_offset_end` for offsets
+
+## Remaining
+- [ ] Phase 3: Deduplication (hash + similarity)
+- [ ] Phase 4: Garage → Graph regeneration
+```
+
+**Relationship to TodoWrite:**
+| Aspect | TodoWrite | `.claude/todo-*.md` |
+|--------|-----------|---------------------|
+| Scope | Current session | Cross-session |
+| Detail | Titles only | Rich context |
+| Visibility | Status bar | Read on demand |
+| Persistence | Session state | Git-tracked files |
+
+Use both: TodoWrite for active visibility, tracking files for continuity.
 
 ### Git Commits
 Use conventional commit format:

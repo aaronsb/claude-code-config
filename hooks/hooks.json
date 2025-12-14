@@ -4,17 +4,25 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "cat ${CLAUDE_PLUGIN_ROOT}/claude-hook.md"
+        "command": "cat ${HOME}/.claude/claude-hook.md"
       },
       {
         "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-config-updates.sh"
+        "command": "${HOME}/.claude/hooks/list-tracking-files.sh"
+      },
+      {
+        "type": "command",
+        "command": "${HOME}/.claude/hooks/check-config-updates.sh"
       }
     ],
     "PreCompact": [
       {
         "type": "command",
-        "command": "cat ${CLAUDE_PLUGIN_ROOT}/claude-hook.md"
+        "command": "cat ${HOME}/.claude/claude-hook.md"
+      },
+      {
+        "type": "command",
+        "command": "${HOME}/.claude/hooks/list-tracking-files.sh"
       }
     ]
   }
