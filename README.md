@@ -1,10 +1,19 @@
 # Claude Code Config
 
-Contextual guidance system for Claude Code. Injects relevant knowledge just-in-time based on what you're doing.
+A domain-agnostic guidance framework for Claude Code. Injects relevant knowledge just-in-time based on what you're doing.
+
+## The Idea
+
+**Ways** = automated, contextual guidance triggered by keywords, commands, and file patterns.
+
+This repo ships with software development ways, but the mechanism is general-purpose. You could have ways for:
+- Excel/Office productivity
+- AWS operations
+- Financial analysis
+- Research workflows
+- Anything with patterns Claude should know about
 
 ## What It Does
-
-**Ways** are bite-sized guidance that load automatically when triggered:
 
 ```
 You: "let's discuss the architecture"
@@ -17,7 +26,7 @@ Claude runs: git commit
 → Commits way loads (conventional commit format)
 ```
 
-19 built-in ways covering: ADR, API design, commits, config, debugging, dependencies, documentation, error handling, GitHub, migrations, patches, performance, quality, releases, security, subagents, testing, tracking, and meta-knowledge about ways themselves.
+Ways load once per session when triggered. No manual invocation needed.
 
 ## Quick Start
 
@@ -46,11 +55,67 @@ chmod +x ~/.claude/hooks/**/*.sh ~/.claude/hooks/*.sh 2>/dev/null
 ~/.claude/hooks/ways/
 ├── core.md              # Loads at startup
 ├── *.md                 # Individual ways (frontmatter defines triggers)
+├── *.macro.sh           # Optional dynamic context (see Way Macros)
 ├── check-prompt.sh      # Keyword matching
 ├── check-bash-post.sh   # Command matching
 ├── check-file-post.sh   # File path matching
 └── show-way.sh          # Once-per-session gating
 ```
+
+## Creating a Way
+
+Each way is self-contained with YAML frontmatter:
+
+```markdown
+---
+keywords: pattern1|pattern2|regex.*
+files: \.tsx$|components/.*
+commands: npm\ run\ build
+macro: prepend
+---
+# Way Name
+
+## Guidance
+- Compact, actionable points
+- Not exhaustive documentation
+```
+
+Drop the file in `~/.claude/hooks/ways/` (global) or `$PROJECT/.claude/ways/` (project). Done.
+
+### Frontmatter Fields
+
+| Field | Purpose |
+|-------|---------|
+| `keywords:` | Regex matched against user prompts |
+| `files:` | Regex matched against file paths (Edit/Write) |
+| `commands:` | Regex matched against bash commands |
+| `macro:` | `prepend` or `append` - run matching `.macro.sh` for dynamic context |
+
+## Way Macros
+
+Static guidance can't know your environment. Macros add dynamic state detection:
+
+```
+Way    = guidance (the "how")
+Macro  = state detection (the "what is")
+Output = contextual guidance (the "how, given what is")
+```
+
+**Example**: `github.macro.sh` detects solo vs team project:
+```bash
+#!/bin/bash
+gh repo view &>/dev/null || { echo "**Note**: Not a GitHub repo"; exit 0; }
+CONTRIBUTORS=$(timeout 2 gh api repos/:owner/:repo/contributors --jq 'length' 2>/dev/null)
+if [[ "$CONTRIBUTORS" -le 2 ]]; then
+  echo "**Context**: Solo project - PR optional"
+else
+  echo "**Context**: Team project - PR recommended"
+fi
+```
+
+Macros are optional. Ways without macros work as pure static guidance.
+
+See [ADR-004](docs/adr/ADR-004-way-macros.md) for full macro documentation.
 
 ## Project-Local Ways
 
@@ -65,26 +130,9 @@ your-project/.claude/ways/
 
 Project ways override global ways with the same name. A template is auto-created on first session.
 
-## Creating a Way
+## Built-in Ways (Software Dev)
 
-Each way is self-contained with YAML frontmatter:
-
-```markdown
----
-keywords: pattern1|pattern2|regex.*
-files: \.tsx$|components/.*
-commands: npm\ run\ build
----
-# Way Name
-
-## Guidance
-- Compact, actionable points
-- Not exhaustive documentation
-```
-
-Drop the file in `~/.claude/hooks/ways/` (global) or `$PROJECT/.claude/ways/` (project). Done.
-
-## Built-in Ways
+This repo ships with 20 development-focused ways:
 
 | Way | Triggers On |
 |-----|-------------|
@@ -104,9 +152,12 @@ Drop the file in `~/.claude/hooks/ways/` (global) or `$PROJECT/.claude/ways/` (p
 | **quality** | "refactor", "code review", "solid" |
 | **release** | "deploy", "version", "changelog" |
 | **security** | "auth", "secret", "token" |
+| **ssh** | `ssh`, `scp`, "remote server" |
 | **subagents** | "delegate", "subagent" |
 | **testing** | `pytest`, `jest`, "coverage", "tdd" |
 | **tracking** | `.claude/todo-*.md`, "multi-session" |
+
+**Replace these entirely** if your domain isn't software dev. The framework doesn't care.
 
 ## Also Included
 
@@ -125,8 +176,9 @@ This is a "poor man's RAG" - retrieval-augmented generation without the infrastr
 | Semantic search | Pattern matching |
 | External services | Bash + jq |
 | Probabilistic | Deterministic |
+| Domain-locked | Domain-agnostic |
 
-Simple, transparent, zero dependencies beyond standard unix tools.
+Simple, transparent, zero dependencies beyond standard unix tools. Fork it, gut the dev ways, add your own domain.
 
 ## Updating
 
