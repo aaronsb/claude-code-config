@@ -28,6 +28,11 @@
 !hooks/ways/
 !hooks/ways/*.md
 !hooks/ways/*.sh
+# Nested ways: domain/wayname/way.md + macro.sh
+!hooks/ways/*/
+!hooks/ways/*/*/
+!hooks/ways/*/*/*.md
+!hooks/ways/*/*/*.sh
 
 # Plugin config (not runtime data)
 !plugins/

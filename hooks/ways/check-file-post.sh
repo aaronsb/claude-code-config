@@ -4,10 +4,11 @@
 # TRIGGER FLOW:
 # ┌───────────────────────┐     ┌─────────────────┐     ┌──────────────┐
 # │ PostToolUse:Edit/Write│────▶│ scan_ways()     │────▶│ show-way.sh  │
-# │ (hook event)          │     │ for each *.md:  │     │ (idempotent) │
+# │ (hook event)          │     │ for each way.md │     │ (idempotent) │
 # └───────────────────────┘     │  if files match │     └──────────────┘
 #                               └─────────────────┘
 #
+# Ways are nested: domain/wayname/way.md (e.g., softwaredev/github/way.md)
 # Multiple ways can match a single file path - CONTEXT accumulates
 # all matching way outputs. Markers prevent duplicate content.
 # Output is returned as additionalContext JSON for Claude to see.
@@ -19,25 +20,25 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(echo "$INPUT" | jq -r '.cwd // empty')}"
 
 CONTEXT=""
 
-# Scan ways in a directory
+# Scan ways in a directory (recursive)
 scan_ways() {
   local dir="$1"
   [[ ! -d "$dir" ]] && return
 
-  for wayfile in "$dir"/*.md; do
-    [[ ! -f "$wayfile" ]] && continue
-    [[ "$(basename "$wayfile")" == "core.md" ]] && continue
-
-    wayname=$(basename "$wayfile" .md)
+  # Find all way.md files recursively
+  while IFS= read -r -d '' wayfile; do
+    # Extract way path relative to ways dir (e.g., "softwaredev/github")
+    waypath="${wayfile#$dir/}"
+    waypath="${waypath%/way.md}"
 
     # Extract files pattern from frontmatter
     files=$(awk '/^---$/{p=!p; next} p && /^files:/' "$wayfile" | sed 's/^files: *//')
 
     # Check file path against pattern
     if [[ -n "$files" && "$FP" =~ $files ]]; then
-      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$wayname" "$SESSION_ID")
+      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID")
     fi
-  done
+  done < <(find "$dir" -name "way.md" -print0 2>/dev/null)
 }
 
 # Scan project-local first, then global

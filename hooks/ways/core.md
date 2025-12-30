@@ -2,7 +2,11 @@
 
 ## Contextual Guidance
 
-Detailed guidance appears automatically (once per session) on tool use or keywords:
+Detailed guidance appears automatically (once per session) on tool use or keywords.
+
+Ways are organized by domain: `~/.claude/hooks/ways/{domain}/{way}/way.md`
+
+### Software Development Ways
 
 | Way | Tool Trigger | Keyword Trigger |
 |-----|--------------|-----------------|
@@ -27,8 +31,8 @@ Detailed guidance appears automatically (once per session) on tool use or keywor
 | **knowledge** | Edit `.claude/ways/*.md` | ways, guidance, knowledge |
 | **docs** | Edit `README.md`, `docs/*.md` | readme, documentation |
 
-Project-local ways: `$PROJECT/.claude/ways/*.md` override global ways.
-Auto-initialized with template on first session in git repos.
+Project-local ways: `$PROJECT/.claude/ways/{domain}/{way}/way.md` override global.
+Other domains (awsops, finance, etc.) can be added as needed.
 
 Just work naturally. No need to request guidance upfront.
 

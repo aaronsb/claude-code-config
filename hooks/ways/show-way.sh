@@ -1,6 +1,9 @@
 #!/bin/bash
-# Show a "way" once per session (strips frontmatter)
-# Usage: show-way.sh <way-name> <session-id>
+# Show a "way" once per session (strips frontmatter, runs macro if configured)
+# Usage: show-way.sh <way-path> <session-id>
+#
+# Way paths can be nested: "softwaredev/github", "awsops/iam", etc.
+# Looks for: {way-path}/way.md and optionally {way-path}/macro.sh
 #
 # STATE MACHINE:
 # ┌─────────────────┬────────────────────────────────────┐
@@ -10,12 +13,11 @@
 # │ exists          │ no-op (idempotent)                 │
 # └─────────────────┴────────────────────────────────────┘
 #
-# This script is called by multiple hooks (check-prompt.sh,
-# check-bash-post.sh, check-file-post.sh). It may be called
-# multiple times for the same way in a single event cycle.
-# The marker file ensures idempotency - first call wins.
+# MACRO SUPPORT:
+# If frontmatter contains `macro: prepend` or `macro: append`,
+# runs {way-path}/macro.sh and combines output with static content.
 #
-# Marker: /tmp/.claude-way-{wayname}-{session_id}
+# Marker: /tmp/.claude-way-{wayname-sanitized}-{session_id}
 
 WAY="$1"
 SESSION_ID="$2"
@@ -23,20 +25,50 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 
 [[ -z "$WAY" ]] && exit 1
 
+# Sanitize way path for marker filename (replace / with -)
+WAY_MARKER_NAME=$(echo "$WAY" | tr '/' '-')
+
 # Project-local takes precedence over global
-if [[ -f "$PROJECT_DIR/.claude/ways/${WAY}.md" ]]; then
-  WAY_FILE="$PROJECT_DIR/.claude/ways/${WAY}.md"
-elif [[ -f "${HOME}/.claude/hooks/ways/${WAY}.md" ]]; then
-  WAY_FILE="${HOME}/.claude/hooks/ways/${WAY}.md"
+WAY_DIR=""
+if [[ -f "$PROJECT_DIR/.claude/ways/${WAY}/way.md" ]]; then
+  WAY_FILE="$PROJECT_DIR/.claude/ways/${WAY}/way.md"
+  WAY_DIR="$PROJECT_DIR/.claude/ways/${WAY}"
+elif [[ -f "${HOME}/.claude/hooks/ways/${WAY}/way.md" ]]; then
+  WAY_FILE="${HOME}/.claude/hooks/ways/${WAY}/way.md"
+  WAY_DIR="${HOME}/.claude/hooks/ways/${WAY}"
 else
   exit 0
 fi
 
 # Marker: scoped to session_id
-MARKER="/tmp/.claude-way-${WAY}-${SESSION_ID:-$(date +%Y%m%d)}"
+MARKER="/tmp/.claude-way-${WAY_MARKER_NAME}-${SESSION_ID:-$(date +%Y%m%d)}"
 
 if [[ ! -f "$MARKER" ]]; then
-  # Output content, stripping YAML frontmatter if present
+  # Extract macro field from frontmatter (prepend or append)
+  MACRO_POS=$(awk '/^---$/{p=!p; next} p && /^macro:/{gsub(/^macro: */, ""); print; exit}' "$WAY_FILE")
+
+  # Check for macro script (same directory as way file)
+  MACRO_FILE="${WAY_DIR}/macro.sh"
+  MACRO_OUT=""
+
+  if [[ -n "$MACRO_POS" && -x "$MACRO_FILE" ]]; then
+    # Run macro, capture output
+    MACRO_OUT=$("$MACRO_FILE" 2>/dev/null)
+  fi
+
+  # Output based on macro position
+  if [[ "$MACRO_POS" == "prepend" && -n "$MACRO_OUT" ]]; then
+    echo "$MACRO_OUT"
+    echo ""
+  fi
+
+  # Output static content, stripping YAML frontmatter
   awk 'BEGIN{fm=0} /^---$/{fm++; next} fm!=1' "$WAY_FILE"
+
+  if [[ "$MACRO_POS" == "append" && -n "$MACRO_OUT" ]]; then
+    echo ""
+    echo "$MACRO_OUT"
+  fi
+
   touch "$MARKER"
 fi

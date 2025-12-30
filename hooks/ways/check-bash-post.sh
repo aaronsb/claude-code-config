@@ -4,11 +4,12 @@
 # TRIGGER FLOW:
 # ┌──────────────────┐     ┌─────────────────┐     ┌──────────────┐
 # │ PostToolUse:Bash │────▶│ scan_ways()     │────▶│ show-way.sh  │
-# │ (hook event)     │     │ for each *.md:  │     │ (idempotent) │
+# │ (hook event)     │     │ for each way.md │     │ (idempotent) │
 # └──────────────────┘     │  if commands OR │     └──────────────┘
 #                          │  keywords match │
 #                          └─────────────────┘
 #
+# Ways are nested: domain/wayname/way.md (e.g., softwaredev/github/way.md)
 # Multiple ways can match a single command - CONTEXT accumulates
 # all matching way outputs. Markers prevent duplicate content.
 # Output is returned as additionalContext JSON for Claude to see.
@@ -21,16 +22,16 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(echo "$INPUT" | jq -r '.cwd // empty')}"
 
 CONTEXT=""
 
-# Scan ways in a directory
+# Scan ways in a directory (recursive)
 scan_ways() {
   local dir="$1"
   [[ ! -d "$dir" ]] && return
 
-  for wayfile in "$dir"/*.md; do
-    [[ ! -f "$wayfile" ]] && continue
-    [[ "$(basename "$wayfile")" == "core.md" ]] && continue
-
-    wayname=$(basename "$wayfile" .md)
+  # Find all way.md files recursively
+  while IFS= read -r -d '' wayfile; do
+    # Extract way path relative to ways dir (e.g., "softwaredev/github")
+    waypath="${wayfile#$dir/}"
+    waypath="${waypath%/way.md}"
 
     # Extract frontmatter fields
     commands=$(awk '/^---$/{p=!p; next} p && /^commands:/' "$wayfile" | sed 's/^commands: *//')
@@ -38,14 +39,14 @@ scan_ways() {
 
     # Check command patterns
     if [[ -n "$commands" && "$CMD" =~ $commands ]]; then
-      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$wayname" "$SESSION_ID")
+      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID")
     fi
 
     # Check description against keywords
     if [[ -n "$DESC" && -n "$keywords" && "$DESC" =~ $keywords ]]; then
-      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$wayname" "$SESSION_ID")
+      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID")
     fi
-  done
+  done < <(find "$dir" -name "way.md" -print0 2>/dev/null)
 }
 
 # Scan project-local first, then global
