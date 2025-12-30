@@ -22,11 +22,16 @@ Claude runs: git commit
 ## Quick Start
 
 ```bash
-# Install
-curl -fsSL https://raw.githubusercontent.com/aaronsb/claude-code-config/main/install.sh | bash
+# Backup existing config if any
+[ -d ~/.claude ] && mv ~/.claude ~/.claude-backup-$(date +%Y%m%d)
 
-# Restart Claude Code
-# That's it - ways are active
+# Clone
+git clone https://github.com/aaronsb/claude-code-config ~/.claude
+
+# Make hooks executable
+chmod +x ~/.claude/hooks/**/*.sh ~/.claude/hooks/*.sh 2>/dev/null
+
+# Restart Claude Code - ways are now active
 ```
 
 ## How It Works

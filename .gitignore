@@ -1,28 +1,34 @@
-# Credentials and sensitive data
-.credentials.json
+# Ignore everything by default
+*
 
-# Conversation history and session data
-projects/
-todos/
-shell-snapshots/
-statsig/
+# Track these directories
+!.gitignore
+!CLAUDE.md
+!README.md
+!settings.json
+!statusline.sh
 
-# Node modules
-node_modules/
-local/node_modules/
+# Agents
+!agents/
+!agents/*.md
 
-# Package files (auto-managed by Claude Code)
-local/package.json
-local/package-lock.json
+# Commands (skills)
+!commands/
+!commands/*.md
 
-# Settings that may contain sensitive data
-settings.local.json
+# Documentation
+!docs/
+!docs/adr/
+!docs/adr/*.md
 
-# Any other sensitive files
-*.key
-*.pem
-*.env
-.env*
+# Hooks and ways
+!hooks/
+!hooks/*.sh
+!hooks/pre-commit
+!hooks/ways/
+!hooks/ways/*.md
+!hooks/ways/*.sh
 
-# Project-specific indexes (generated per project)
-.claude/index/
+# Plugin config (not runtime data)
+!plugins/
+!plugins/config.json
