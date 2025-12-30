@@ -139,27 +139,104 @@ This follows Single Responsibility and makes each piece testable in isolation."
 
 ## GitHub Integration
 
-**Check for upstream**: `gh repo view`
+**Always post to GitHub** when reviewing PRs. Don't just return text - add your review as a PR comment so it's visible and persistent.
 
-### Review in GitHub PR
+### Context Detection (Do This First)
+
+```bash
+# Detect if this is a self-PR
+PR_AUTHOR=$(gh pr view --json author --jq '.author.login')
+CURRENT_USER=$(gh api user --jq '.login')
+
+# Self-PR: Post comment, report back what you posted
+# Team-PR: More formal review structure
+```
+
+### PR Size Tiers
+
+| Lines Changed | Approach |
+|---------------|----------|
+| **< 50** | Focused review - brief but substantive |
+| **50-300** | Standard review - categorized findings |
+| **300-750** | Thorough review - "significant change" flag, architecture + details |
+| **750+** | Bootstrap mode - focus on patterns/structure/risks, not line-by-line |
+
+Check size: `gh pr diff --stat | tail -1`
+
+### Never Say "LGTM"
+
+Even when no issues found, provide value:
+- What does this change accomplish?
+- Why does it look solid?
+- Any considerations for future work?
+
+"No issues found" should explain *why* the code is sound.
+
+### Self-PR Workflow
+
+When reviewing your own (or the invoking user's) PR:
+
+```bash
+# Post substantive comment
+gh pr comment NUMBER --body "$(cat <<'EOF'
+## Review Summary
+
+**What this changes**: [Brief description]
+
+**Assessment**: [What you found - issues, suggestions, or why it's solid]
+
+**Considerations**: [Any risks, future work, or things to watch]
+EOF
+)"
+```
+
+Then tell main Claude: "I posted a review comment to PR #N covering [summary]."
+
+### Team PR Workflow
+
+For PRs from other contributors:
+
+```bash
+# Standard review with structured feedback
+gh pr review NUMBER --comment --body "## Code Review
+
+### Findings
+[Categorized issues with locations]
+
+### Suggestions
+[Improvements with rationale]
+
+### Assessment
+[Overall evaluation]
+
+---
+*AI-assisted review via Claude*"
+```
+
+### Commands Reference
+
 ```bash
 # View PR diff
-gh pr view 123 --web
+gh pr diff NUMBER
 
-# Add review comment
-gh pr review 123 --comment --body "Feedback here"
+# Check size
+gh pr diff NUMBER --stat
 
-# Request changes
-gh pr review 123 --request-changes --body "Issues found:
-1. Security: API key exposed (config.js:23)
-2. SOLID: Class has 12 methods, suggest decomposition"
+# Add comment (self-PR, informal)
+gh pr comment NUMBER --body "Review content"
 
-# Approve
-gh pr review 123 --approve --body "LGTM. Clean implementation following ADR-005."
+# Add review (team PR, formal)
+gh pr review NUMBER --comment --body "Review content"
+
+# Request changes (blocking issues)
+gh pr review NUMBER --request-changes --body "Issues requiring attention..."
+
+# Approve (only when substantively reviewed)
+gh pr review NUMBER --approve --body "Reviewed: [what you checked and why it's sound]"
 ```
 
 ### Without GitHub
-Provide review feedback directly in conversation. User implements changes.
+Provide review feedback directly in conversation. Structure it as you would a PR comment.
 
 ## Integration
 
