@@ -111,6 +111,7 @@ Create a directory in `~/.claude/hooks/ways/{domain}/{wayname}/` and add `way.md
 | `semantic:` | `true` to enable semantic matching (see below) |
 | `description:` | Reference text for NCD similarity (semantic mode) |
 | `semantic_keywords:` | Domain vocabulary for keyword counting (semantic mode) |
+| `ncd_threshold:` | NCD similarity threshold (default 0.58, lower = stricter) |
 
 ## Semantic Matching
 
@@ -121,6 +122,7 @@ For ambiguous triggers like "design" (software design vs UI design), ways can us
 semantic: true
 description: software system design architecture patterns database schema
 semantic_keywords: design architecture pattern schema api component factory
+ncd_threshold: 0.55  # Optional: stricter matching (default 0.58)
 ---
 ```
 

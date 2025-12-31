@@ -37,13 +37,14 @@ scan_ways() {
     semantic=$(echo "$frontmatter" | awk '/^semantic:/{gsub(/^semantic: */, ""); print}')
     description=$(echo "$frontmatter" | awk '/^description:/{gsub(/^description: */, ""); print}')
     semantic_keywords=$(echo "$frontmatter" | awk '/^semantic_keywords:/{gsub(/^semantic_keywords: */, ""); print}')
+    ncd_threshold=$(echo "$frontmatter" | awk '/^ncd_threshold:/{gsub(/^ncd_threshold: */, ""); print}')
 
     # Check for match
     matched=false
 
     # Semantic matching (if enabled)
     if [[ "$semantic" == "true" && -n "$description" && -n "$semantic_keywords" ]]; then
-      if "${WAYS_DIR}/semantic-match.sh" "$PROMPT" "$description" "$semantic_keywords" 2>/dev/null; then
+      if "${WAYS_DIR}/semantic-match.sh" "$PROMPT" "$description" "$semantic_keywords" "$ncd_threshold" 2>/dev/null; then
         matched=true
       fi
     # Regex matching (fallback)

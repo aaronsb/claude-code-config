@@ -1,6 +1,6 @@
 #!/bin/bash
 # Semantic matching using keyword counting + gzip NCD
-# Usage: semantic-match.sh "prompt" "description" "keywords"
+# Usage: semantic-match.sh "prompt" "description" "keywords" [ncd_threshold]
 # Returns: 0 if match, 1 if no match
 # Output: match score details to stderr
 #
@@ -23,14 +23,15 @@
 #    Where C(x) = compressed size of x
 #
 #    Range: 0 = identical, 1 = completely different
-#    Threshold: < 0.58 indicates meaningful similarity
+#    Threshold: < 0.58 indicates meaningful similarity (tunable via 4th arg)
 #
-# Combined decision: match if keywords >= 2 OR ncd < 0.58
+# Combined decision: match if keywords >= 2 OR ncd < threshold (default 0.58)
 # ============================================================================
 
 PROMPT="$1"
 DESC="$2"
 KEYWORDS="$3"
+NCD_THRESHOLD="${4:-0.58}"  # Default threshold, tunable per-way via frontmatter
 
 # Common words to ignore (not domain-specific)
 STOPWORDS="the a an is are was were be been being have has had do does did will would could should may might must shall can this that these those it its what how why when where who let lets just to for of in on at by"
@@ -40,7 +41,8 @@ STOPWORDS="the a an is are was were be been being have has had do does did will 
 # Count prompt words that appear in domain vocabulary
 # ============================================================================
 kw_count=0
-for word in $(echo "$PROMPT" | tr '[:upper:]' '[:lower:]'); do
+# tr -cs 'a-z' '\n' strips punctuation and splits into words (e.g., "learning?" → "learning")
+for word in $(echo "$PROMPT" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z' '\n'); do
   [[ ${#word} -lt 3 ]] && continue                        # Skip short words
   echo "$STOPWORDS" | grep -qw "$word" && continue        # Skip stopwords
   echo "$KEYWORDS" | grep -qiw "$word" && ((kw_count++))  # Count domain matches
@@ -66,10 +68,10 @@ ncd=$(echo "scale=4; ($cab - $min) / $max" | bc)
 # ============================================================================
 # Decision: either technique can trigger a match
 # ============================================================================
-if [[ $kw_count -ge 2 ]] || (( $(echo "$ncd < 0.58" | bc -l) )); then
-  echo "match: kw=$kw_count ncd=$ncd" >&2
+if [[ $kw_count -ge 2 ]] || (( $(echo "$ncd < $NCD_THRESHOLD" | bc -l) )); then
+  echo "match: kw=$kw_count ncd=$ncd threshold=$NCD_THRESHOLD" >&2
   exit 0
 else
-  echo "no match: kw=$kw_count ncd=$ncd" >&2
+  echo "no match: kw=$kw_count ncd=$ncd threshold=$NCD_THRESHOLD" >&2
   exit 1
 fi
