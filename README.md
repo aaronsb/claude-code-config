@@ -53,13 +53,17 @@ chmod +x ~/.claude/hooks/**/*.sh ~/.claude/hooks/*.sh 2>/dev/null
 
 ```
 ~/.claude/hooks/ways/
-├── core.md              # Loads at startup
-├── *.md                 # Individual ways (frontmatter defines triggers)
-├── *.macro.sh           # Optional dynamic context (see Way Macros)
-├── check-prompt.sh      # Keyword matching
-├── check-bash-post.sh   # Command matching
-├── check-file-post.sh   # File path matching
-└── show-way.sh          # Once-per-session gating
+├── core.md                      # Loads at startup (static guidance)
+├── macro.sh                     # Generates dynamic ways table
+├── show-core.sh                 # Combines macro + core.md
+├── check-prompt.sh              # Keyword matching
+├── check-bash-post.sh           # Command matching
+├── check-file-post.sh           # File path matching
+├── show-way.sh                  # Once-per-session gating
+└── {domain}/                    # Domain directories
+    └── {wayname}/
+        ├── way.md               # Frontmatter + guidance
+        └── macro.sh             # Optional dynamic context
 ```
 
 ## Creating a Way
@@ -80,7 +84,7 @@ macro: prepend
 - Not exhaustive documentation
 ```
 
-Drop the file in `~/.claude/hooks/ways/` (global) or `$PROJECT/.claude/ways/` (project). Done.
+Create a directory in `~/.claude/hooks/ways/{domain}/{wayname}/` and add `way.md`. For project-local: `$PROJECT/.claude/ways/{domain}/{wayname}/way.md`.
 
 ### Frontmatter Fields
 
@@ -119,16 +123,21 @@ See [ADR-004](docs/adr/ADR-004-way-macros.md) for full macro documentation.
 
 ## Project-Local Ways
 
-Projects can have custom ways in `.claude/ways/`:
+Projects can have custom ways in `.claude/ways/{domain}/{wayname}/`:
 
 ```
 your-project/.claude/ways/
-├── our-api.md           # Project conventions
-├── deployment.md        # How we deploy
-└── react.md             # Framework-specific guidance
+└── myproject/
+    ├── api/
+    │   └── way.md       # Project API conventions
+    ├── deployment/
+    │   ├── way.md       # How we deploy
+    │   └── macro.sh     # Query deployment status
+    └── testing/
+        └── way.md       # Override global testing way
 ```
 
-Project ways override global ways with the same name. A template is auto-created on first session.
+Project ways override global ways with the same path. A template is auto-created on first session.
 
 ## Built-in Ways (Software Dev)
 
@@ -166,19 +175,50 @@ This repo ships with 20 development-focused ways:
 - **GitHub-first patterns** (auto-detects `gh` availability)
 - **Status line** with git branch and API usage
 
+## Ways vs Skills
+
+Claude Code has built-in **Skills** (semantically-discovered knowledge bundles). How do ways compare?
+
+| Aspect | Skills | Ways |
+|--------|--------|------|
+| **Discovery** | Semantic (Claude decides based on intent) | Pattern (regex on prompts/tools/files) |
+| **Trigger** | User asks something matching skill description | Hook events (tool use, file edit, keywords) |
+| **Invocation** | Claude requests permission to use | Automatic injection (no permission needed) |
+| **Frequency** | Per semantic match | Once per session (marker-gated) |
+| **Dynamic context** | Via bundled scripts | Via macro.sh |
+| **Tool restriction** | `allowed-tools` field | Not supported |
+
+**They complement each other:**
+
+- **Skills** = "Teach Claude how to do X" (semantic, on-demand knowledge)
+- **Ways** = "Remind Claude when doing Y" (event-driven, just-in-time guidance)
+
+**Use Skills for:**
+- Semantic discovery ("explain this code" → explaining-code skill)
+- Tool restrictions (read-only security review)
+- Multi-file reference docs with progressive disclosure
+
+**Use Ways for:**
+- Tool-triggered guidance (`git commit` → commit format reminder)
+- File-triggered guidance (editing `.env` → config best practices)
+- Session-gated delivery (show once, not repeatedly)
+- Dynamic context (query GitHub API for contributor count)
+
+Skills can't detect tool execution. Ways can't do semantic matching. Together they cover both intent-based and event-based guidance.
+
 ## Philosophy
 
-This is a "poor man's RAG" - retrieval-augmented generation without the infrastructure:
+An extensible macro framework for contextual guidance - lightweight, portable, deterministic.
 
-| Traditional RAG | Ways System |
-|-----------------|-------------|
-| Vector embeddings | Keyword regex |
-| Semantic search | Pattern matching |
-| External services | Bash + jq |
-| Probabilistic | Deterministic |
-| Domain-locked | Domain-agnostic |
+| Feature | Why It Matters |
+|---------|----------------|
+| **Pattern matching** | Predictable, debuggable (no semantic black box) |
+| **Shell macros** | Dynamic context from any source (APIs, files, system state) |
+| **Zero dependencies** | Bash + jq - runs anywhere |
+| **Domain-agnostic** | Swap software dev ways for finance, ops, research, anything |
+| **Fully hackable** | Plain text files, fork and customize in minutes |
 
-Simple, transparent, zero dependencies beyond standard unix tools. Fork it, gut the dev ways, add your own domain.
+The string matching is intentionally simple - it keeps the system portable and transparent. The power comes from macros that can query anything and inject real-time context.
 
 ## Updating
 

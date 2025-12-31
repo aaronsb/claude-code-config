@@ -1,8 +1,22 @@
 ---
-keywords: knowledge|ways|guidance|context.?inject|how.?do.?ways
-files: \.claude/ways/.*\.md$
+keywords: knowledge|ways|guidance|context.?inject|how.?do.?ways|skill
+files: \.claude/ways/.*way\.md$
 ---
 # Knowledge Way
+
+## Ways vs Skills
+
+**Skills** = semantically-discovered (Claude decides based on intent)
+**Ways** = pattern-triggered (keywords, commands, file edits)
+
+| Use Skills for | Use Ways for |
+|---------------|--------------|
+| Semantic discovery ("explain code") | Tool-triggered (`git commit` → format reminder) |
+| Tool restrictions (`allowed-tools`) | File-triggered (edit `.env` → config guidance) |
+| Multi-file reference docs | Session-gated (once per session) |
+| | Dynamic context (macro queries API) |
+
+They complement: Skills can't detect tool execution. Ways can't do semantic matching.
 
 ## How Ways Work
 Ways are contextual guidance that loads once per session when triggered by:
@@ -11,13 +25,14 @@ Ways are contextual guidance that loads once per session when triggered by:
 
 ## Way File Format
 
-Each way is a self-contained markdown file with YAML frontmatter:
+Each way lives in `{domain}/{wayname}/way.md` with YAML frontmatter:
 
 ```markdown
 ---
 keywords: pattern1|pattern2|regex.*
 files: \.md$|docs/.*
 commands: git\ commit|npm\ test
+macro: prepend
 ---
 # Way Name
 
@@ -27,19 +42,20 @@ commands: git\ commit|npm\ test
 ```
 
 ### Frontmatter Fields
-- `keywords:` - Regex patterns matched against user prompts and tool descriptions
-- `files:` - Regex patterns matched against file paths (Edit/Write)
-- `commands:` - Regex patterns matched against bash commands
+- `keywords:` - Regex matched against user prompts
+- `files:` - Regex matched against file paths (Edit/Write)
+- `commands:` - Regex matched against bash commands
+- `macro:` - `prepend` or `append` to run `macro.sh` for dynamic context
 
 ## Creating a New Way
 
-1. Create `wayname.md` in:
-   - Global: `~/.claude/hooks/ways/`
-   - Project: `$PROJECT/.claude/ways/`
+1. Create directory in:
+   - Global: `~/.claude/hooks/ways/{domain}/{wayname}/`
+   - Project: `$PROJECT/.claude/ways/{domain}/{wayname}/`
 
-2. Add frontmatter with triggers
+2. Add `way.md` with frontmatter + guidance
 
-3. Write compact guidance
+3. Optionally add `macro.sh` for dynamic context
 
 **That's it.** No config files to update.
 
@@ -47,19 +63,19 @@ commands: git\ commit|npm\ test
 
 Projects can override or add ways:
 ```
-$PROJECT/.claude/
-└── ways/
-    ├── our-api.md       # Project conventions
-    ├── deployment.md    # How we deploy
-    └── testing.md       # Override global testing way
+$PROJECT/.claude/ways/
+└── myproject/
+    ├── api/way.md           # Project conventions
+    ├── deployment/way.md    # How we deploy
+    └── testing/way.md       # Override global testing way
 ```
 
-Project ways take precedence over global ways with same name.
+Project ways take precedence over global ways with same path.
 
 ## Locations
-- Global: `~/.claude/hooks/ways/`
-- Project: `$PROJECT/.claude/ways/`
-- Markers: `/tmp/.claude-way-{name}-{session_id}`
+- Global: `~/.claude/hooks/ways/{domain}/{wayname}/way.md`
+- Project: `$PROJECT/.claude/ways/{domain}/{wayname}/way.md`
+- Markers: `/tmp/.claude-way-{domain}-{wayname}-{session_id}`
 
 ## State Machine
 
