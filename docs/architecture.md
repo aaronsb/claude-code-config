@@ -11,7 +11,7 @@ flowchart TB
     subgraph Session["Claude Code Session"]
         SS[SessionStart] --> Core["show-core.sh<br/>Dynamic table + core.md"]
 
-        UP[UserPromptSubmit] --> CP["check-prompt.sh<br/>Scan keywords"]
+        UP[UserPromptSubmit] --> CP["check-prompt.sh<br/>Regex OR semantic"]
 
         subgraph PostTool["PostToolUse"]
             Bash[Bash tool] --> CB["check-bash-post.sh<br/>Scan commands"]
@@ -19,7 +19,9 @@ flowchart TB
         end
     end
 
-    CP --> SW["show-way.sh"]
+    CP -->|semantic: true| SM["semantic-match.sh<br/>gzip NCD + keywords"]
+    CP -->|regex| SW["show-way.sh"]
+    SM --> SW
     CB --> SW
     CF --> SW
 
@@ -85,6 +87,53 @@ flowchart LR
     FL -->|match| SW
 ```
 
+## Semantic Matching
+
+For ways with `semantic: true`, regex is replaced with gzip NCD + keyword counting:
+
+```mermaid
+flowchart TB
+    subgraph Input
+        Prompt["User prompt"]
+        Desc["Way description"]
+        Keywords["Domain vocabulary"]
+    end
+
+    subgraph Tech1["Technique 1: Keyword Counting"]
+        Split["Split prompt into words"]
+        Filter["Remove stopwords"]
+        Count["Count matches in vocabulary"]
+        KWResult["kw_count >= 2?"]
+    end
+
+    subgraph Tech2["Technique 2: Gzip NCD"]
+        Compress["Compress separately:<br/>C(desc), C(prompt)"]
+        Combined["Compress together:<br/>C(desc+prompt)"]
+        Formula["NCD = (C(ab) - min) / max"]
+        NCDResult["ncd < 0.58?"]
+    end
+
+    Prompt --> Split
+    Keywords --> Count
+    Split --> Filter --> Count --> KWResult
+
+    Desc --> Compress
+    Prompt --> Compress
+    Compress --> Combined --> Formula --> NCDResult
+
+    KWResult -->|Yes| Match["✓ MATCH"]
+    NCDResult -->|Yes| Match
+    KWResult -->|No| NCDResult
+    NCDResult -->|No| NoMatch["✗ No match"]
+```
+
+**Why gzip NCD works**: Similar texts share patterns that compress well together.
+
+```
+NCD("software design", "design the database schema") = 0.52 (similar)
+NCD("software design", "button design looks off")    = 0.63 (different)
+```
+
 ## Macro Injection
 
 Ways with `macro: prepend|append` run dynamic scripts:
@@ -136,11 +185,15 @@ flowchart TB
         CheckB[check-bash-post.sh]
         CheckF[check-file-post.sh]
         ShowW[show-way.sh]
+        Semantic[semantic-match.sh]
 
         subgraph Domain["softwaredev/"]
             subgraph WayDir["github/"]
                 WayMD[way.md]
                 WayMacro[macro.sh]
+            end
+            subgraph DesignDir["design/"]
+                DesignMD["way.md<br/>(semantic: true)"]
             end
             Other["adr/, commits/, ..."]
         end
@@ -151,6 +204,7 @@ flowchart TB
         ProjWay["{wayname}/way.md"]
     end
 
+    CheckP -->|semantic way| Semantic
     ProjWay -.->|overrides| WayMD
 ```
 

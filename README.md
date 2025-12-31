@@ -69,10 +69,11 @@ See [docs/architecture.md](docs/architecture.md) for detailed Mermaid diagrams o
 ├── core.md                      # Loads at startup (static guidance)
 ├── macro.sh                     # Generates dynamic ways table
 ├── show-core.sh                 # Combines macro + core.md
-├── check-prompt.sh              # Keyword matching
+├── check-prompt.sh              # Keyword + semantic matching
 ├── check-bash-post.sh           # Command matching
 ├── check-file-post.sh           # File path matching
 ├── show-way.sh                  # Once-per-session gating
+├── semantic-match.sh            # Gzip NCD similarity scoring
 └── {domain}/                    # Domain directories
     └── {wayname}/
         ├── way.md               # Frontmatter + guidance
@@ -106,7 +107,36 @@ Create a directory in `~/.claude/hooks/ways/{domain}/{wayname}/` and add `way.md
 | `keywords:` | Regex matched against user prompts |
 | `files:` | Regex matched against file paths (Edit/Write) |
 | `commands:` | Regex matched against bash commands |
-| `macro:` | `prepend` or `append` - run matching `.macro.sh` for dynamic context |
+| `macro:` | `prepend` or `append` - run `macro.sh` for dynamic context |
+| `semantic:` | `true` to enable semantic matching (see below) |
+| `description:` | Reference text for NCD similarity (semantic mode) |
+| `semantic_keywords:` | Domain vocabulary for keyword counting (semantic mode) |
+
+## Semantic Matching
+
+For ambiguous triggers like "design" (software design vs UI design), ways can use **semantic matching** instead of regex:
+
+```yaml
+---
+semantic: true
+description: software system design architecture patterns database schema
+semantic_keywords: design architecture pattern schema api component factory
+---
+```
+
+Semantic matching combines two techniques:
+1. **Keyword counting** - how many domain-specific words appear in the prompt
+2. **Gzip NCD** - compression-based similarity (Normalized Compression Distance)
+
+```
+Match if: domain_keywords >= 2 OR ncd_similarity < 0.58
+```
+
+This correctly distinguishes:
+- ✓ "design the database schema" → triggers (software design)
+- ✗ "button design looks off" → no trigger (UI design)
+
+**Zero dependencies** - uses only `bash`, `gzip`, `bc`, `grep` (universal on all distros).
 
 ## Way Macros
 
@@ -217,7 +247,7 @@ Claude Code has built-in **Skills** (semantically-discovered knowledge bundles).
 - Session-gated delivery (show once, not repeatedly)
 - Dynamic context (query GitHub API for contributor count)
 
-Skills can't detect tool execution. Ways can't do semantic matching. Together they cover both intent-based and event-based guidance.
+Skills can't detect tool execution. Ways now support semantic matching via gzip NCD (see above). Together they cover both intent-based and event-based guidance.
 
 ## Philosophy
 
