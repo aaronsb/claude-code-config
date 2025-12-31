@@ -49,7 +49,18 @@ chmod +x ~/.claude/hooks/**/*.sh ~/.claude/hooks/*.sh 2>/dev/null
 2. **UserPromptSubmit** scans your message for keywords
 3. **PostToolUse** scans commands, file paths, and descriptions
 4. Matching ways inject via `additionalContext` - Claude sees them
-5. Each way loads once per session (markers in `/tmp`)
+5. Each way loads **once per session** - marker files prevent re-triggering
+
+### Once-Per-Session Gating
+
+Ways don't continuously re-hook. When a way triggers:
+
+```
+First match  → Output guidance + create marker file
+Second match → Marker exists → No-op (silent)
+```
+
+Markers live in `/tmp/.claude-way-{domain}-{wayname}-{session_id}`. This prevents noise - you see each way once, when first relevant, then it stays quiet.
 
 ```
 ~/.claude/hooks/ways/
