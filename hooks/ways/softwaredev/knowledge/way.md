@@ -1,6 +1,6 @@
 ---
 match: regex
-pattern: knowledge|ways|guidance|context.?inject|how.?do.?ways|skill
+pattern: \bway\b|ways|knowledge|guidance|context.?inject
 files: \.claude/ways/.*way\.md$
 ---
 # Knowledge Way
