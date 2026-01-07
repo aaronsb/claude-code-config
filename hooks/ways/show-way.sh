@@ -25,6 +25,16 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 
 [[ -z "$WAY" ]] && exit 1
 
+# Check if domain is disabled via ~/.claude/ways.json
+# Example: { "disabled": ["itops", "softwaredev"] }
+WAYS_CONFIG="${HOME}/.claude/ways.json"
+DOMAIN="${WAY%%/*}"  # First path component (e.g., "softwaredev" from "softwaredev/github")
+if [[ -f "$WAYS_CONFIG" ]]; then
+  if jq -e --arg d "$DOMAIN" '.disabled | index($d) != null' "$WAYS_CONFIG" >/dev/null 2>&1; then
+    exit 0
+  fi
+fi
+
 # Sanitize way path for marker filename (replace / with -)
 WAY_MARKER_NAME=$(echo "$WAY" | tr '/' '-')
 

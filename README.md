@@ -86,6 +86,22 @@ See [docs/architecture.md](docs/architecture.md) for detailed Mermaid diagrams o
         └── macro.sh             # Optional dynamic context
 ```
 
+## Configuration
+
+Ways config lives in `~/.claude/ways.json`:
+
+```json
+{
+  "disabled": ["itops"]
+}
+```
+
+| Field | Purpose |
+|-------|---------|
+| `disabled` | Array of domain names to skip (e.g., `["itops", "softwaredev"]`) |
+
+Disabled domains are completely ignored - no pattern matching, no output.
+
 ## Creating a Way
 
 Each way is self-contained with YAML frontmatter:
