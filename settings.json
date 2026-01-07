@@ -6,7 +6,8 @@
     "allow": [
       "Edit(~/.claude/**)",
       "Read(~/.claude/**)",
-      "Write(~/.claude/**)"
+      "Write(~/.claude/**)",
+      "Bash(~/.claude/hooks/ways/list-triggered.sh:*)"
     ]
   },
   "hooks": {
