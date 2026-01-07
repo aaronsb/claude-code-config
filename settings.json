@@ -16,6 +16,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "${HOME}/.claude/hooks/ways/clear-markers.sh"
+          },
+          {
+            "type": "command",
             "command": "${HOME}/.claude/hooks/ways/show-core.sh"
           },
           {
@@ -31,6 +35,10 @@
       {
         "matcher": "compact",
         "hooks": [
+          {
+            "type": "command",
+            "command": "${HOME}/.claude/hooks/ways/clear-markers.sh"
+          },
           {
             "type": "command",
             "command": "${HOME}/.claude/hooks/ways/show-core.sh"
