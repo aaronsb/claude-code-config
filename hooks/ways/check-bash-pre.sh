@@ -1,13 +1,13 @@
 #!/bin/bash
-# PostToolUse: Check bash commands against way frontmatter
+# PreToolUse: Check bash commands against way frontmatter
 #
 # TRIGGER FLOW:
-# ┌──────────────────┐     ┌─────────────────┐     ┌──────────────┐
-# │ PostToolUse:Bash │────▶│ scan_ways()     │────▶│ show-way.sh  │
-# │ (hook event)     │     │ for each way.md │     │ (idempotent) │
-# └──────────────────┘     │  if commands OR │     └──────────────┘
-#                          │  keywords match │
-#                          └─────────────────┘
+# ┌─────────────────┐     ┌─────────────────┐     ┌──────────────┐
+# │ PreToolUse:Bash │────▶│ scan_ways()     │────▶│ show-way.sh  │
+# │ (hook event)    │     │ for each way.md │     │ (idempotent) │
+# └─────────────────┘     │  if commands OR │     └──────────────┘
+#                         │  keywords match │
+#                         └─────────────────┘
 #
 # Ways are nested: domain/wayname/way.md (e.g., softwaredev/github/way.md)
 # Multiple ways can match a single command - CONTEXT accumulates
@@ -53,12 +53,10 @@ scan_ways() {
 scan_ways "$PROJECT_DIR/.claude/ways"
 scan_ways "${HOME}/.claude/hooks/ways"
 
-# Output JSON with additionalContext if we have any
+# Output JSON - PreToolUse format with decision + additionalContext
 if [[ -n "$CONTEXT" ]]; then
   jq -n --arg ctx "$CONTEXT" '{
-    "hookSpecificOutput": {
-      "hookEventName": "PostToolUse",
-      "additionalContext": $ctx
-    }
+    "decision": "approve",
+    "additionalContext": $ctx
   }'
 fi

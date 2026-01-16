@@ -1,9 +1,9 @@
 #!/bin/bash
-# PostToolUse: Check file operations against way frontmatter
+# PreToolUse: Check file operations against way frontmatter
 #
 # TRIGGER FLOW:
 # ┌───────────────────────┐     ┌─────────────────┐     ┌──────────────┐
-# │ PostToolUse:Edit/Write│────▶│ scan_ways()     │────▶│ show-way.sh  │
+# │ PreToolUse:Edit/Write │────▶│ scan_ways()     │────▶│ show-way.sh  │
 # │ (hook event)          │     │ for each way.md │     │ (idempotent) │
 # └───────────────────────┘     │  if files match │     └──────────────┘
 #                               └─────────────────┘
@@ -45,12 +45,10 @@ scan_ways() {
 scan_ways "$PROJECT_DIR/.claude/ways"
 scan_ways "${HOME}/.claude/hooks/ways"
 
-# Output JSON with additionalContext if we have any
+# Output JSON - PreToolUse format with decision + additionalContext
 if [[ -n "$CONTEXT" ]]; then
   jq -n --arg ctx "$CONTEXT" '{
-    "hookSpecificOutput": {
-      "hookEventName": "PostToolUse",
-      "additionalContext": $ctx
-    }
+    "decision": "approve",
+    "additionalContext": $ctx
   }'
 fi
