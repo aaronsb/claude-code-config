@@ -119,6 +119,20 @@ $PROJECT/.claude/ways/
 
 Project ways take precedence over global ways with same path.
 
+## Enabling/Disabling Way Domains
+
+Control which domains are active via `~/.claude/ways.json`:
+
+```json
+{
+  "disabled": ["itops", "experimental"]
+}
+```
+
+- Add domain name to `disabled` array to deactivate all ways in that domain
+- Remove from array to reactivate
+- Empty array `[]` means all domains active
+
 ## Locations
 - Global: `~/.claude/hooks/ways/{domain}/{wayname}/way.md`
 - Project: `$PROJECT/.claude/ways/{domain}/{wayname}/way.md`
