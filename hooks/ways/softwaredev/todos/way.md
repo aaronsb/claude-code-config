@@ -16,10 +16,17 @@ threshold: 75
 
 ## Context Checkpoint
 
-You're approaching compaction. Before context is summarized:
+You're approaching compaction. Task lists survive compaction and provide continuity.
 
-- [ ] TodoWrite captures current work items
-- [ ] If multi-session: `.claude/todo-*.md` reflects progress
+**If no active task list exists:** Create one now using TodoWrite. Capture:
+- What we're working on (the goal)
+- Current progress (what's done)
+- Next steps (what remains)
+- Any decisions or constraints established
+
+**If task list exists:** Verify it reflects current state - update stale items, add discovered work.
+
+This is not optional. Task lists are the primary continuity mechanism across compaction.
 
 ## Avoiding Intent Drift
 
