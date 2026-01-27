@@ -5,8 +5,13 @@
 # Must be in a git repo
 git rev-parse --is-inside-work-tree &>/dev/null || exit 0
 
-# Exclusion patterns (generated, vendor, lock files, etc.)
-EXCLUDE_PATTERN='\.(lock|min\.js|min\.css|generated\.|bundle\.)|\bvendor/|\bnode_modules/|\bdist/|\bbuild/|\b__pycache__/'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WAY_FILE="${SCRIPT_DIR}/way.md"
+
+# Read exclusion pattern from way.md frontmatter, or use default
+DEFAULT_EXCLUDE='\.md$|\.lock$|\.min\.(js|css)$|\.generated\.|\.bundle\.|vendor/|node_modules/|dist/|build/|__pycache__/'
+EXCLUDE_PATTERN=$(awk '/^scan_exclude:/{print $2; exit}' "$WAY_FILE" 2>/dev/null)
+EXCLUDE_PATTERN="${EXCLUDE_PATTERN:-$DEFAULT_EXCLUDE}"
 
 THRESHOLD=500
 PRIORITY_THRESHOLD=800

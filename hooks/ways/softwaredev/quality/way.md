@@ -2,6 +2,7 @@
 match: regex
 pattern: solid.?principle|refactor|code.?review|code.?quality
 macro: append
+scan_exclude: \.md$|\.lock$|\.min\.(js|css)$|\.generated\.|\.bundle\.|vendor/|node_modules/|dist/|build/|__pycache__/
 ---
 # Code Quality Way
 
