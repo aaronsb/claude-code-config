@@ -1,6 +1,6 @@
 ---
 match: regex
-pattern: operation.?class|policy.?(engine|enforcement)|approval.?(gate|level|workflow)|\bopa\b|blast.?radius|risk.?(class|level|score)
+pattern: operation.?class|policy.?(engine|enforcement)|approval.?(gate|level|workflow)|blast.?radius|risk.?(class|level|score)
 ---
 # Policy Way
 

@@ -1,6 +1,6 @@
 ---
 match: regex
-pattern: architect|decision|design.?pattern|technical.?choice|trade.?off
+pattern: \badr\b|architect|decision|design.?pattern|technical.?choice|trade.?off
 files: docs/adr/.*\.md$
 ---
 # ADR Way

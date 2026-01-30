@@ -33,6 +33,8 @@ When escalating, provide:
 **Bad**: "User can't connect to VPN"
 **Good**: "User locked after 5 failed attempts. No password change. No security alerts. Unlocked account - user should retry in 2 min."
 
+**Related**: Policy Way (operation classification, approval levels), Proposals Way (structured approval requests).
+
 ## L0 Example (VPN Failure)
 
 1. Query AD → Account locked

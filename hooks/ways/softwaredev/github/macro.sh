@@ -16,7 +16,7 @@ if [[ -z "$CONTRIBUTORS" ]]; then
   exit 0
 fi
 
-CURRENT_USER=$(gh api user --jq '.login' 2>/dev/null)
+CURRENT_USER=$(timeout 2 gh api user --jq '.login' 2>/dev/null)
 
 if [[ "$CONTRIBUTORS" -le 2 ]]; then
   echo "**Context**: Solo/pair project ($CONTRIBUTORS contributors)"
