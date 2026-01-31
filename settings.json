@@ -65,6 +65,15 @@
             "command": "${HOME}/.claude/hooks/ways/check-bash-pre.sh"
           }
         ]
+      },
+      {
+        "matcher": "TaskCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${HOME}/.claude/hooks/ways/mark-tasks-active.sh"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [

@@ -116,9 +116,21 @@ scan_state_triggers() {
 
     # Evaluate the trigger condition
     if evaluate_trigger "$trigger" "$wayfile"; then
-      # Condition met - fire the way (show-way.sh handles marker)
-      local output=$("${WAYS_DIR}/show-way.sh" "$waypath" "$SESSION_ID")
-      [[ -n "$output" ]] && CONTEXT+="$output"$'\n\n'
+      case "$trigger" in
+        context-threshold)
+          # Repeat on every prompt until tasks-active marker exists
+          local tasks_marker="/tmp/.claude-tasks-active-${SESSION_ID}"
+          if [[ ! -f "$tasks_marker" ]]; then
+            local output=$(awk 'BEGIN{fm=0} /^---$/{fm++; next} fm!=1' "$wayfile")
+            [[ -n "$output" ]] && CONTEXT+="$output"$'\n\n'
+          fi
+          ;;
+        *)
+          # Other triggers use standard once-per-session marker
+          local output=$("${WAYS_DIR}/show-way.sh" "$waypath" "$SESSION_ID")
+          [[ -n "$output" ]] && CONTEXT+="$output"$'\n\n'
+          ;;
+      esac
     fi
 
   done < <(find "$dir" -name "way.md" -print0 2>/dev/null)
