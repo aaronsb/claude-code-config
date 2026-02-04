@@ -25,28 +25,31 @@ sequenceDiagram
     end
 
     rect rgba(106, 27, 154, 0.15)
-        Note over C,C: Claude investigates the bug
-        C->>C: Bash: git log --oneline auth/
-        Note right of W: No way matches this command
-        C->>C: Edit: src/auth/login.ts
-        W-->>C: ⚙️ Config way injected (file: config pattern)
+        Note over C,W: Claude uses tools — ways intercept before execution
+        C->>W: about to run: git log --oneline auth/
+        Note right of W: No way matches → command proceeds
+        C->>W: about to edit: src/auth/login.ts
+        W-->>C: ⚙️ Config way injected (PreToolUse: file match)
+        Note right of C: Guidance arrives before the edit happens
     end
 
     rect rgba(0, 105, 92, 0.15)
         Note over C,S: Claude delegates to a subagent
-        C->>S: Task: "Review the auth module<br/>for security vulnerabilities"
-        W-->>S: 🔑 Security way injected into subagent
-        W-->>S: 🐛 Debugging way injected into subagent
-        Note right of S: Subagent works with<br/>its own way context
+        C->>W: about to spawn: Task("Review auth<br/>for security vulnerabilities")
+        W-->>W: Stash matched ways (PreToolUse:Task)
+        C->>S: Subagent starts
+        W-->>S: 🔑 Security way injected (SubagentStart)
+        W-->>S: 🐛 Debugging way injected (SubagentStart)
+        Note right of S: Subagent has its own way context
         S-->>C: Review findings
     end
 
     rect rgba(230, 81, 0, 0.15)
-        Note over C,C: Claude creates a PR
-        C->>C: Bash: gh pr create
-        W-->>C: 🔀 GitHub way injected (command: gh)
-        Note right of W: macro.sh runs → queries GitHub API<br/>→ "Team project (4 contributors) — PR recommended"
-        Note right of C: Way content is tailored by macro<br/>to this project's collaboration context
+        Note over C,W: Macro tailors guidance to project context
+        C->>W: about to run: gh pr create
+        W->>W: macro.sh → queries GitHub API
+        W-->>C: 🔀 GitHub way injected (PreToolUse:Bash)<br/>"Team project (4 contributors) — PR recommended"
+        Note right of C: Claude sees team context before<br/>the command executes
     end
 
     rect rgba(21, 101, 192, 0.15)
