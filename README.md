@@ -76,8 +76,8 @@ See [docs/architecture.md](docs/architecture.md) for detailed Mermaid diagrams o
 ├── macro.sh                     # Generates dynamic ways table
 ├── show-core.sh                 # Combines macro + core.md
 ├── check-prompt.sh              # Keyword + semantic matching
-├── check-bash-post.sh           # Command matching
-├── check-file-post.sh           # File path matching
+├── check-bash-pre.sh            # Command matching (PreToolUse:Bash)
+├── check-file-pre.sh            # File path matching (PreToolUse:Edit|Write)
 ├── show-way.sh                  # Once-per-session gating
 ├── semantic-match.sh            # Gzip NCD similarity scoring
 └── {domain}/                    # Domain directories

@@ -13,13 +13,13 @@ flowchart TB
 
         UP[UserPromptSubmit] --> CP["check-prompt.sh<br/>Regex OR semantic"]
 
-        subgraph PostTool["PostToolUse"]
-            Bash[Bash tool] --> CB["check-bash-post.sh<br/>Scan commands"]
-            Edit[Edit/Write tool] --> CF["check-file-post.sh<br/>Scan file paths"]
+        subgraph PreTool["PreToolUse"]
+            Bash[Bash tool] --> CB["check-bash-pre.sh<br/>Scan commands"]
+            Edit[Edit/Write tool] --> CF["check-file-pre.sh<br/>Scan file paths"]
         end
     end
 
-    CP -->|semantic: true| SM["semantic-match.sh<br/>gzip NCD + keywords"]
+    CP -->|match: semantic| SM["semantic-match.sh<br/>gzip NCD + keywords"]
     CP -->|regex| SW["show-way.sh"]
     SM --> SW
     CB --> SW
@@ -64,11 +64,11 @@ flowchart LR
 
     subgraph Scan["Recursive Scan"]
         Find["find */way.md"]
-        Extract["Extract frontmatter:<br/>keywords, commands, files"]
+        Extract["Extract frontmatter:<br/>pattern, commands, files"]
     end
 
     subgraph Match["Regex Match"]
-        KW["keywords: pattern"]
+        KW["pattern: regex"]
         CM["commands: pattern"]
         FL["files: pattern"]
     end
@@ -89,7 +89,7 @@ flowchart LR
 
 ## Semantic Matching
 
-For ways with `semantic: true`, regex is replaced with gzip NCD + keyword counting:
+For ways with `match: semantic`, regex is replaced with gzip NCD + keyword counting:
 
 ```mermaid
 flowchart TB
@@ -193,7 +193,7 @@ flowchart TB
                 WayMacro[macro.sh]
             end
             subgraph DesignDir["design/"]
-                DesignMD["way.md<br/>(semantic: true)"]
+                DesignMD["way.md<br/>(match: semantic)"]
             end
             Other["adr/, commits/, ..."]
         end
@@ -216,9 +216,9 @@ What happens when multiple triggers fire:
 flowchart TB
     Prompt["'Let's review the PR and fix the bug'"]
 
-    Prompt --> KW1["keywords: github|pr"]
-    Prompt --> KW2["keywords: debug|bug"]
-    Prompt --> KW3["keywords: review"]
+    Prompt --> KW1["pattern: github|pr"]
+    Prompt --> KW2["pattern: debug|bug"]
+    Prompt --> KW3["pattern: review"]
 
     KW1 -->|match| GH["github way"]
     KW2 -->|match| DB["debugging way"]
