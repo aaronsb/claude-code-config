@@ -2,9 +2,30 @@
 
 A domain-agnostic guidance framework for Claude Code. Injects relevant knowledge just-in-time based on what you're doing.
 
-## The Idea
+```mermaid
+sequenceDiagram
+    participant U as 👤 You
+    participant C as 🤖 Claude
+    participant W as ⚡ Ways
 
-**Ways** = automated, contextual guidance triggered by keywords, commands, and file patterns.
+    rect rgba(21, 101, 192, 0.2)
+        U->>C: "fix the auth bug"
+        W-->>C: 🔑 Security · 🐛 Debugging
+    end
+    rect rgba(106, 27, 154, 0.2)
+        C->>W: about to run: git commit
+        W-->>C: 📝 Commit format rules
+    end
+    rect rgba(0, 105, 92, 0.2)
+        C->>W: spawning subagent
+        W-->>C: 🔑 Security (injected into subagent too)
+    end
+    rect rgba(198, 40, 40, 0.15)
+        Note over U,W: Context fills up → auto-compact → ways reset → cycle repeats
+    end
+```
+
+**Ways** = automated, contextual guidance triggered by keywords, commands, and file patterns. They fire once per session, before tools execute, and carry into subagents.
 
 This repo ships with software development ways, but the mechanism is general-purpose. You could have ways for:
 - Excel/Office productivity
@@ -12,21 +33,6 @@ This repo ships with software development ways, but the mechanism is general-pur
 - Financial analysis
 - Research workflows
 - Anything with patterns Claude should know about
-
-## What It Does
-
-```
-You: "let's discuss the architecture"
-→ ADR way loads (architecture decision format, workflow)
-
-You: "there's a bug in the auth"
-→ Debugging way + Security way load
-
-Claude runs: git commit
-→ Commits way loads (conventional commit format)
-```
-
-Ways load once per session when triggered. No manual invocation needed.
 
 ## Quick Start
 
