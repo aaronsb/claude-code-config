@@ -1,6 +1,6 @@
 # Claude Code Config
 
-A domain-agnostic guidance framework for Claude Code. Injects relevant knowledge just-in-time based on what you're doing.
+Event-driven policy, process, and governance for Claude Code. Ways encode *how we do things* — prescriptive rules triggered by context, not requested by intent — and inject them just-in-time before tools execute.
 
 ```mermaid
 sequenceDiagram
@@ -25,7 +25,7 @@ sequenceDiagram
     end
 ```
 
-**Ways** = automated, contextual guidance triggered by keywords, commands, and file patterns. They fire once per session, before tools execute, and carry into subagents.
+**Ways** = policy and process encoded as contextual guidance. Triggered by keywords, commands, and file patterns — they fire once per session, before tools execute, and carry into subagents.
 
 This repo ships with software development ways, but the mechanism is general-purpose. You could have ways for:
 - Excel/Office productivity
@@ -272,8 +272,8 @@ Claude Code has built-in **Skills** (semantically-discovered knowledge bundles).
 
 **They complement each other:**
 
-- **Skills** = "Teach Claude how to do X" (semantic, on-demand knowledge)
-- **Ways** = "Remind Claude when doing Y" (event-driven, just-in-time guidance)
+- **Ways** = *"how we do things"* — policy, process, governance. Prescriptive rules triggered by events and context. Encodes developed opinions about process.
+- **Skills** = *"what we can do"* — capability, ability. Procedural knowledge triggered by intent and task. Encodes how to accomplish something.
 
 **Use Skills for:**
 - Semantic discovery ("explain this code" → explaining-code skill)
@@ -290,7 +290,7 @@ Skills can't detect tool execution. Ways now support semantic matching via gzip 
 
 ## Philosophy
 
-An extensible macro framework for contextual guidance - lightweight, portable, deterministic.
+Policy-as-code for AI agents — lightweight, portable, deterministic.
 
 | Feature | Why It Matters |
 |---------|----------------|
