@@ -81,7 +81,7 @@ collect_candidates "${WAYS_DIR}"
 
 # Single candidate? Fire directly (no need for model call)
 if [[ ${#CANDIDATES[@]} -eq 1 ]]; then
-  CONTEXT=$("${WAYS_DIR}/show-way.sh" "${CANDIDATES[0]}" "$SESSION_ID")
+  CONTEXT=$("${WAYS_DIR}/show-way.sh" "${CANDIDATES[0]}" "$SESSION_ID" "smart")
   if [[ -n "$CONTEXT" ]]; then
     jq -n --arg ctx "$CONTEXT" '{"additionalContext": $ctx}'
   fi
@@ -116,7 +116,7 @@ if [[ "$RESULT" != *"none"* ]]; then
     num=$((i + 1))
     if echo "$RESULT" | grep -q "$num"; then
       way="${CANDIDATES[$i]}"
-      output=$("${WAYS_DIR}/show-way.sh" "$way" "$SESSION_ID")
+      output=$("${WAYS_DIR}/show-way.sh" "$way" "$SESSION_ID" "smart")
       [[ -n "$output" ]] && CONTEXT+="$output"$'\n\n'
     fi
   done

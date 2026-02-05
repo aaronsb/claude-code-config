@@ -13,5 +13,6 @@ rm -f /tmp/.claude-way-* 2>/dev/null
 rm -f /tmp/.claude-tasks-active-* 2>/dev/null
 rm -rf /tmp/.claude-subagent-stash-* 2>/dev/null
 
-# Debug: uncomment to log
-# echo "Cleared markers for session ${SESSION_ID:-unknown}" >> /tmp/claude-ways-debug.log
+# Log session event
+"${HOME}/.claude/hooks/ways/log-event.sh" \
+  event=session_start project="${CLAUDE_PROJECT_DIR:-$PWD}" session="${SESSION_ID:-unknown}"

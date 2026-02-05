@@ -41,7 +41,7 @@ scan_ways() {
 
     # Check file path against pattern
     if [[ -n "$files" && "$FP" =~ $files ]]; then
-      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID")
+      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID" "file")
     fi
   done < <(find "$dir" -name "way.md" -print0 2>/dev/null)
 }

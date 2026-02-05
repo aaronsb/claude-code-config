@@ -44,12 +44,12 @@ scan_ways() {
 
     # Check command patterns
     if [[ -n "$commands" && "$CMD" =~ $commands ]]; then
-      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID")
+      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID" "bash")
     fi
 
     # Check description against pattern (for tool description matching)
     if [[ -n "$DESC" && -n "$pattern" && "$DESC" =~ $pattern ]]; then
-      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID")
+      CONTEXT+=$(~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID" "bash")
     fi
   done < <(find "$dir" -name "way.md" -print0 2>/dev/null)
 }

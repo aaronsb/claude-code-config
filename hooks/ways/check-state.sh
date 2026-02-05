@@ -127,12 +127,17 @@ scan_state_triggers() {
           local tasks_marker="/tmp/.claude-tasks-active-${SESSION_ID}"
           if [[ ! -f "$tasks_marker" ]]; then
             local output=$(awk 'BEGIN{fm=0} /^---$/{fm++; next} fm!=1' "$wayfile")
-            [[ -n "$output" ]] && CONTEXT+="$output"$'\n\n'
+            if [[ -n "$output" ]]; then
+              CONTEXT+="$output"$'\n\n'
+              "${WAYS_DIR}/log-event.sh" \
+                event=way_fired way="$waypath" domain="${waypath%%/*}" \
+                trigger="state" project="$PROJECT_DIR" session="$SESSION_ID"
+            fi
           fi
           ;;
         *)
           # Other triggers use standard once-per-session marker
-          local output=$("${WAYS_DIR}/show-way.sh" "$waypath" "$SESSION_ID")
+          local output=$("${WAYS_DIR}/show-way.sh" "$waypath" "$SESSION_ID" "state")
           [[ -n "$output" ]] && CONTEXT+="$output"$'\n\n'
           ;;
       esac

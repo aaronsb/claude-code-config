@@ -21,6 +21,7 @@
 
 WAY="$1"
 SESSION_ID="$2"
+TRIGGER="${3:-unknown}"
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 
 [[ -z "$WAY" ]] && exit 1
@@ -96,4 +97,9 @@ if [[ ! -f "$MARKER" ]]; then
   fi
 
   touch "$MARKER"
+
+  # Log event
+  "${HOME}/.claude/hooks/ways/log-event.sh" \
+    event=way_fired way="$WAY" domain="$DOMAIN" \
+    trigger="$TRIGGER" project="$PROJECT_DIR" session="$SESSION_ID"
 fi

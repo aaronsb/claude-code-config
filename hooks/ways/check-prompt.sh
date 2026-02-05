@@ -76,7 +76,7 @@ scan_ways() {
     fi
 
     if $matched; then
-      ~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID"
+      ~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID" "prompt"
     fi
   done < <(find "$dir" -name "way.md" -print0 2>/dev/null)
 }
