@@ -131,7 +131,7 @@ scan_state_triggers() {
               CONTEXT+="$output"$'\n\n'
               "${WAYS_DIR}/log-event.sh" \
                 event=way_fired way="$waypath" domain="${waypath%%/*}" \
-                trigger="state" project="$PROJECT_DIR" session="$SESSION_ID"
+                trigger="state" scope=agent project="$PROJECT_DIR" session="$SESSION_ID"
             fi
           fi
           ;;

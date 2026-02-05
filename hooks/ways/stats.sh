@@ -168,6 +168,7 @@ if $JSON_OUT; then
     way_fires: [.[] | select(.event == "way_fired")] | length,
     by_way: ([.[] | select(.event == "way_fired") | .way] | group_by(.) | map({(.[0]): length}) | add // {}),
     by_trigger: ([.[] | select(.event == "way_fired") | .trigger] | group_by(.) | map({(.[0]): length}) | add // {}),
+    by_scope: ([.[] | select(.event == "way_fired") | .scope // "unknown"] | group_by(.) | map({(.[0]): length}) | add // {}),
     by_project: ([.[] | select(.event != null) | .project] | group_by(.) | map({(.[0]): length}) | add // {})
   }'
   exit 0
@@ -212,6 +213,13 @@ else
     printf "  %-30s %3d  %s\n" "$way" "$count" "$bar"
   done
 fi
+echo ""
+
+# By scope
+AGENT_FIRES=$(echo "$EVENTS" | jq -r 'select(.event == "way_fired" and .scope == "agent") | .way' | wc -l)
+SUBAGENT_FIRES=$(echo "$EVENTS" | jq -r 'select(.event == "way_fired" and .scope == "subagent") | .way' | wc -l)
+echo "By scope:"
+printf "  agent      %3d    subagent  %3d\n" "$AGENT_FIRES" "$SUBAGENT_FIRES"
 echo ""
 
 # By trigger

@@ -101,5 +101,5 @@ if [[ ! -f "$MARKER" ]]; then
   # Log event
   "${HOME}/.claude/hooks/ways/log-event.sh" \
     event=way_fired way="$WAY" domain="$DOMAIN" \
-    trigger="$TRIGGER" project="$PROJECT_DIR" session="$SESSION_ID"
+    trigger="$TRIGGER" scope=agent project="$PROJECT_DIR" session="$SESSION_ID"
 fi

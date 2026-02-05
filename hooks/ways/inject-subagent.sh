@@ -94,7 +94,12 @@ while IFS= read -r waypath; do
     WAY_CONTENT+=$'\n'"$MACRO_OUT"
   fi
 
-  [[ -n "$WAY_CONTENT" ]] && CONTEXT+="$WAY_CONTENT"$'\n\n'
+  if [[ -n "$WAY_CONTENT" ]]; then
+    CONTEXT+="$WAY_CONTENT"$'\n\n'
+    "${HOME}/.claude/hooks/ways/log-event.sh" \
+      event=way_fired way="$waypath" domain="$DOMAIN" \
+      trigger="subagent" scope=subagent project="$PROJECT_DIR" session="$SESSION_ID"
+  fi
 done <<< "$WAYS"
 
 # Output for SubagentStart
