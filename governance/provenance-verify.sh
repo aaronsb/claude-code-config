@@ -13,6 +13,12 @@
 
 set -euo pipefail
 
+# Check dependencies
+if ! command -v jq &>/dev/null; then
+  echo "Error: jq is required but not installed." >&2
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WAYS_DIR="${HOME}/.claude/hooks/ways"
 SCANNER="${SCRIPT_DIR}/provenance-scan.py"
@@ -23,10 +29,10 @@ STALE_DAYS=90
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --manifest) MANIFEST="$2"; shift 2 ;;
-    --ledger) LEDGER="$2"; shift 2 ;;
+    --manifest) [[ $# -lt 2 ]] && { echo "Error: --manifest requires a file path" >&2; exit 1; }; MANIFEST="$2"; shift 2 ;;
+    --ledger) [[ $# -lt 2 ]] && { echo "Error: --ledger requires a file path" >&2; exit 1; }; LEDGER="$2"; shift 2 ;;
     --json) JSON_OUTPUT=true; shift ;;
-    --stale-days) STALE_DAYS="$2"; shift 2 ;;
+    --stale-days) [[ $# -lt 2 ]] && { echo "Error: --stale-days requires a number" >&2; exit 1; }; STALE_DAYS="$2"; shift 2 ;;
     *) echo "Unknown option: $1" >&2; exit 1 ;;
   esac
 done
@@ -35,6 +41,10 @@ done
 if [[ -z "$MANIFEST" ]]; then
   MANIFEST_DATA=$(python3 "$SCANNER" 2>/dev/null)
 else
+  if [[ ! -f "$MANIFEST" ]]; then
+    echo "Error: manifest file not found: $MANIFEST" >&2
+    exit 1
+  fi
   MANIFEST_DATA=$(cat "$MANIFEST")
 fi
 
@@ -86,7 +96,7 @@ if $JSON_OUTPUT; then
       total_ways: $total,
       with_provenance: $with,
       without_provenance: $without,
-      coverage_pct: (($with / $total * 100) | floor),
+      coverage_pct: (if $total > 0 then ($with / $total * 100) | floor else 0 end),
       policy_sources: $policies,
       control_references: $controls,
       stale_ways: $stale,
@@ -102,7 +112,11 @@ echo "Provenance Coverage Report"
 echo "=========================="
 echo ""
 printf "Ways scanned:        %3d\n" "$TOTAL"
-printf "With provenance:     %3d (%d%%)\n" "$WITH" "$((WITH * 100 / TOTAL))"
+if [[ "$TOTAL" -gt 0 ]]; then
+  printf "With provenance:     %3d (%d%%)\n" "$WITH" "$((WITH * 100 / TOTAL))"
+else
+  printf "With provenance:     %3d\n" "$WITH"
+fi
 printf "Without provenance:  %3d\n" "$WITHOUT"
 echo ""
 

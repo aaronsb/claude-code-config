@@ -10,7 +10,7 @@ and generates a JSON manifest mapping ways to their policy sources.
 
 import json
 import os
-import re
+
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -111,12 +111,7 @@ def parse_provenance_block(lines):
             result['provenance']['controls'].append(stripped[2:])
             continue
 
-        # Rationale continuation (folded scalar lines)
-        if 'rationale_lines' not in dir():
-            pass
-
     # Handle multiline rationale by collecting indented lines after rationale: >
-    # Re-parse for rationale folded scalar
     rationale_text = []
     collecting_rationale = False
     for line in lines:
@@ -128,7 +123,7 @@ def parse_provenance_block(lines):
                 continue
             break
         if collecting_rationale:
-            if stripped and line.startswith('    '):
+            if stripped and len(line) > len(line.lstrip()) and len(line) - len(line.lstrip()) >= 2:
                 rationale_text.append(stripped)
             elif not stripped:
                 continue
@@ -161,7 +156,7 @@ def scan_ways(ways_dir):
         provenance = parsed.get('provenance')
 
         ways[way_key] = {
-            'path': str(way_file.relative_to(ways_dir.parent.parent)),
+            'path': str(way_file.relative_to(ways_dir)),
             'provenance': provenance
         }
 
