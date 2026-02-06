@@ -1,5 +1,11 @@
 # Claude Code Config
 
+![GitHub stars](https://img.shields.io/github/stars/aaronsb/claude-code-config?style=social)
+![GitHub forks](https://img.shields.io/github/forks/aaronsb/claude-code-config?style=social)
+![GitHub issues](https://img.shields.io/github/issues/aaronsb/claude-code-config)
+![License](https://img.shields.io/github/license/aaronsb/claude-code-config)
+![Last commit](https://img.shields.io/github/last-commit/aaronsb/claude-code-config)
+
 <img src="docs/images/lumon-office-team.jpg" alt="A team coordinating in a managed environment" width="100%" />
 
 <sub>Fresh context. Injected guidance. Structured coordination. No memory of previous sessions.<br/>The parallels are entirely coincidental.</sub>

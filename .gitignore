@@ -5,9 +5,19 @@
 !.gitignore
 !CLAUDE.md
 !README.md
+!LICENSE
+!CONTRIBUTING.md
+!SECURITY.md
 !settings.json
 !statusline.sh
 !ways.json
+
+# GitHub community health files
+!.github/
+!.github/FUNDING.yml
+!.github/pull_request_template.md
+!.github/ISSUE_TEMPLATE/
+!.github/ISSUE_TEMPLATE/*.md
 
 # Agents
 !agents/
