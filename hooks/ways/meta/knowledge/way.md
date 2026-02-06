@@ -107,6 +107,18 @@ threshold: 90             # percentage (0-100)
 
 **That's it.** No config files to update.
 
+## Writing Voice
+
+The mechanical format matters, but so does how the guidance reads. Framing shapes how it gets applied.
+
+**Include the why.** "Use conventional commits" is a rule. "We use conventional commits — the release tooling parses them for changelogs" is a shared practice with context. An agent that understands the reason applies better judgment at the edges.
+
+**Write as a collaborator.** "Run tests before committing" is an instruction. "We run tests before committing to catch regressions early" is alignment around a shared goal. The inclusive framing — *we*, *our*, *let's* — carries intent that directives alone don't. This isn't sentimental; it's functional.
+
+**Write for the innie.** Your reader arrives with no memory, no prior context, and a set of injected instructions as their entire understanding of how work gets done. If guidance only makes sense with context they'll never have, rewrite it.
+
+**Respect the reader.** Governance that talks down gets routed around. Ways that explain their reasoning get better adherence than ways that assert authority.
+
 ## Project-Local Ways
 
 Projects can override or add ways:
