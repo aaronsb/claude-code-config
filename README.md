@@ -276,7 +276,8 @@ This repo ships with 20 development-focused ways:
 - **ADR-driven workflow** guidance
 - **GitHub-first patterns** (auto-detects `gh` availability)
 - **Update checking** — detects direct clones, forks, and plugin installs; nudges you when behind upstream
-- **Governance traceability** — optional `provenance:` metadata on ways traces guidance back to policy documents and regulatory controls (NIST, OWASP, ISO, SOC 2). See [provenance](docs/hooks-and-ways/provenance.md).
+- **Governance traceability** — optional `provenance:` metadata on ways traces guidance back to policy documents and regulatory controls (NIST, OWASP, ISO, SOC 2) with per-control justification evidence. Includes a governance operator (`governance.sh`) for coverage reports, control queries, traceability matrices, and integrity linting. See [provenance](docs/hooks-and-ways/provenance.md).
+- **Governance citation skill** — Claude can semantically discover and cite governance controls when justifying recommendations, grounding advice in actual standards rather than general knowledge
 
 ## Ways vs Skills
 
@@ -309,6 +310,8 @@ Claude Code has built-in **Skills** (semantically-discovered knowledge bundles).
 
 Skills can't detect tool execution. Ways now support semantic matching via gzip NCD (see above). Together they cover both intent-based and event-based guidance.
 
+**The governance-cite skill** is a concrete example of this complement: ways push governance *in* (automatic injection when triggers match), while the skill lets Claude pull governance *out* (active citation of controls and justifications when explaining why a practice matters). The same provenance data serves both directions.
+
 ## Governance
 
 Everything above is about what happens on the floor — the agents, the teams, the guidance, the triggers. But someone has to decide what the handbooks say.
@@ -317,15 +320,19 @@ Ways don't emerge from nothing. They're compiled from policy — organizational 
 
 The answer is yes, and it doesn't require expensive software.
 
-Every way can carry optional `provenance:` metadata linking it to policy documents and regulatory controls. The runtime ignores it completely — zero tokens, zero latency. But a governance tool can scan all your ways and produce a traceability manifest: which policies produced which guidance, which standards are covered, where the gaps are.
+Every way can carry optional `provenance:` metadata linking it to policy documents, regulatory controls, and per-control justification evidence. The runtime ignores it completely — zero tokens, zero latency. But the governance operator can scan all your ways and produce traceability in whatever shape the auditor needs.
 
 ```
 NIST SP 800-53 CM-3        →  code-lifecycle.md  →  softwaredev/commits/way.md
+  ✓ Conventional commit types classify changes by nature
+  ✓ Atomic commits make each change independently reviewable
+
 OWASP Top 10 A03:Injection →  operations.md      →  softwaredev/security/way.md
-ISO 25010 Maintainability  →  code-lifecycle.md   →  softwaredev/quality/way.md
+  ✓ Detection table maps SQL concatenation to remediation actions
+  ✓ Parameterized queries required as default
 ```
 
-The built-in ways already reference 13 real standards across NIST, OWASP, ISO, SOC 2, CIS, and IEEE. Not decorative — an auditor can follow the chain from regulatory control through policy document to the specific guidance an agent receives.
+The built-in ways carry 33 justifications across 13 controls from NIST, OWASP, ISO, SOC 2, CIS, and IEEE. Not decorative — an auditor can follow the chain from regulatory control through policy document to specific guidance, with evidence for each claim. The governance operator reports this as coverage reports, control queries, flat traceability matrices, or JSON — and validates its own structural integrity with `--lint`.
 
 The [`governance/`](governance/) directory contains the tooling and is designed to be separable — tear it out, point it at your own ways and policies, verify the chain. See [ADR-005](docs/adr/ADR-005-governance-traceability.md) for the design rationale.
 
