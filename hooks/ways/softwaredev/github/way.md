@@ -7,6 +7,13 @@ scope: agent, subagent
 ---
 # GitHub Way
 
+## Pull Requests — Always
+
+We use PRs for all changes, including solo projects. A PR without reviewers still has value — it's a decision record, a CI gate, and muscle memory for when the project grows. Working solo without PRs is like doing research without keeping notes.
+
+- **Solo/pair**: Lightweight PRs — a title and a few bullets is enough
+- **Team**: Full PR with context, reviewers, and linked issues
+
 ## When User Mentions GitHub
 
 **Trigger words**: "issue", "PR", "pull request", "review", "comments", "checks"
@@ -38,20 +45,16 @@ gh pr create --title "ADR-003: Decision Title" \
   --body "## Context\n\n## Decision\n\n## Consequences"
 ```
 
-## Pattern: GitHub First
-
-```bash
-# 1. Check if GitHub is available
-gh repo view > /dev/null 2>&1
-
-# 2. If success, use gh commands
-# 3. If fail, fall back to file search
-```
-
 ## What to Use
+- **PRs**: Always — lightweight for solo, thorough for teams
 - **Issues**: Optional, for requirements/discussions/bugs
-- **PRs**: Required, for ADR and code review
 - **Labels**: Basic set (bug, enhancement, documentation)
+
+## Repo Health
+
+The macro checks repository configuration (README, license, templates, branch protection, etc.) and reports what's missing. If the report shows gaps:
+- Offer to help configure items the user has rights to fix
+- For items needing admin access, note them but don't push
 
 ## What to Avoid
 - Complex project boards
