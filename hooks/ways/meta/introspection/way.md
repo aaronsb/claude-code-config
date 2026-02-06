@@ -2,15 +2,22 @@
 match: regex
 pattern: pull.?request|create.*pr|pr.*create|write.*pr|open.*pr
 commands: gh\ pr\ create
+macro: prepend
 scope: agent
 ---
 # Introspection Way
 
 A pull request is a natural boundary of work — a moment to pause and reflect before closing the loop. Regardless of what the PR contains (code, config, docs, process), this is the right time to ask: did we learn something this session that should become a way?
 
+## The Surprise Test
+
+Intelligence is managing surprise. If this session went as expected — no corrections, no unexpected behavior, no "actually we do it this way" moments — then there's nothing to capture and you should skip this entirely. A routine session that followed existing patterns doesn't need introspection. Move on and create the PR.
+
+The threshold is surprise: something the next session would also get wrong without guidance.
+
 ## Two-Part Flow
 
-This introspection splits between you (the main agent) and a subagent. You hold the session history — only you can identify what the human taught. The subagent gets a fresh context window to review existing ways and draft proposals without burning your remaining tokens.
+If something *did* surprise, this splits between you (the main agent) and a subagent. You hold the session history — only you can identify what the human taught. The subagent gets a fresh context window to review existing ways and draft proposals without burning your remaining tokens.
 
 ### Part 1: You Summarize (main agent)
 
@@ -21,12 +28,12 @@ Before creating the PR, look back through this conversation for moments where th
 - **Pushed back** — "That's not how this project works..."
 - **Repeated** a preference — if they said it twice, it's a pattern
 
-Compile a concise summary of these signals. For each one, capture:
+If none of these happened, say "Nothing surprising this session" and proceed with the PR. No subagent, no proposals, no ceremony.
+
+If something did stand out, compile a concise summary. For each signal, capture:
 - **What** the human said or corrected
 - **Why** they said it (if they gave a reason)
 - **When** it would apply again (what kind of work would hit this)
-
-If you find nothing — no corrections, no explanations, no guidance — that's a valid outcome. Say so and skip the subagent.
 
 ### Part 2: Subagent Reviews Ways and Proposes
 

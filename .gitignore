@@ -63,6 +63,10 @@
 !hooks/ways/*/*/*.yaml.template
 !hooks/ways/*/*/*
 
+# Scripts (shared utilities for hooks, macros, skills)
+!scripts/
+!scripts/*.sh
+
 # Governance traceability (separable)
 !governance-report
 !governance/
