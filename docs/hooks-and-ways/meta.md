@@ -75,6 +75,34 @@ The way fires at 75% to give Claude time to create the task list before compacti
 
 The nag stops when `TaskCreate` is used, which triggers a `PreToolUse:TaskCreate` hook that creates a marker file. This is the only way in the system with this repeat-until-resolved behavior.
 
+## Teams
+
+**Triggers**: `session-start` (scope: teammate only)
+
+The coordination handbook for team members. When a teammate's session begins, this way fires once and injects the norms that keep a multi-agent team from stepping on itself:
+
+- Check TaskList after completing each task to find next work
+- Use SendMessage to report progress and blockers to the lead
+- Mark tasks completed via TaskUpdate — don't just say you're done
+- Prefer Edit over Write to reduce merge conflicts with other teammates
+- Read before editing — another teammate may have changed the file
+- Don't commit to git unless the task explicitly says to
+- Don't stall silently — message the lead immediately if blocked
+
+These norms exist because teammates are long-lived and collaborative, unlike subagents which do one thing and exit. Coordination failures in a team compound: one teammate that stalls silently or overwrites another's work can derail the whole effort.
+
+The way is gated to `scope: teammate` — the main agent never sees it, and quick subagents don't need it.
+
+See [teams.md](teams.md) for the full three-scope model and detection mechanism.
+
+## Memory
+
+**Triggers**: `session-start` (scope: agent only)
+
+The memory checkpoint way fires at session start to remind the agent about MEMORY.md — the persistent memory that survives across conversations. It's gated to `scope: agent` because only the main session should read and write MEMORY.md. If three teammates all tried to update it simultaneously, the file would get corrupted.
+
+This way works in tandem with the todos way: todos handles in-session task continuity, memory handles cross-session knowledge continuity.
+
 ## Tracking
 
 **Triggers**: Prompt mentions "tracking file", "cross-session", "multi-session", "picking up where we left off"; editing `.claude/todo-*.md`

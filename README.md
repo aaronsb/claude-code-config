@@ -1,5 +1,11 @@
 # Claude Code Config
 
+<img src="docs/images/lumon-office-team.jpg" alt="A team coordinating in a managed environment" width="100%" />
+
+<sub>Fresh context. Injected guidance. Structured coordination. No memory of previous sessions.<br/>The parallels are entirely coincidental.</sub>
+
+---
+
 Event-driven policy, process, and governance for Claude Code. Ways encode *how we do things* — prescriptive rules triggered by context, not requested by intent — and inject them just-in-time before tools execute.
 
 ```mermaid
@@ -252,10 +258,12 @@ This repo ships with 20 development-focused ways:
 
 ## Also Included
 
+- **Agent team coordination** — three-scope model (agent/teammate/subagent) with scope-gated governance and team telemetry. See [teams](docs/hooks-and-ways/teams.md).
+- **Usage stats** — way firing telemetry by scope, team, project, and trigger type. See [stats](docs/hooks-and-ways/stats.md).
 - **6 specialized subagents** for complex tasks (requirements, architecture, planning, review, workflow, organization)
 - **ADR-driven workflow** guidance
 - **GitHub-first patterns** (auto-detects `gh` availability)
-- **Status line** with git branch and API usage
+- **Update checking** — detects direct clones, forks, and plugin installs; nudges you when behind upstream
 
 ## Ways vs Skills
 

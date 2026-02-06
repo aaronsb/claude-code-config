@@ -25,7 +25,7 @@ Six Claude Code hook events drive the system. Each fires shell scripts that scan
 - **`clear-markers.sh`** - Removes all `/tmp/.claude-way-*`, `/tmp/.claude-tasks-active-*` markers, and `/tmp/.claude-subagent-stash-*` dirs. Resets session state so ways can fire fresh.
 - **`show-core.sh`** - Runs `macro.sh` to generate the Available Ways table, then outputs `core.md` (collaboration style, communication norms). This is the initial context Claude sees.
 - **`init-project-ways.sh`** - Creates `$PROJECT/.claude/ways/_template.md` if the project has a `.claude/` or `.git/` dir but no ways directory yet.
-- **`check-config-updates.sh`** - Once-per-day check for plugin updates.
+- **`check-config-updates.sh`** - Checks if the config is behind upstream. Detects direct clones, GitHub forks, and plugin installs. Network calls are rate-limited to once per hour; update notices fire every session when behind.
 
 ### Trigger Evaluation
 
@@ -87,18 +87,41 @@ sequenceDiagram
 
 ## Way Scope
 
-The `scope:` frontmatter field controls where a way injects its content:
+The `scope:` frontmatter field controls where a way fires. There are three scopes, reflecting the three types of Claude Code sessions:
 
-| Value | Injected into | Via |
-|-------|--------------|-----|
-| `agent` | Main agent context | `check-prompt.sh`, `check-bash-pre.sh`, `check-file-pre.sh` |
-| `subagent` | Subagent context | `check-task-pre.sh` → `inject-subagent.sh` |
-| `agent, subagent` | Both | All paths |
-| *(absent)* | Main agent only | Backward compatible default |
+| Scope | Session type | Detection |
+|-------|-------------|-----------|
+| `agent` | Your main session | Default (no marker file) |
+| `teammate` | Named agent in a coordinated team | `/tmp/.claude-teammate-{session_id}` exists |
+| `subagent` | Quick Task tool delegate | Spawned via Task without `team_name` |
 
-All built-in ways ship with `scope: agent, subagent`. Ways with only `subagent` scope are invisible to the main agent - useful for subagent-specific instructions.
+Ways declare which scopes they apply to:
 
-Subagent injection bypasses the marker system. A way can fire for the parent (marker-gated) AND separately for each subagent (no markers). The parent's way guidance doesn't automatically transfer to subagents because the Task prompt is a compact delegation - the scope system bridges this gap.
+```yaml
+scope: agent                     # Main session only (default if omitted)
+scope: teammate                  # Team members only
+scope: agent, teammate           # Both, but not quick delegates
+scope: agent, subagent           # Main + delegates, not teammates
+scope: agent, teammate, subagent # Everyone
+```
+
+### Scope Detection
+
+Detection runs via `detect-scope.sh`, which every trigger evaluation script sources. It checks for a teammate marker file — if one exists, the scope is `teammate`; otherwise `agent`. Subagent scope is determined at injection time by `check-task-pre.sh`, not by the running session itself.
+
+The teammate marker is created by `inject-subagent.sh` during Phase 2 of the two-phase injection. It persists for the teammate's entire session lifetime and contains the team name (used for telemetry).
+
+### What Gets Gated
+
+| Way | Scope | Why |
+|-----|-------|-----|
+| `meta/memory` | `agent` | Prevents concurrent MEMORY.md writes from multiple teammates |
+| `meta/subagents` | `agent` | Delegation guidance is irrelevant to agents that are themselves delegated work |
+| `meta/teams` | `teammate` | Coordination norms only make sense for team members |
+
+Subagent injection bypasses the marker system entirely. A way can fire for the parent (marker-gated) AND separately for each subagent or teammate (no markers). The parent's way guidance doesn't automatically transfer because the Task prompt is a compact delegation — the scope system bridges this gap.
+
+See [teams.md](hooks-and-ways/teams.md) for the full team coordination model.
 
 ## Way Matching Modes
 

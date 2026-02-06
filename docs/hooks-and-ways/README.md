@@ -171,12 +171,17 @@ The policy doc should reference which way implements it. The way doesn't need to
 ## Reading Order
 
 If you want to understand the system:
-1. **This file** - you're here
-2. **[rationale.md](rationale.md)** - why this exists
-3. **[../hooks-and-ways.md](../hooks-and-ways.md)** - how it works (reference)
-4. **Domain docs** - the policy for each group of ways
+1. **This file** — you're here
+2. **[rationale.md](rationale.md)** — why this exists
+3. **[../hooks-and-ways.md](../hooks-and-ways.md)** — how it works (reference)
+4. **Domain docs** — the policy for each group of ways
 
 If you want to add or modify ways:
-1. **[extending.md](extending.md)** - how to create ways
-2. **[matching.md](matching.md)** - choosing a trigger strategy
-3. **[macros.md](macros.md)** - if you need dynamic content
+1. **[extending.md](extending.md)** — how to create ways
+2. **[matching.md](matching.md)** — choosing a trigger strategy
+3. **[macros.md](macros.md)** — if you need dynamic content
+
+If you're running agent teams:
+1. **[teams.md](teams.md)** — scope detection, coordination norms, the three-scope model
+2. **[stats.md](stats.md)** — observability, interpreting the telemetry
+3. **[meta.md](meta.md)** — the meta ways (teams, memory, todos, tracking)

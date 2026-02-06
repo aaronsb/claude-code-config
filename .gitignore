@@ -28,6 +28,8 @@
 !docs/hooks-and-ways/softwaredev/*.md
 !docs/hooks-and-ways/**/
 !docs/hooks-and-ways/**/*.md
+!docs/images/
+!docs/images/*
 
 # Hooks and ways
 !hooks/
