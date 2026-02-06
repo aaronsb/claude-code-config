@@ -166,7 +166,9 @@ Test by triggering it and verifying the guidance is actionable.
 
 ### Step 5: Connect the layers
 
-The policy doc should reference which way implements it. The way doesn't need to reference the policy doc (it would waste context tokens), but the connection should be traceable by a human reading the docs.
+Add a `provenance:` block to the way's frontmatter referencing the policy document, relevant control standards, and a rationale connecting policy intent to compiled guidance. The runtime strips all frontmatter before injection, so provenance metadata costs zero tokens.
+
+See [provenance.md](provenance.md) for the full traceability system — manifest generation, coverage reports, and cross-repo verification.
 
 ## Reading Order
 
@@ -185,3 +187,7 @@ If you're running agent teams:
 1. **[teams.md](teams.md)** — scope detection, coordination norms, the three-scope model
 2. **[stats.md](stats.md)** — observability, interpreting the telemetry
 3. **[meta.md](meta.md)** — the meta ways (teams, memory, todos, tracking)
+
+If you care about governance traceability:
+1. **[provenance.md](provenance.md)** — the full chain from regulatory framework to agent context
+2. **[../adr/ADR-005-governance-traceability.md](../adr/ADR-005-governance-traceability.md)** — the design decision

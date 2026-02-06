@@ -24,9 +24,15 @@
 !agents/
 !agents/*.md
 
-# Commands (skills)
+# Commands (slash commands)
 !commands/
 !commands/*.md
+
+# Skills (semantic discovery)
+!skills/
+!skills/*/
+!skills/*/SKILL.md
+!skills/*/*.md
 
 # Documentation
 !docs/
@@ -56,6 +62,13 @@
 !hooks/ways/*/*/*.sh
 !hooks/ways/*/*/*.yaml.template
 !hooks/ways/*/*/*
+
+# Governance traceability (separable)
+!governance-report
+!governance/
+!governance/README.md
+!governance/*.py
+!governance/*.sh
 
 # Plugin config (not runtime data)
 !plugins/
