@@ -9,9 +9,19 @@ provenance:
     - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
       type: governance-doc
   controls:
-    - ISO/IEC 25010:2011 (Maintainability - Analyzability, Modifiability)
-    - NIST SP 800-53 SA-15 (Development Process, Standards, and Tools)
-    - IEEE 730-2014 (Software Quality Assurance Processes)
+    - id: ISO/IEC 25010:2011 (Maintainability - Analyzability, Modifiability)
+      justifications:
+        - File length thresholds (500/800 lines) enforce analyzability through size limits
+        - Nesting depth limit (3 levels) maintains modifiability by controlling complexity
+        - Method count limit (7 public methods) enforces single responsibility
+    - id: NIST SP 800-53 SA-15 (Development Process, Standards, and Tools)
+      justifications:
+        - Ecosystem convention enforcement reduces security-relevant coding errors
+        - Anti-pattern detection (foreign patterns, unnecessary abstractions) prevents tool misuse
+    - id: IEEE 730-2014 (Software Quality Assurance Processes)
+      justifications:
+        - Measurable quality signals with specific action thresholds
+        - Function size limits (30-50 lines) enforce decomposition practices
   verified: 2026-02-05
   rationale: >
     Measurable thresholds (file length, nesting depth, method count) operationalize

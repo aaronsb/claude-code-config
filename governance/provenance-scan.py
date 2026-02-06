@@ -36,16 +36,37 @@ def parse_frontmatter(path):
     return parse_provenance_block(fm_lines)
 
 
+def _indent_level(line):
+    """Return the number of leading spaces in a line."""
+    return len(line) - len(line.lstrip()) if line.strip() else 0
+
+
 def parse_provenance_block(lines):
-    """Extract provenance fields from frontmatter lines."""
+    """Extract provenance fields from frontmatter lines.
+
+    Handles two control formats:
+      Legacy (plain strings):
+        controls:
+          - NIST SP 800-53 CM-3 (Configuration Change Control)
+
+      Structured (with justifications):
+        controls:
+          - id: NIST SP 800-53 CM-3 (Configuration Change Control)
+            justifications:
+              - Conventional commit types classify changes by nature
+              - Atomic commits make each change independently reviewable
+    """
     result = {}
     in_provenance = False
     in_policy = False
     in_controls = False
+    in_justifications = False
     current_policy = None
+    current_control = None
 
     for line in lines:
         stripped = line.strip()
+        indent = _indent_level(line)
 
         # Detect provenance block start
         if line.startswith('provenance:'):
@@ -69,31 +90,33 @@ def parse_provenance_block(lines):
         if stripped == 'policy:':
             in_policy = True
             in_controls = False
+            in_justifications = False
             continue
 
         # Controls array
         if stripped == 'controls:':
             in_controls = True
             in_policy = False
+            in_justifications = False
+            current_control = None
             continue
 
-        # Verified date
+        # Verified date — exits controls/policy context
         if stripped.startswith('verified:'):
             in_policy = False
             in_controls = False
+            in_justifications = False
             result['provenance']['verified'] = stripped.split(':', 1)[1].strip()
             continue
 
-        # Rationale (single line or multiline with >)
+        # Rationale — exits controls/policy context
         if stripped.startswith('rationale:'):
             in_policy = False
             in_controls = False
+            in_justifications = False
             val = stripped.split(':', 1)[1].strip()
-            if val == '>':
-                # Collect folded scalar
-                rationale_lines = []
-                continue
-            result['provenance']['rationale'] = val
+            if val != '>':
+                result['provenance']['rationale'] = val
             continue
 
         # Policy entries
@@ -107,9 +130,30 @@ def parse_provenance_block(lines):
             continue
 
         # Control entries
-        if in_controls and stripped.startswith('- '):
-            result['provenance']['controls'].append(stripped[2:])
-            continue
+        if in_controls:
+            if stripped.startswith('- id:'):
+                # Structured control with id field
+                current_control = {
+                    'id': stripped[5:].strip(),
+                    'justifications': []
+                }
+                result['provenance']['controls'].append(current_control)
+                in_justifications = False
+                continue
+
+            if stripped.startswith('- ') and not stripped.startswith('- id:'):
+                if in_justifications and current_control is not None:
+                    # Justification entry
+                    current_control['justifications'].append(stripped[2:])
+                    continue
+                else:
+                    # Legacy plain string control
+                    result['provenance']['controls'].append(stripped[2:])
+                    continue
+
+            if stripped == 'justifications:' and current_control is not None:
+                in_justifications = True
+                continue
 
     # Handle multiline rationale by collecting indented lines after rationale: >
     rationale_text = []
@@ -123,7 +167,7 @@ def parse_provenance_block(lines):
                 continue
             break
         if collecting_rationale:
-            if stripped and len(line) > len(line.lstrip()) and len(line) - len(line.lstrip()) >= 2:
+            if stripped and _indent_level(line) >= 2:
                 rationale_text.append(stripped)
             elif not stripped:
                 continue
@@ -163,8 +207,26 @@ def scan_ways(ways_dir):
     return ways
 
 
+def _control_id(control):
+    """Extract control ID from either string or structured control."""
+    if isinstance(control, dict):
+        return control['id']
+    return control
+
+
+def _control_justifications(control):
+    """Extract justifications from a structured control, or empty list."""
+    if isinstance(control, dict):
+        return control.get('justifications', [])
+    return []
+
+
 def build_indices(ways):
-    """Build inverted indices from way provenance data."""
+    """Build inverted indices from way provenance data.
+
+    Handles both legacy string controls and structured controls with justifications.
+    The inverted index carries justifications per way under each control.
+    """
     by_policy = {}
     by_control = {}
 
@@ -183,9 +245,17 @@ def build_indices(ways):
             by_policy[uri]['implementing_ways'].append(way_key)
 
         for control in prov.get('controls', []):
-            if control not in by_control:
-                by_control[control] = {'addressing_ways': []}
-            by_control[control]['addressing_ways'].append(way_key)
+            cid = _control_id(control)
+            justifications = _control_justifications(control)
+
+            if cid not in by_control:
+                by_control[cid] = {
+                    'addressing_ways': [],
+                    'justifications': {}
+                }
+            by_control[cid]['addressing_ways'].append(way_key)
+            if justifications:
+                by_control[cid]['justifications'][way_key] = justifications
 
     return by_policy, by_control
 

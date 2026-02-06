@@ -45,8 +45,13 @@ provenance:
     - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
       type: governance-doc
   controls:
-    - NIST SP 800-53 CM-3 (Configuration Change Control)
-    - SOC 2 CC8.1 (Change Management)
+    - id: NIST SP 800-53 CM-3 (Configuration Change Control)
+      justifications:
+        - Conventional commit types classify changes by nature
+        - Atomic commits make each change independently reviewable
+    - id: SOC 2 CC8.1 (Change Management)
+      justifications:
+        - Type prefix and scope create structured change records
   verified: 2026-02-05
   rationale: >
     Conventional commits create structured change records. Atomic commits
@@ -54,13 +59,16 @@ provenance:
 ---
 ```
 
+Each control carries its own justifications — specific claims about how the way's guidance satisfies that control's requirements. This enables both graph queries (way → control → justification) and flat reporting (the spreadsheet auditors love).
+
 ### Fields
 
 | Field | Purpose |
 |-------|---------|
 | `policy[].uri` | Source policy document — relative path (same repo) or `github://org/repo/path` (cross-repo) |
 | `policy[].type` | Classification: `adr`, `governance-doc`, `regulatory-framework`, `control-spec` |
-| `controls[]` | Regulatory control references this way addresses |
+| `controls[].id` | Regulatory control reference this way addresses |
+| `controls[].justifications[]` | Specific claims about how guidance satisfies the control |
 | `verified` | Date provenance was last confirmed accurate |
 | `rationale` | How policy intent became way guidance — the "compilation commentary" |
 

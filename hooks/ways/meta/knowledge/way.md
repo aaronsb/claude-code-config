@@ -10,9 +10,21 @@ provenance:
     - uri: docs/hooks-and-ways/rationale.md
       type: governance-doc
   controls:
-    - ISO 9001:2015 7.5 (Documented Information)
-    - ISO/IEC 27001:2022 5.2 (Policy)
-    - NIST SP 800-53 PL-2 (System Security and Privacy Plans)
+    - id: ISO 9001:2015 7.5 (Documented Information)
+      justifications:
+        - Way file format specification ensures documented information is appropriate and suitable
+        - Frontmatter schema (match, pattern, files, commands) standardizes trigger documentation
+        - Writing voice guidance ensures guidance is readable by context-free readers
+    - id: ISO/IEC 27001:2022 5.2 (Policy)
+      justifications:
+        - Collaborative framing pattern ensures policies are communicated, not just asserted
+        - Domain organization (global vs project-local) establishes policy hierarchy
+        - Enable/disable mechanism via ways.json provides controlled policy application
+    - id: NIST SP 800-53 PL-2 (System Security and Privacy Plans)
+      justifications:
+        - Ways index at session start documents active security and privacy guidance
+        - State machine ensures each policy is delivered exactly once per session
+        - Project-local override mechanism allows plan tailoring per system
   verified: 2026-02-05
   rationale: >
     Guidance on writing effective ways implements ISO requirements for documented

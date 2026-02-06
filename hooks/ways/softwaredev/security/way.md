@@ -9,10 +9,24 @@ provenance:
     - uri: docs/hooks-and-ways/softwaredev/operations.md
       type: governance-doc
   controls:
-    - OWASP Top 10 2021 A03:Injection
-    - NIST SP 800-53 IA-5 (Authenticator Management)
-    - CIS Controls v8 16.12 (Implementation of Application-Level Access)
-    - SOC 2 CC6.1 (Logical and Physical Access Controls)
+    - id: OWASP Top 10 2021 A03:Injection
+      justifications:
+        - Detection table maps SQL concatenation, innerHTML, and shell interpolation to remediation actions
+        - Parameterized queries required as default for all database access
+        - Input validation enforced at system boundaries
+    - id: NIST SP 800-53 IA-5 (Authenticator Management)
+      justifications:
+        - Never-commit list explicitly prohibits API keys, tokens, passwords, and private keys
+        - Hardcoded secrets flagged for extraction to environment variables
+        - .env hygiene enforced with .env.example and .gitignore verification
+    - id: CIS Controls v8 16.12 (Implementation of Application-Level Access)
+      justifications:
+        - Missing auth check on endpoints flagged as security issue
+        - Principle of least privilege stated as default for permissions
+    - id: SOC 2 CC6.1 (Logical and Physical Access Controls)
+      justifications:
+        - Authentication/authorization gap detection in code review checklist
+        - Endpoint access control enforcement via middleware/guard guidance
   verified: 2026-02-05
   rationale: >
     Detection table operationalizes OWASP injection prevention and NIST credential

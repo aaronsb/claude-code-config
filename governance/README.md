@@ -61,36 +61,50 @@ Each layer compresses the one above it. The regulatory framework is hundreds of 
 
 | File | Purpose |
 |------|---------|
+| `governance.sh` | The governance operator — unified CLI for all queries |
 | `provenance-scan.py` | Scan all ways, extract provenance, generate traceability manifest |
 | `provenance-verify.sh` | Coverage report — policy sources, control references, gaps |
 
-### Generate a coverage report
+A symlink at the repo root (`governance-report`) provides convenient access.
+
+### The governance operator
 
 ```bash
-bash governance/provenance-verify.sh
+# Coverage report
+bash governance/governance.sh
+
+# Trace a single way end-to-end (controls + justifications + firing stats)
+bash governance/governance.sh --trace softwaredev/security
+
+# Query by control
+bash governance/governance.sh --control OWASP
+
+# Flat traceability matrix (the spreadsheet auditors want)
+bash governance/governance.sh --matrix
+
+# Validate provenance integrity (the audit of the audit)
+bash governance/governance.sh --lint
+
+# Cross-reference provenance with way firing stats
+bash governance/governance.sh --active
+
+# Any mode outputs JSON with --json
+bash governance/governance.sh --matrix --json
 ```
 
+### Justifications
+
+Each control carries specific claims about how the way satisfies it:
+
+```yaml
+controls:
+  - id: OWASP Top 10 2021 A03:Injection
+    justifications:
+      - Detection table maps SQL concatenation to remediation actions
+      - Parameterized queries required as default for all database access
 ```
-Provenance Coverage Report
-==========================
 
-Ways scanned:         29
-With provenance:       4 (13%)
-Without provenance:   25
-
-Policy Sources (4):
-  docs/hooks-and-ways/softwaredev/code-lifecycle.md
-    → softwaredev/commits, softwaredev/quality
-  docs/hooks-and-ways/softwaredev/operations.md
-    → softwaredev/security
-
-Control References (13):
-  NIST SP 800-53 CM-3 (Configuration Change Control)
-    → softwaredev/commits
-  OWASP Top 10 2021 A03:Injection
-    → softwaredev/security
-  ...
-```
+The `--matrix` mode flattens these into rows for spreadsheet export. The `--lint` mode validates that every control has justifications, every policy URI points to a real file, and every verified date is well-formed. The linter is committed and versioned — it's the governance system auditing its own integrity.
 
 ### Generate the manifest
 
