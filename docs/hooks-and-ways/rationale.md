@@ -69,3 +69,20 @@ Without this system, the alternatives are:
 - **Nothing** - Accepting inconsistency across sessions
 
 The ways system is a middle ground: automated enough to be reliable, transparent enough to be understood, and lightweight enough to not get in the way.
+
+## The Cost of Bad Instructions
+
+Every interaction with a language model has a real cost — compute, energy, money. These costs are easy to ignore because they're distributed and invisible at the individual level, but they're there.
+
+A vague instruction that takes three retries to get right costs three times what a clear one does. A 200-line CLAUDE.md that's always in context burns tokens on every single prompt, whether relevant or not. A way that fires at the wrong time wastes context capacity that could have been used for the actual work. A team of five agents given conflicting guidance will thrash, retry, and duplicate effort — multiplying the waste.
+
+This isn't hypothetical. If you've ever watched an agent go in circles because the instructions were ambiguous, or retry a task because it lacked context that could have been provided upfront, you've seen the cost. You just didn't see the meter running.
+
+Good governance is resource efficiency:
+
+- **Just-in-time delivery** means tokens aren't spent until they're needed
+- **Once-per-session gating** means guidance doesn't repeat wastefully
+- **Clear framing** means fewer misunderstandings, fewer retries, fewer wasted cycles
+- **The "we" pattern** means alignment on the first attempt, not correction on the third
+
+None of this is precisely measurable at the individual session level. But across thousands of sessions, millions of prompts, and an industry of AI-assisted work, the difference between thoughtful guidance and careless instruction is real — economically and environmentally. Writing well for your agents isn't just good practice. It's good stewardship.
