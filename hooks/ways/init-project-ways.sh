@@ -1,15 +1,34 @@
 #!/bin/bash
-# SessionStart: Initialize project ways directory with template
+# SessionStart: Initialize project .claude/ directory structure
+# Creates ways template and .gitignore so ways get committed
+# but developer-local files stay out of version control.
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
-WAYS_DIR="$PROJECT_DIR/.claude/ways"
+CLAUDE_DIR="$PROJECT_DIR/.claude"
+WAYS_DIR="$CLAUDE_DIR/ways"
 TEMPLATE="$WAYS_DIR/_template.md"
+GITIGNORE="$CLAUDE_DIR/.gitignore"
 
 # Only create if .claude exists (respect projects that don't use it)
 # Or create both if this looks like a git repo
-if [[ -d "$PROJECT_DIR/.claude" ]] || [[ -d "$PROJECT_DIR/.git" ]]; then
+if [[ -d "$CLAUDE_DIR" ]] || [[ -d "$PROJECT_DIR/.git" ]]; then
   if [[ ! -d "$WAYS_DIR" ]]; then
     mkdir -p "$WAYS_DIR"
+  fi
+
+  # Ensure .gitignore exists — commit ways, ignore local state
+  if [[ ! -f "$GITIGNORE" ]]; then
+    cat > "$GITIGNORE" << 'GIEOF'
+# Developer-local files (not committed)
+settings.local.json
+todo-*.md
+memory/
+projects/
+plans/
+
+# Ways and CLAUDE.md ARE committed (shared team knowledge)
+GIEOF
+    echo "Created .claude/.gitignore"
   fi
 
   if [[ ! -f "$TEMPLATE" ]]; then

@@ -15,6 +15,12 @@ WAYS_DIR="${HOME}/.claude/hooks/ways"
 # Output static content (skip frontmatter)
 awk 'BEGIN{fm=0} /^---$/{fm++; next} fm!=1' "${WAYS_DIR}/core.md"
 
+# Append ways version (short commit hash from the config repo)
+WAYS_VERSION=$(git -C "${HOME}/.claude" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+echo ""
+echo "---"
+echo "_Ways version: ${WAYS_VERSION}_"
+
 # Mark core as injected for this session
 if [[ -n "$SESSION_ID" ]]; then
   date +%s > "/tmp/.claude-core-${SESSION_ID}"
