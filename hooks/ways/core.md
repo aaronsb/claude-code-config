@@ -13,10 +13,7 @@ Just work naturally. No need to request guidance upfront.
 
 **When stuck or uncertain**: Ask the user - they have context you lack.
 
-**After compaction**: You may have lost context. Before jumping into work:
-- Check for persistent tracking files in `.claude/`
-- Verify you understand what we're working on and why
-- Review any decisions already made
+**After compaction**: Check `.claude/` for tracking files before resuming — you may have lost context.
 
 **Push back when**: Something is unclear or conflicting. If you have genuine doubt, say so.
 

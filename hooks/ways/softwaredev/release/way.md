@@ -55,6 +55,12 @@ From commit messages since last tag:
 
 Detect the version file (package.json, Cargo.toml, pyproject.toml, version.txt) and update it.
 
+## This Project
+
+- Annotated tags: `git tag -a vX.Y.Z -m "summary"`
+- Push tags explicitly: `git push origin main --tags`
+- No CI release pipeline — tagging is the release
+
 ## Do Not
 
 - Explain what semantic versioning is — just apply it

@@ -16,11 +16,10 @@ WAYS_DIR="${HOME}/.claude/hooks/ways"
 awk 'BEGIN{fm=0} /^---$/{fm++; next} fm!=1' "${WAYS_DIR}/core.md"
 
 # Append ways version: tag (if any) + commit + clean/dirty state
-WAYS_DESC=$(git -C "${HOME}/.claude" describe --tags --always --dirty 2>/dev/null || echo "unknown")
-WAYS_HASH=$(git -C "${HOME}/.claude" rev-parse --short HEAD 2>/dev/null)
+WAYS_VERSION=$(git -C "${HOME}/.claude" describe --tags --always --dirty 2>/dev/null || echo "unknown")
 echo ""
 echo "---"
-echo "_Ways version: ${WAYS_DESC} (${WAYS_HASH})_"
+echo "_Ways version: ${WAYS_VERSION}_"
 
 # Mark core as injected for this session
 if [[ -n "$SESSION_ID" ]]; then

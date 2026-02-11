@@ -78,7 +78,17 @@ while IFS= read -r wayfile; do
       sed 's/[.][?]/ /g; s/[.][*]/ /g; s/[.][+]/ /g' | \
       sed 's/\\b//g; s/\\//g; s/[?]//g; s/\^//g; s/\$//g; s/(/ /g; s/)//g; s/|/,/g; s/\[//g; s/\]//g' | \
       sed 's/  */ /g; s/ *, */,/g; s/,,*/,/g; s/^,//; s/,$//; s/,/, /g' | \
-      awk -F', ' '{for(i=1;i<=NF;i++){if(!seen[$i]++)printf "%s%s",(i>1?", ":""),$i}print""}')
+      awk -F', ' '{
+        for(i=1;i<=NF;i++){
+          if(!seen[$i]++){
+            w=$i
+            # Append * to regex stems (truncated prefixes)
+            if(length(w)>=5 && match(w,/(at|nc|ndl|pos|isz|rat|handl)$/))w=w"*"
+            printf "%s%s",(i>1?", ":""),w
+          }
+        }
+        print""
+      }')
   fi
 
   echo "| **${wayname}** | ${tool_trigger} | ${keyword_display} |"

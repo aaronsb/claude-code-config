@@ -31,6 +31,8 @@ provenance:
 
 ## Conventional Commit Format
 
+Scopes match the area of change: `ways`, `hooks`, `adr`, `docs`, `config`, `governance`, or the specific way/feature name.
+
 - `feat(scope): description` - New features
 - `fix(scope): description` - Bug fixes
 - `docs(scope): description` - Documentation
