@@ -46,6 +46,27 @@ This repo ships with software development ways, but the mechanism is general-pur
 - Research workflows
 - Anything with patterns Claude should know about
 
+## Prerequisites
+
+Runs on **Linux** and **macOS**. The hooks are all bash and lean on standard POSIX utilities plus a few extras:
+
+| Tool | Purpose | Notes |
+|------|---------|-------|
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | The agent this configures | `npm install -g @anthropic-ai/claude-code` |
+| `git` | Version control, update checking | Usually pre-installed |
+| `jq` | JSON parsing (hook inputs, configs, API responses) | **Must install** |
+| `gzip` | Compression-based semantic matching (NCD) | Usually pre-installed |
+| `bc` | Math for NCD similarity scoring | Usually pre-installed (not in Arch `base`) |
+| `python3` | Governance traceability tooling | Stdlib only — no pip packages |
+| [`gh`](https://cli.github.com/) | GitHub API (update checks, repo macros) | Recommended, not required — degrades gracefully |
+
+Standard utilities (`bash`, `awk`, `sed`, `grep`, `find`, `timeout`, `tr`, `sort`, `wc`, `date`) are assumed present via coreutils.
+
+**Platform install guides:**
+[macOS (Homebrew)](docs/prerequisites-macos.md) · [Arch Linux](docs/prerequisites-arch.md) · [Debian / Ubuntu](docs/prerequisites-debian.md) · [Fedora / RHEL](docs/prerequisites-fedora.md)
+
+> **macOS note:** `timeout` is a GNU coreutils command not present by default. Install `coreutils` via Homebrew — see the [macOS guide](docs/prerequisites-macos.md) for PATH setup.
+
 ## Quick Start
 
 **Fork first.** This repo is a starting point — you'll want to add your own ways for your own workflows. Fork it, then clone your fork:

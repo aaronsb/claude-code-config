@@ -164,7 +164,7 @@ if git -C "$CLAUDE_DIR" rev-parse --git-dir >/dev/null 2>&1; then
   if [[ "$OWNER_REPO" == "$UPSTREAM_REPO" ]]; then
     # --- Direct clone ---
     if needs_refresh; then
-      git -C "$CLAUDE_DIR" fetch origin --quiet 2>/dev/null
+      timeout 10 git -C "$CLAUDE_DIR" fetch origin --quiet 2>/dev/null
       BEHIND=$(git -C "$CLAUDE_DIR" rev-list HEAD..origin/main --count 2>/dev/null || echo 0)
       write_cache "clone" "$BEHIND"
     else
@@ -182,7 +182,7 @@ if git -C "$CLAUDE_DIR" rev-parse --git-dir >/dev/null 2>&1; then
     # Only call check_gh + API when cache needs refresh (avoids gh auth status latency)
     if needs_refresh; then
       if check_gh; then
-        GH_OUTPUT=$(gh api "repos/${OWNER_REPO}" 2>&1)
+        GH_OUTPUT=$(timeout 10 gh api "repos/${OWNER_REPO}" 2>&1)
         GH_RC=$?
 
         if [[ $GH_RC -ne 0 ]]; then
@@ -202,7 +202,7 @@ if git -C "$CLAUDE_DIR" rev-parse --git-dir >/dev/null 2>&1; then
               HAS_UPSTREAM=true
             fi
 
-            UPSTREAM_HEAD=$(git ls-remote "${UPSTREAM_URL}" refs/heads/main 2>/dev/null | cut -f1)
+            UPSTREAM_HEAD=$(timeout 10 git ls-remote "${UPSTREAM_URL}" refs/heads/main 2>/dev/null | cut -f1)
             LOCAL_HEAD=$(git -C "$CLAUDE_DIR" rev-parse HEAD 2>/dev/null)
             FORK_OWNER=$(echo "$OWNER_REPO" | cut -d/ -f1)
 
@@ -243,7 +243,7 @@ if [[ -n "$CLAUDE_PLUGIN_ROOT" && -f "$CLAUDE_PLUGIN_ROOT/.claude-plugin/plugin.
 
   if needs_refresh; then
     if check_gh; then
-      LATEST_VERSION=$(gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq '.tag_name' 2>&1)
+      LATEST_VERSION=$(timeout 10 gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq '.tag_name' 2>&1)
       GH_RC=$?
       LATEST_VERSION=$(echo "$LATEST_VERSION" | tr -d 'v')
 

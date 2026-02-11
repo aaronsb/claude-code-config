@@ -150,6 +150,31 @@ scan_state_triggers() {
   done < <(find "$dir" -name "way.md" -print0 2>/dev/null)
 }
 
+# Safety net: re-inject core if context was cleared without SessionStart
+# (e.g., plan mode "clear context"). Detects the contradiction:
+#   core marker exists (we think we injected) + tiny context + old marker
+# Fires once — show-core.sh recreates the marker, gating further runs.
+CORE_MARKER="/tmp/.claude-core-${SESSION_ID}"
+if [[ -n "$SESSION_ID" ]]; then
+  if [[ ! -f "$CORE_MARKER" ]]; then
+    # No marker at all — session_id changed or first run without SessionStart
+    CORE_OUTPUT=$("${WAYS_DIR}/show-core.sh" <<< "{\"session_id\":\"${SESSION_ID}\"}")
+    [[ -n "$CORE_OUTPUT" ]] && CONTEXT+="$CORE_OUTPUT"$'\n\n'
+  else
+    # Marker exists — check for stale injection (context cleared under us)
+    ctx_size=$(get_transcript_size)
+    marker_ts=$(cat "$CORE_MARKER" 2>/dev/null)
+    now_ts=$(date +%s)
+    age=$(( now_ts - ${marker_ts:-$now_ts} ))
+    if [[ $ctx_size -lt 5000 && $age -gt 30 ]]; then
+      # Small context + marker older than 30s = context was cleared
+      rm -f "$CORE_MARKER"
+      CORE_OUTPUT=$("${WAYS_DIR}/show-core.sh" <<< "{\"session_id\":\"${SESSION_ID}\"}")
+      [[ -n "$CORE_OUTPUT" ]] && CONTEXT+="$CORE_OUTPUT"$'\n\n'
+    fi
+  fi
+fi
+
 # Scan project-local first, then global
 scan_state_triggers "$PROJECT_DIR/.claude/ways"
 scan_state_triggers "${WAYS_DIR}"
