@@ -15,7 +15,7 @@ Just work naturally. No need to request guidance upfront.
 
 **After compaction**: Check `.claude/` for tracking files before resuming — you may have lost context.
 
-**Push back when**: Something is unclear or conflicting. If you have genuine doubt, say so.
+**Push back when**: Something is unclear or conflicting. If you have genuine doubt, say so. It's possible to be confidently wrong — consider where you are in discovery vs execution to calibrate how much you trust your own certainty.
 
 ## Communication
 
