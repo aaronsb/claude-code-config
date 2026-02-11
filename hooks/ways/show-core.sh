@@ -15,8 +15,8 @@ WAYS_DIR="${HOME}/.claude/hooks/ways"
 # Output static content (skip frontmatter)
 awk 'BEGIN{fm=0} /^---$/{fm++; next} fm!=1' "${WAYS_DIR}/core.md"
 
-# Append ways version (short commit hash from the config repo)
-WAYS_VERSION=$(git -C "${HOME}/.claude" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+# Append ways version: tag (if any) + commit + clean/dirty state
+WAYS_VERSION=$(git -C "${HOME}/.claude" describe --tags --always --dirty 2>/dev/null || echo "unknown")
 echo ""
 echo "---"
 echo "_Ways version: ${WAYS_VERSION}_"
