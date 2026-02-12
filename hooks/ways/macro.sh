@@ -36,6 +36,7 @@ while IFS= read -r wayfile; do
 
   # Extract frontmatter fields (only from first block, stop at second ---)
   frontmatter=$(awk 'NR==1 && /^---$/{p=1; next} p && /^---$/{exit} p{print}' "$wayfile")
+  match_type=$(echo "$frontmatter" | awk '/^match:/{gsub(/^match: */, ""); print}')
   pattern=$(echo "$frontmatter" | awk '/^pattern:/{gsub(/^pattern: */, ""); print}')
   commands=$(echo "$frontmatter" | awk '/^commands:/{gsub(/^commands: */, ""); print}')
   files=$(echo "$frontmatter" | awk '/^files:/{gsub(/^files: */, ""); print}')
@@ -69,7 +70,9 @@ while IFS= read -r wayfile; do
 
   # Format pattern for display (strip regex syntax, keep readable)
   keyword_display="—"
-  if [[ -n "$pattern" ]]; then
+  if [[ "$match_type" == "semantic" || "$match_type" == "model" ]]; then
+    keyword_display="_(${match_type})_"
+  elif [[ -n "$pattern" ]]; then
     # Strip regex syntax, word boundaries, escapes — keep human-readable keywords
     # 1. Replace regex connectors with space (literal dot+quantifier patterns)
     # 2. Strip remaining regex syntax
@@ -83,7 +86,7 @@ while IFS= read -r wayfile; do
           if(!seen[$i]++){
             w=$i
             # Append * to regex stems (truncated prefixes)
-            if(length(w)>=5 && match(w,/(at|nc|ndl|pos|isz|rat|handl)$/))w=w"*"
+            if(length(w)>=5 && match(w,/(at|nc|ndl|pos|isz|rat|handl|mi)$/))w=w"*"
             printf "%s%s",(i>1?", ":""),w
           }
         }
