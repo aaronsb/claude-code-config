@@ -1,6 +1,6 @@
 ---
 match: regex
-pattern: slow|optimi[sz]|latency|profile|performance|speed.?up|benchmark|bottleneck|throughput|memory.?leak
+pattern: slow|optimi|latency|profile|performance|speed.?up|benchmark|bottleneck|throughput|memory.?leak
 scope: agent, subagent
 ---
 # Performance Way

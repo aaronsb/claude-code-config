@@ -1,6 +1,6 @@
 ---
 match: regex
-pattern: incident.?response|\bl[0-2]\b.?support|escalat|mttr|mean.?time|alert.?(response|triage)|remediat
+pattern: incident.?response|l0.?support|l1.?support|l2.?support|escalat|mttr|mean.?time|alert.?(response|triage)|remediat
 scope: agent, subagent
 ---
 # Incident Response Way
