@@ -85,6 +85,7 @@ Ways covering broad concepts where keyword matching would be either too narrow o
 - `design` (2.0) — architecture, patterns, schema, modeling
 - `config` (2.0) — environment variables, dotenv, configuration
 - `adr-context` (2.0) — planning, approach decisions, context
+- `knowledge/optimization` (2.0) — vocabulary tuning, way health analysis
 
 All use threshold 2.0. The test harness maintains 0 false positives as a hard constraint.
 

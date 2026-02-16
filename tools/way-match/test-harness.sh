@@ -81,7 +81,8 @@ ncd_matches_way() {
   local desc="${WAY_DESC[$way_id]}"
   local vocab="${WAY_VOCAB[$way_id]}"
   # NCD uses distance metric (0-1), not BM25 score threshold
-  local ncd_thresh="0.55"
+  # Must match check-prompt.sh hardcoded value (0.58)
+  local ncd_thresh="0.58"
 
   if bash "$NCD_SCRIPT" "$prompt" "$desc" "$vocab" "$ncd_thresh" 2>/dev/null; then
     return 0

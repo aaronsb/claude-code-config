@@ -1,6 +1,6 @@
 ---
 description: optimizing way vocabulary, tuning thresholds, reviewing matching quality, analyzing gaps and coverage
-vocabulary: optimize vocabulary suggest gaps coverage unused threshold tune score scoring review ways health audit
+vocabulary: optimize vocabulary suggest gaps coverage unused threshold tune scoring health audit sparsity discrimination overlap
 threshold: 2.0
 macro: prepend
 scope: agent
