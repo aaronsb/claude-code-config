@@ -296,7 +296,7 @@ This repo ships with 20 development-focused ways:
 - **6 specialized subagents** for complex tasks (requirements, architecture, planning, review, workflow, organization)
 - **ADR-driven workflow** guidance
 - **GitHub-first patterns** (auto-detects `gh` availability)
-- **Update checking** — detects direct clones, forks, and plugin installs; nudges you when behind upstream
+- **Update checking** — detects direct clones, forks, renamed clones, and plugin installs; nudges you when behind upstream
 - **Governance traceability** — optional `provenance:` metadata on ways traces guidance back to policy documents and regulatory controls (NIST, OWASP, ISO, SOC 2) with per-control justification evidence. Includes a governance operator (`governance.sh`) for coverage reports, control queries, traceability matrices, and integrity linting. See [provenance](docs/hooks-and-ways/provenance.md).
 - **Governance citation skill** — Claude can semantically discover and cite governance controls when justifying recommendations, grounding advice in actual standards rather than general knowledge
 
@@ -373,9 +373,34 @@ The string matching is intentionally simple - it keeps the system portable and t
 
 ## Updating
 
-```bash
-cd ~/.claude && git pull
+At session start, `check-config-updates.sh` compares your local copy against upstream (`aaronsb/claude-code-config`). It runs silently unless you're behind — then it prints a notice with the exact commands to sync. Network calls are rate-limited to once per hour.
+
+Four install scenarios are detected:
+
+| Scenario | How detected | Sync command |
+|----------|-------------|--------------|
+| **Direct clone** | `origin` points to `aaronsb/claude-code-config` | `cd ~/.claude && git pull` |
+| **Fork** | GitHub API reports `parent` is `aaronsb/claude-code-config` | `cd ~/.claude && git fetch upstream && git merge upstream/main` |
+| **Renamed clone** | `.claude-upstream` marker file exists | `cd ~/.claude && git fetch upstream && git merge upstream/main` |
+| **Plugin** | `CLAUDE_PLUGIN_ROOT` set with `plugin.json` | `/plugin update disciplined-methodology` |
+
+### Renamed clones (org-internal copies)
+
+If your organization clones this repo under a different name (e.g., `myorg/claude-config`) without forking on GitHub, update notifications still work via the `.claude-upstream` marker file. This file ships with the repo and contains the upstream repo identifier:
+
 ```
+aaronsb/claude-code-config
+```
+
+The marker file approach does not require `gh` CLI — it uses `git ls-remote` against the public upstream, so it works in environments where GitHub API access is restricted.
+
+### Controlling update checks
+
+| Goal | Action |
+|------|--------|
+| **Opt out entirely** | Delete `.claude-upstream` and point `origin` to your internal repo. The script will classify it as "unrelated" and stay silent. |
+| **Track a different upstream** | Edit `.claude-upstream` to contain your internal canonical repo (e.g., `myorg/claude-config`), and update `UPSTREAM_REPO` in `check-config-updates.sh` to match. |
+| **Disable for all users** | Remove `check-config-updates.sh` from `hooks/` or delete the SessionStart hook entry in `settings.json`. |
 
 ## License
 

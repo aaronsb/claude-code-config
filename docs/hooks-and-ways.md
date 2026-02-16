@@ -25,7 +25,7 @@ Six Claude Code hook events drive the system. Each fires shell scripts that scan
 - **`clear-markers.sh`** - Removes all `/tmp/.claude-way-*`, `/tmp/.claude-tasks-active-*` markers, and `/tmp/.claude-subagent-stash-*` dirs. Resets session state so ways can fire fresh.
 - **`show-core.sh`** - Runs `macro.sh` to generate the Available Ways table, then outputs `core.md` (collaboration style, communication norms). This is the initial context Claude sees.
 - **`init-project-ways.sh`** - Creates `$PROJECT/.claude/ways/_template.md` if the project has a `.claude/` or `.git/` dir but no ways directory yet.
-- **`check-config-updates.sh`** - Checks if the config is behind upstream. Detects direct clones, GitHub forks, and plugin installs. Network calls are rate-limited to once per hour; update notices fire every session when behind.
+- **`check-config-updates.sh`** - Checks if the config is behind upstream. Detects four install scenarios: direct clones, GitHub forks, renamed clones (via `.claude-upstream` marker file), and plugin installs. Network calls (`git fetch`, `gh api`, `git ls-remote`) are rate-limited to once per hour; update notices fire every session when behind. See the [Updating](#updating) section of the README for scenario details and how to control this behavior.
 
 ### Trigger Evaluation
 

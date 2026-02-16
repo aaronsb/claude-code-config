@@ -12,6 +12,7 @@
 !settings.json
 !statusline.sh
 !ways.json
+!.claude-upstream
 
 # GitHub community health files
 !.github/

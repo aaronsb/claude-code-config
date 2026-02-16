@@ -1,12 +1,13 @@
 #!/bin/bash
 # Check if claude-code-config is up to date with upstream
-# Handles three install scenarios: direct clone, fork, plugin
+# Handles four install scenarios: direct clone, fork, renamed clone, plugin
 #
 # Detection order:
 #   1. Is ~/.claude a git repo? If not, exit.
 #   2. Is origin aaronsb/claude-code-config? → direct clone
 #   3. Is origin a fork of aaronsb/claude-code-config? → fork
-#   4. Is CLAUDE_PLUGIN_ROOT set? → plugin install
+#   4. Does .claude-upstream marker exist? → renamed clone (org internal copy)
+#   5. Is CLAUDE_PLUGIN_ROOT set? → plugin install
 #
 # Network calls (git fetch, gh api) are rate-limited to once per hour.
 # Display fires every session if cached state shows "behind".
@@ -14,6 +15,7 @@
 CLAUDE_DIR="${HOME}/.claude"
 UPSTREAM_REPO="aaronsb/claude-code-config"
 UPSTREAM_URL="https://github.com/${UPSTREAM_REPO}"
+UPSTREAM_MARKER="${CLAUDE_DIR}/.claude-upstream"
 CACHE_FILE="/tmp/.claude-config-update-state-$(id -u)"
 ONE_HOUR=3600
 ONE_DAY=86400
@@ -91,6 +93,29 @@ show_plugin_notice() {
   echo ""
   echo "  Release notes:"
   echo "  ${UPSTREAM_URL}/releases/tag/v${latest}"
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+}
+
+check_marker_file() {
+  [[ -f "$UPSTREAM_MARKER" ]] || return 1
+  local declared
+  declared=$(head -1 "$UPSTREAM_MARKER" | tr -d '[:space:]')
+  [[ "$declared" == "$UPSTREAM_REPO" ]]
+}
+
+show_renamed_clone_notice() {
+  local has_upstream="$1"
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  Update Available — behind ${UPSTREAM_REPO}"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  if [[ "$has_upstream" != "true" ]]; then
+    echo "  git -C ~/.claude remote add upstream ${UPSTREAM_URL}"
+  fi
+  echo "  cd ~/.claude && git fetch upstream && git merge upstream/main"
   echo ""
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   echo ""
@@ -214,11 +239,45 @@ fork_owner=${FORK_OWNER}"
 fork_owner=${FORK_OWNER}"
             fi
           else
-            write_cache "unrelated" "0"
+            # Not a GitHub fork — check marker file for renamed clones
+            if check_marker_file; then
+              HAS_UPSTREAM=false
+              if git -C "$CLAUDE_DIR" remote get-url upstream >/dev/null 2>&1; then
+                HAS_UPSTREAM=true
+              fi
+
+              UPSTREAM_HEAD=$(timeout 10 git ls-remote "${UPSTREAM_URL}" refs/heads/main 2>/dev/null | cut -f1)
+              LOCAL_HEAD=$(git -C "$CLAUDE_DIR" rev-parse HEAD 2>/dev/null)
+
+              if [[ -n "$UPSTREAM_HEAD" && "$UPSTREAM_HEAD" != "$LOCAL_HEAD" ]]; then
+                write_cache "renamed_clone" "1" "has_upstream=${HAS_UPSTREAM}"
+              else
+                write_cache "renamed_clone" "0" "has_upstream=${HAS_UPSTREAM}"
+              fi
+            else
+              write_cache "unrelated" "0"
+            fi
           fi
         fi
       else
-        write_cache "gh_unavailable" "0" "reason=${GH_ISSUE}"
+        # gh unavailable — marker file can still detect renamed clones without gh
+        if check_marker_file; then
+          HAS_UPSTREAM=false
+          if git -C "$CLAUDE_DIR" remote get-url upstream >/dev/null 2>&1; then
+            HAS_UPSTREAM=true
+          fi
+
+          UPSTREAM_HEAD=$(timeout 10 git ls-remote "${UPSTREAM_URL}" refs/heads/main 2>/dev/null | cut -f1)
+          LOCAL_HEAD=$(git -C "$CLAUDE_DIR" rev-parse HEAD 2>/dev/null)
+
+          if [[ -n "$UPSTREAM_HEAD" && "$UPSTREAM_HEAD" != "$LOCAL_HEAD" ]]; then
+            write_cache "renamed_clone" "1" "has_upstream=${HAS_UPSTREAM}"
+          else
+            write_cache "renamed_clone" "0" "has_upstream=${HAS_UPSTREAM}"
+          fi
+        else
+          write_cache "gh_unavailable" "0" "reason=${GH_ISSUE}"
+        fi
       fi
     fi
 
@@ -227,6 +286,8 @@ fork_owner=${FORK_OWNER}"
 
     if [[ "$CACHED_TYPE" == "fork" && "$CACHED_BEHIND" =~ ^[0-9]+$ ]] && (( CACHED_BEHIND > 0 )); then
       show_fork_notice "$CACHED_HAS_UPSTREAM"
+    elif [[ "$CACHED_TYPE" == "renamed_clone" && "$CACHED_BEHIND" =~ ^[0-9]+$ ]] && (( CACHED_BEHIND > 0 )); then
+      show_renamed_clone_notice "$CACHED_HAS_UPSTREAM"
     elif [[ "$CACHED_TYPE" == "gh_unavailable" ]]; then
       GH_ISSUE=$(sed -n 's/^reason=//p' "$CACHE_FILE")
       show_gh_notice
