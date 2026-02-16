@@ -77,13 +77,23 @@ jobs:
       - name: Make binary executable
         run: chmod +x bin/way-match
 
+      - name: Install bash 5 (macOS)
+        if: runner.os == 'macOS'
+        run: brew install bash
+
       - name: Run test harness (BM25 vs NCD)
-        run: bash tools/way-match/test-harness.sh --verbose
+        run: |
+          # macOS ships bash 3.2 which lacks associative arrays; use bash 5 if available
+          BASH_BIN=$(command -v bash)
+          if [[ -x /opt/homebrew/bin/bash ]]; then BASH_BIN=/opt/homebrew/bin/bash; fi
+          "$BASH_BIN" tools/way-match/test-harness.sh --verbose
 
       - name: Run test harness (BM25 only, check exit code)
         run: |
           # BM25 should beat NCD baseline of 50% accuracy
-          bash tools/way-match/test-harness.sh --bm25-only 2>&1 | tee /tmp/results.txt
+          BASH_BIN=$(command -v bash)
+          if [[ -x /opt/homebrew/bin/bash ]]; then BASH_BIN=/opt/homebrew/bin/bash; fi
+          "$BASH_BIN" tools/way-match/test-harness.sh --bm25-only 2>&1 | tee /tmp/results.txt
           # Extract accuracy
           accuracy=$(grep "BM25:" /tmp/results.txt | sed -n 's/.*accuracy=\([0-9]*\/[0-9]*\).*/\1/p')
           correct=$(echo "$accuracy" | cut -d/ -f1)
