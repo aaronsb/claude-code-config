@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: \brunbook\b|runbook.?(automation|executable)|playbook|sop.?(automation|as.?code)|operational.?procedure
 scope: agent, subagent
 ---

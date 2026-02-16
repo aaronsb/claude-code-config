@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: operation.?class|policy.?(engine|enforcement)|approval.?(gate|level|workflow)|blast.?radius|risk.?(class|level|score)
 scope: agent, subagent
 ---

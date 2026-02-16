@@ -233,41 +233,36 @@ Create a directory in `~/.claude/hooks/ways/{domain}/{wayname}/` and add `way.md
 
 | Field | Purpose |
 |-------|---------|
-| `match:` | `regex` (default) or `semantic` |
 | `pattern:` | Regex matched against user prompts |
 | `files:` | Regex matched against file paths (Edit/Write) |
 | `commands:` | Regex matched against bash commands |
+| `description:` | Natural language reference text (enables semantic matching) |
+| `vocabulary:` | Domain keywords users would say (enables semantic matching) |
+| `threshold:` | BM25 score threshold (default 2.0, higher = stricter) |
 | `macro:` | `prepend` or `append` - run `macro.sh` for dynamic context |
-| `description:` | Reference text for NCD similarity (semantic mode) |
-| `vocabulary:` | Domain words for keyword counting (semantic mode) |
-| `threshold:` | NCD similarity threshold (default 0.58, lower = stricter) |
+| `scope:` | `agent`, `subagent`, `teammate` (comma-separated) |
+
+Matching is **additive** — pattern and semantic are OR'd. A way with both triggers can fire from either channel.
 
 ## Semantic Matching
 
-For ambiguous triggers like "design" (software design vs UI design), ways can use **semantic matching** instead of regex:
+For ambiguous triggers like "design" (software design vs UI design), ways can use **BM25 semantic matching**:
 
 ```yaml
 ---
-match: semantic
 description: software system design architecture patterns database schema
 vocabulary: design architecture pattern schema api component factory
-threshold: 0.55  # Optional: stricter matching (default 0.58)
+threshold: 2.0
 ---
 ```
 
-Semantic matching combines two techniques:
-1. **Keyword counting** - how many domain-specific words appear in the prompt
-2. **Gzip NCD** - compression-based similarity (Normalized Compression Distance)
-
-```
-Match if: domain_keywords >= 2 OR ncd_similarity < 0.58
-```
+Scores description+vocabulary against the user's prompt using Okapi BM25 with Porter2 stemming. Degrades gracefully: BM25 binary → gzip NCD fallback → skip.
 
 This correctly distinguishes:
-- ✓ "design the database schema" → triggers (software design)
-- ✗ "button design looks off" → no trigger (UI design)
+- "design the database schema" → triggers (software design)
+- "button design looks off" → no trigger (UI design)
 
-**Zero dependencies** - uses only `bash`, `gzip`, `bc`, `grep` (universal on all distros).
+Use `/test-way` to validate matching quality and optimize vocabulary.
 
 ## Way Macros
 

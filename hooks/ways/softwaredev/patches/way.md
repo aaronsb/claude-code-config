@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: patch|\.diff|apply.*change
 files: \.(patch|diff)$
 commands: git\ apply|git\ diff.*\>

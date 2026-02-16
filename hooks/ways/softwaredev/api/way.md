@@ -1,5 +1,4 @@
 ---
-match: semantic
 description: designing REST APIs, HTTP endpoints, API versioning, request response structure
 vocabulary: endpoint api rest route http status pagination versioning graphql request response header payload crud webhook
 threshold: 2.0

@@ -33,40 +33,48 @@ GIEOF
 
   if [[ ! -f "$TEMPLATE" ]]; then
     cat > "$TEMPLATE" << 'EOF'
----
-keywords: your|trigger|patterns
-files: optional\.file\.pattern$
-commands: optional\ command\ pattern
----
-# Way Name
+# Project Ways Template
 
-A "way" is contextual guidance that loads once per session when triggered.
+Ways are contextual guidance that loads once per session when triggered.
+Each way lives in its own directory: `{domain}/{wayname}/way.md`
 
-## Creating This Way
+## Creating a Way
 
-1. Copy this template to `your-way-name.md`
-2. Update the frontmatter:
-   - `keywords:` - regex patterns for user prompts
-   - `files:` - regex patterns for file paths (Edit/Write)
-   - `commands:` - regex patterns for bash commands
-3. Replace content with your guidance
+1. Create a directory: `.claude/ways/{domain}/{wayname}/`
+2. Add `way.md` with YAML frontmatter + guidance
 
-## Example
-
-For a React project, you might create `react.md`:
+### Pattern matching (for known keywords):
 
 ```yaml
 ---
-keywords: component|hook|useState|useEffect|jsx
+pattern: component|hook|useState|useEffect
 files: \.(jsx|tsx)$
+commands: npm\ run\ build
 ---
+# React Way
+- Use functional components with hooks
 ```
 
-## Guidance Section
+### Semantic matching (for broad concepts):
 
-- Keep it compact and actionable
-- Bullet points work well
-- Link to detailed docs if needed
+```yaml
+---
+description: React component design, hooks, state management
+vocabulary: component hook useState useEffect jsx props render state
+threshold: 2.0
+---
+# React Way
+- Use functional components with hooks
+```
+
+Matching is additive — a way can have both pattern and semantic triggers.
+
+## Tips
+
+- Keep guidance compact and actionable
+- Include the *why* — agents apply better judgment when they understand the reason
+- Use `/test-way score <way> "sample prompt"` to verify matching
+- Use `/test-way suggest <way>` to find vocabulary gaps
 EOF
     echo "Created project ways template: $TEMPLATE"
   fi

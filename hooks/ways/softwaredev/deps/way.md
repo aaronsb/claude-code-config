@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: dependenc|package|library|npm.?install|pip.?install|upgrade.*version
 commands: npm\ install|yarn\ add|pip\ install|cargo\ add|go\ get
 scope: agent, subagent

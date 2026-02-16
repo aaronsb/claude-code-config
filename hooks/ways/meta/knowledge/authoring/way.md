@@ -1,5 +1,4 @@
 ---
-match: regex
 files: \.claude/ways/.*way\.md$
 scope: agent, subagent
 provenance:
@@ -26,7 +25,6 @@ Each way lives in `{domain}/{wayname}/way.md` with YAML frontmatter:
 
 ```markdown
 ---
-match: regex              # or "semantic"
 pattern: foo|bar|regex.*  # for regex matching
 files: \.md$|docs/.*
 commands: git\ commit

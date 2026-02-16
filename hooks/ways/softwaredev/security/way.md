@@ -1,5 +1,4 @@
 ---
-match: semantic
 description: application security, authentication, secrets management, input validation, vulnerability prevention
 vocabulary: authentication secrets password credentials owasp injection xss sql sanitize vulnerability bcrypt hash encrypt token cert ssl tls csrf cors rotate login expose
 threshold: 2.0

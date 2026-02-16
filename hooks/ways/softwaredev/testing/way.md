@@ -1,5 +1,4 @@
 ---
-match: semantic
 description: writing unit tests, test coverage, mocking dependencies, test-driven development
 vocabulary: unittest coverage mock tdd assertion jest pytest rspec testcase spec fixture describe expect verify
 commands: npm\ test|yarn\ test|jest|pytest|cargo\ test|go\ test|rspec

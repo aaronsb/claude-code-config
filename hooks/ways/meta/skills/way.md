@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: \bskill\b|SKILL\.md|skill.?(creation|author|write)|claude.?code.?skill|~\/\.claude\/skills
 scope: agent, subagent
 ---

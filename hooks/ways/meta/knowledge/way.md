@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: \bway\b|\bways\b|knowledge|guidance|context.?inject
 scope: agent, subagent
 provenance:

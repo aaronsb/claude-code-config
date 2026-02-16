@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: \badr\b|architect|decision|design.?pattern|technical.?choice|trade.?off
 files: docs/architecture/.*\.md$
 macro: prepend

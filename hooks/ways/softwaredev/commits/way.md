@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: commit|push.*(remote|origin|upstream)
 commands: git\ commit
 scope: agent, subagent

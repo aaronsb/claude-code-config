@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: release|changelog|tag|version.?bump|bump.?version|npm.?publish|cargo.?publish
 scope: agent, subagent
 provenance:

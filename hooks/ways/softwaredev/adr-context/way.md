@@ -1,5 +1,4 @@
 ---
-match: semantic
 description: planning how to implement a feature, deciding an approach, understanding existing project decisions, starting work on an item, investigating why something was built a certain way
 vocabulary: plan approach debate implement build work pick understand investigate why how decision context tradeoff evaluate option consider scope
 threshold: 2.0

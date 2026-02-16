@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: readme|documentation|docs|document.*project|explain.*repo|docstring|mermaid|diagram
 files: README\.md$|docs/.*\.md$
 scope: agent, subagent

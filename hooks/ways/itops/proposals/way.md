@@ -1,5 +1,4 @@
 ---
-match: regex
 pattern: proposal.?(primitive|lifecycle|structure)|human.?in.?(the.?)?loop|approval.?workflow|operation.?proposal
 scope: agent, subagent
 ---
