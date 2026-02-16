@@ -1,0 +1,32 @@
+{"prompt": "add unit tests for the auth module", "expected": "softwaredev-testing", "match": true, "category": "direct"}
+{"prompt": "write pytest fixtures for the database layer", "expected": "softwaredev-testing", "match": true, "category": "direct"}
+{"prompt": "increase test coverage to 80%", "expected": "softwaredev-testing", "match": true, "category": "direct"}
+{"prompt": "mock the payment gateway in tests", "expected": "softwaredev-testing", "match": true, "category": "direct"}
+{"prompt": "how should I structure the REST API endpoints", "expected": "softwaredev-api", "match": true, "category": "direct"}
+{"prompt": "add pagination to the users endpoint", "expected": "softwaredev-api", "match": true, "category": "direct"}
+{"prompt": "what HTTP status code for a deleted resource", "expected": "softwaredev-api", "match": true, "category": "direct"}
+{"prompt": "debug this segfault in the parser", "expected": "softwaredev-debugging", "match": true, "category": "direct"}
+{"prompt": "investigate why the build is broken", "expected": "softwaredev-debugging", "match": true, "category": "direct"}
+{"prompt": "add a breakpoint and step through the logic", "expected": "softwaredev-debugging", "match": true, "category": "direct"}
+{"prompt": "fix the XSS vulnerability in the comment form", "expected": "softwaredev-security", "match": true, "category": "direct"}
+{"prompt": "rotate the database credentials", "expected": "softwaredev-security", "match": true, "category": "direct"}
+{"prompt": "sanitize user input before SQL queries", "expected": "softwaredev-security", "match": true, "category": "direct"}
+{"prompt": "design the database schema for orders", "expected": "softwaredev-design", "match": true, "category": "direct"}
+{"prompt": "which architecture pattern for the notification service", "expected": "softwaredev-design", "match": true, "category": "direct"}
+{"prompt": "set up environment variables for staging", "expected": "softwaredev-config", "match": true, "category": "direct"}
+{"prompt": "manage the dotenv files across environments", "expected": "softwaredev-config", "match": true, "category": "direct"}
+{"prompt": "plan how to implement the search feature", "expected": "softwaredev-adr-context", "match": true, "category": "direct"}
+{"prompt": "why was the caching layer built this way", "expected": "softwaredev-adr-context", "match": true, "category": "direct"}
+{"prompt": "speed up the SQL queries", "expected": "softwaredev-design", "match": true, "category": "synonym", "note": "NCD likely misses: no shared bytes with design description"}
+{"prompt": "harden the login endpoints against brute force", "expected": "softwaredev-security", "match": true, "category": "synonym", "note": "NCD likely misses: harden not in vocabulary"}
+{"prompt": "the app crashes when you submit the form", "expected": "softwaredev-debugging", "match": true, "category": "synonym", "note": "NCD likely misses: crash/submit not in debugging vocabulary"}
+{"prompt": "verify the service handles bad input gracefully", "expected": "softwaredev-testing", "match": true, "category": "synonym", "note": "NCD likely misses: verify/gracefully not in testing vocabulary"}
+{"prompt": "set up the connection string for postgres", "expected": "softwaredev-config", "match": true, "category": "synonym", "note": "NCD likely misses: connection string is config concept but not in vocabulary"}
+{"prompt": "how do the microservices talk to each other", "expected": "softwaredev-design", "match": true, "category": "synonym", "note": "NCD likely misses: microservices/talk are design concepts but informal"}
+{"prompt": "make the API respond with proper error codes", "expected": "softwaredev-api", "match": true, "category": "synonym", "note": "NCD may match via api but error codes is the real signal"}
+{"prompt": "what's the weather today", "expected": null, "match": false, "category": "negative"}
+{"prompt": "hello", "expected": null, "match": false, "category": "negative"}
+{"prompt": "tell me a joke about programmers", "expected": null, "match": false, "category": "negative"}
+{"prompt": "what time zone is Tokyo in", "expected": null, "match": false, "category": "negative"}
+{"prompt": "summarize this document for me", "expected": null, "match": false, "category": "negative"}
+{"prompt": "translate this paragraph to Spanish", "expected": null, "match": false, "category": "negative"}

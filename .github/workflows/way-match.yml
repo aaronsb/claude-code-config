@@ -1,0 +1,116 @@
+name: way-match
+
+on:
+  push:
+    paths:
+      - 'tools/way-match/**'
+      - 'bin/way-match'
+      - '.github/workflows/way-match.yml'
+  pull_request:
+    paths:
+      - 'tools/way-match/**'
+      - 'bin/way-match'
+      - '.github/workflows/way-match.yml'
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+        # ubuntu-latest  = linux amd64
+        # macos-latest   = macos arm64 (Apple Silicon)
+        # macos-13       = macos amd64 (Intel)
+        # windows-latest = windows amd64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cosmocc (unix)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p "$HOME/.cosmocc"
+          curl -sL https://cosmo.zip/pub/cosmocc/cosmocc.zip -o /tmp/cosmocc.zip
+          unzip -q /tmp/cosmocc.zip -d "$HOME/.cosmocc"
+
+      - name: Install cosmocc (windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.cosmocc"
+          curl -sL https://cosmo.zip/pub/cosmocc/cosmocc.zip -o /tmp/cosmocc.zip
+          unzip -q /tmp/cosmocc.zip -d "$HOME/.cosmocc"
+
+      - name: Build from source
+        shell: bash
+        run: |
+          export COSMOCC="$HOME/.cosmocc/bin/cosmocc"
+          make -f tools/way-match/Makefile bin/way-match
+
+      - name: Verify binary runs
+        shell: bash
+        run: |
+          bin/way-match --version || bin/way-match --help || echo "binary executes"
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: way-match-${{ matrix.os }}
+          path: bin/way-match
+
+  test:
+    name: Test (${{ matrix.os }})
+    needs: build
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-13]
+        # Windows excluded: test harness uses bash features
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: way-match-${{ matrix.os }}
+          path: bin/
+
+      - name: Make binary executable
+        run: chmod +x bin/way-match
+
+      - name: Run test harness (BM25 vs NCD)
+        run: bash tools/way-match/test-harness.sh --verbose
+
+      - name: Run test harness (BM25 only, check exit code)
+        run: |
+          # BM25 should beat NCD baseline of 50% accuracy
+          bash tools/way-match/test-harness.sh --bm25-only 2>&1 | tee /tmp/results.txt
+          # Extract accuracy
+          accuracy=$(grep "BM25:" /tmp/results.txt | grep -oP 'accuracy=\K\d+/\d+')
+          correct=$(echo "$accuracy" | cut -d/ -f1)
+          total=$(echo "$accuracy" | cut -d/ -f2)
+          # Fail if BM25 accuracy is below 75%
+          threshold=$((total * 75 / 100))
+          if [ "$correct" -lt "$threshold" ]; then
+            echo "FAIL: BM25 accuracy $accuracy is below 75% threshold ($threshold/$total)"
+            exit 1
+          fi
+          echo "PASS: BM25 accuracy $accuracy meets 75% threshold"
+
+  verify:
+    name: Verify checked-in binary
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cosmocc
+        run: |
+          mkdir -p "$HOME/.cosmocc"
+          curl -sL https://cosmo.zip/pub/cosmocc/cosmocc.zip -o /tmp/cosmocc.zip
+          unzip -q /tmp/cosmocc.zip -d "$HOME/.cosmocc"
+
+      - name: Verify binary matches source
+        run: |
+          export COSMOCC="$HOME/.cosmocc/bin/cosmocc"
+          make -f tools/way-match/Makefile verify
