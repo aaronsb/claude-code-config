@@ -109,8 +109,41 @@ bm25_matches_way() {
 }
 
 # --- Score a prompt against all ways, return best match ---
+# For BM25: scores all ways, returns highest-scoring match.
+# For NCD: binary scorer (no score output), returns first match.
 find_best_match() {
   local scorer="$1" prompt="$2"
+
+  if [[ "$scorer" == "bm25" ]]; then
+    local best_way="none" best_score="0"
+    for way_id in "${WAY_IDS[@]}"; do
+      local stderr_out
+      stderr_out=$("$BM25_BINARY" pair \
+        --description "${WAY_DESC[$way_id]}" \
+        --vocabulary "${WAY_VOCAB[$way_id]}" \
+        --query "$prompt" \
+        --threshold "0" 2>&1 >/dev/null)
+      local score
+      score=$(echo "$stderr_out" | sed -n 's/match: score=\([0-9.]*\).*/\1/p')
+      if [[ -n "$score" ]] && command -v bc >/dev/null 2>&1; then
+        if (( $(echo "$score > $best_score" | bc -l) )); then
+          best_score="$score"
+          best_way="$way_id"
+        fi
+      fi
+    done
+    # Verify best actually meets its threshold
+    if [[ "$best_way" != "none" ]]; then
+      local thresh="${WAY_THRESH[$best_way]}"
+      if command -v bc >/dev/null 2>&1 && (( $(echo "$best_score < $thresh" | bc -l) )); then
+        best_way="none"
+      fi
+    fi
+    echo "$best_way"
+    return 0
+  fi
+
+  # NCD fallback: binary match, return first
   for way_id in "${WAY_IDS[@]}"; do
     if "${scorer}_matches_way" "$prompt" "$way_id"; then
       echo "$way_id"

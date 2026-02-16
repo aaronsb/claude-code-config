@@ -91,7 +91,11 @@ scan_ways() {
           fi
           ;;
         ncd)
-          # NCD uses its own threshold (distance 0-1); ignore BM25 threshold from frontmatter
+          # NCD fallback uses a fixed threshold (distance 0-1, lower = more similar).
+          # This is intentionally NOT derived from frontmatter thresholds, which are
+          # on the BM25 score scale (higher = better match). The two scales don't map
+          # cleanly: BM25 threshold 2.0 ≠ NCD distance 0.58. The fixed value 0.58 was
+          # tuned against the test fixture corpus for acceptable recall without false positives.
           if "${WAYS_DIR}/semantic-match.sh" "$PROMPT" "$description" "$vocabulary" "0.58" 2>/dev/null; then
             matched=true
           fi
