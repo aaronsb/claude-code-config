@@ -31,7 +31,7 @@ Six Claude Code hook events drive the system. Each fires shell scripts that scan
 
 These scripts fire on **PreToolUse** — before the tool executes, not after. This is a critical design choice: guidance must arrive while Claude can still act on it. A commit format reminder after the commit is too late. Security guidance after the file edit is too late. The "Pre" in PreToolUse means Claude sees the way content and can adjust its behavior before the action happens.
 
-- **`check-prompt.sh`** - Scans all ways for `pattern:` (regex), `match: semantic`, or `match: model` fields. Tests the user's prompt against each. Fires matching ways via `show-way.sh`.
+- **`check-prompt.sh`** - Scans all ways for `pattern:` (regex) and `description:`+`vocabulary:` (BM25 semantic) fields. Matching is additive — either channel firing activates the way. Semantic matching degrades: BM25 binary → gzip NCD → skip. Fires matching ways via `show-way.sh`.
 - **`check-bash-pre.sh`** - Scans ways for `commands:` patterns. Tests the command about to run. Also checks `pattern:` against the command description.
 - **`check-file-pre.sh`** - Scans ways for `files:` patterns. Tests the file path about to be edited.
 - **`check-state.sh`** - Evaluates `trigger:` fields (context-threshold, file-exists, session-start). See [State Triggers](#state-triggers).
@@ -131,43 +131,36 @@ Each way declares how it should be matched in its YAML frontmatter.
 flowchart TD
     classDef regex fill:#2E7D32,stroke:#1B5E20,color:#fff
     classDef semantic fill:#1565C0,stroke:#0D47A1,color:#fff
-    classDef model fill:#6A1B9A,stroke:#4A148C,color:#fff
     classDef decision fill:#E65100,stroke:#BF360C,color:#fff
     classDef result fill:#00695C,stroke:#004D40,color:#fff
 
     W[way.md frontmatter]
-    W -->|"match: regex (default)"| R
-    W -->|"match: semantic"| S
-    W -->|"match: model"| M
+    W -->|"pattern: / commands: / files:"| R
+    W -->|"description: + vocabulary:"| S
 
-    subgraph RX [" "]
+    subgraph RX ["Pattern Matching"]
         R[Regex Match]:::regex
         R --> RP["pattern: → user prompt"]:::regex
         R --> RC["commands: → bash command"]:::regex
         R --> RF["files: → file path"]:::regex
     end
 
-    subgraph SM [" "]
-        S[Semantic Match]:::semantic
-        S --> SK["Keyword Count<br/>vocabulary words in prompt ≥ 2"]:::semantic
-        S --> SN["Gzip NCD<br/>compress description + prompt<br/>NCD &lt; threshold"]:::semantic
-        SK --> OR{Either?}:::decision
-        SN --> OR
+    subgraph SM ["Semantic Matching (additive)"]
+        S[BM25 Scorer]:::semantic
+        S --> BM["way-match pair<br/>Porter2 stemming + IDF"]:::semantic
+        S -.->|"fallback"| NCD["Gzip NCD<br/>if binary unavailable"]:::semantic
     end
 
-    subgraph ML [" "]
-        M[Model Match]:::model
-        M --> MC["Spawn claude -p<br/>'Does this relate to: description?'<br/>~800ms latency"]:::model
-    end
-
-    OR -->|yes| FIRE[Fire Way]:::result
-    RP -->|match| FIRE
+    RP -->|match| FIRE[Fire Way]:::result
     RC -->|match| FIRE
     RF -->|match| FIRE
-    MC -->|"'yes'"| FIRE
+    BM -->|"score ≥ threshold"| FIRE
+    NCD -->|"NCD &lt; 0.58"| FIRE
 ```
 
-### Regex
+Matching is **additive** — pattern and semantic are OR'd. A way with both `pattern:` and `description:`+`vocabulary:` can fire from either channel.
+
+### Pattern
 
 ```yaml
 pattern: commit|push          # matched against user prompt
@@ -177,29 +170,15 @@ files: \.env$|config\.json    # matched against file paths
 
 Fast and precise. Most ways use this.
 
-### Semantic
+### Semantic (BM25)
 
 ```yaml
-match: semantic
 description: "API design, REST endpoints, request handling"
 vocabulary: api endpoint route handler middleware
-threshold: 0.55
+threshold: 2.0
 ```
 
-Two-technique approach:
-1. **Keyword counting** - counts vocabulary words in the prompt (match if >= 2)
-2. **Gzip NCD** - compresses description + prompt together; similar text compresses better (match if NCD < threshold)
-
-Either technique succeeding triggers the way.
-
-### Model
-
-```yaml
-match: model
-description: "security-sensitive operations, auth changes, credential handling"
-```
-
-Spawns a minimal Claude subprocess to classify yes/no. Most accurate but adds ~800ms latency.
+Scores description+vocabulary against the user's prompt using Okapi BM25 with Porter2 stemming. Degrades: BM25 binary → gzip NCD fallback → skip.
 
 ## State Triggers
 

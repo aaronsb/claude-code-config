@@ -96,9 +96,9 @@ flowchart TB
         SA[SubagentStart]:::event --> IS["inject-subagent.sh"]:::script
     end
 
-    CP -->|"match: semantic"| SM["semantic-match.sh<br/>gzip NCD + keywords"]:::match
-    CP -->|regex| SW["show-way.sh"]:::script
-    SM --> SW
+    CP -->|"pattern:"| SW["show-way.sh"]:::script
+    CP -->|"description:+vocabulary:"| WM["way-match pair<br/>BM25 scorer"]:::match
+    WM --> SW
     CB --> SW
     CF --> SW
 
@@ -259,7 +259,7 @@ flowchart LR
 
 ## Semantic Matching
 
-For ways with `match: semantic`, regex is replaced with gzip NCD + keyword counting:
+Ways with `description:` and `vocabulary:` fields use BM25 scoring with a degradation chain:
 
 ```mermaid
 flowchart TB
@@ -272,35 +272,32 @@ flowchart TB
     subgraph Input
         Prompt["User prompt"]:::input
         Desc["Way description"]:::input
-        Keywords["Domain vocabulary"]:::input
+        Vocab["Domain vocabulary"]:::input
     end
 
-    subgraph Tech1["Technique 1: Keyword Counting"]
-        Split["Split prompt into words"]:::process
-        Filter["Remove stopwords"]:::process
-        Count["Count matches in vocabulary"]:::process
-        KWResult["kw_count >= 2?"]:::check
+    subgraph BM25["BM25 (preferred)"]
+        Tokenize["Tokenize + Porter2 stem"]:::process
+        Score["Okapi BM25 score<br/>k1=1.2, b=0.75"]:::process
+        IDF["IDF weighted against<br/>built-in 7-way corpus"]:::process
+        BM25Result["score ≥ threshold?"]:::check
     end
 
-    subgraph Tech2["Technique 2: Gzip NCD"]
-        Compress["Compress separately:<br/>C(desc), C(prompt)"]:::process
-        Combined["Compress together:<br/>C(desc+prompt)"]:::process
+    subgraph NCD["Gzip NCD (fallback)"]
+        Compress["Compress description + prompt"]:::process
         Formula["NCD = (C(ab) - min) / max"]:::process
-        NCDResult["ncd < threshold?"]:::check
+        NCDResult["NCD < 0.58?"]:::check
     end
 
-    Prompt --> Split
-    Keywords --> Count
-    Split --> Filter --> Count --> KWResult
+    Prompt --> Tokenize
+    Desc --> Tokenize
+    Vocab --> Tokenize
+    Tokenize --> Score --> IDF --> BM25Result
 
-    Desc --> Compress
-    Prompt --> Compress
-    Compress --> Combined --> Formula --> NCDResult
-
-    KWResult -->|Yes| Match["✓ MATCH"]:::yes
+    BM25Result -->|Yes| Match["MATCH"]:::yes
+    BM25Result -->|"No binary"| Compress
+    Compress --> Formula --> NCDResult
     NCDResult -->|Yes| Match
-    KWResult -->|No| NCDResult
-    NCDResult -->|No| NoMatch["✗ No match"]:::no
+    NCDResult -->|No| NoMatch["No match"]:::no
 ```
 
 **Why gzip NCD works**: Similar texts share patterns that compress well together.
@@ -379,8 +376,7 @@ sequenceDiagram
 ├── check-response.sh           # Stop → extract topics for next turn
 │
 ├── inject-subagent.sh          # SubagentStart → emit stashed ways
-├── semantic-match.sh           # Gzip NCD + keyword matching
-├── model-match.sh              # Haiku subprocess classifier
+├── semantic-match.sh           # Gzip NCD fallback (when way-match binary unavailable)
 ├── clear-markers.sh            # SessionStart → reset all state
 ├── mark-tasks-active.sh        # PreToolUse:TaskCreate → context nag gate
 │
@@ -411,7 +407,7 @@ flowchart LR
     classDef stash fill:#E65100,stroke:#BF360C,color:#fff
     classDef util fill:#00695C,stroke:#004D40,color:#fff
 
-    CP["check-prompt.sh"]:::trigger --> SM["semantic-match.sh"]:::util
+    CP["check-prompt.sh"]:::trigger --> WM["way-match (BM25)"]:::util
     CP --> SW["show-way.sh"]:::output
     CB["check-bash-pre.sh"]:::trigger --> SW
     CF["check-file-pre.sh"]:::trigger --> SW

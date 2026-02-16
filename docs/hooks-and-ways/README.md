@@ -151,7 +151,7 @@ How does this apply in practice? Write the prose doc (or add a section to an exi
 Decide how the guidance should be delivered:
 - On what user prompt keywords? → `pattern:`
 - On what tool use? → `commands:` or `files:`
-- On what concept? → `match: semantic`
+- On what concept? → `description:` + `vocabulary:` (BM25 semantic matching)
 - On what condition? → `trigger:`
 
 Add this to the reference doc if the trigger mechanism is novel.
