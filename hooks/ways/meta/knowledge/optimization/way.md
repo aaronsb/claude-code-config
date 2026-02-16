@@ -44,15 +44,21 @@ suggest → interpret → apply → test → verify
 
 **Don't remove unused terms.** Terms like `owasp`, `csrf`, `xss` in security vocabulary exist to catch user prompts, not because they appear in the way body.
 
-## Discrimination
+## Sparsity and Discrimination
 
-Two ways sharing vocabulary causes both to fire on the same prompt. Check overlap:
+The goal isn't to maximize each way's score — it's to maximize the **semantic distance between ways**. Narrow, distinct vocabularies create sparsity: each way occupies its own region of the scoring space with minimal overlap. This means prompts activate exactly the right guidance, not a cluster of partially-relevant ways.
 
 ```bash
 /test-way score-all "the ambiguous prompt"
 ```
 
-If two ways both match, their vocabularies may need sharpening — add discriminating terms to each, or raise the threshold on the less-specific one.
+Ideal outcome: one way scores well above threshold, others score well below. If two ways both match the same prompt, their semantic regions overlap — they need sharpening.
+
+**Sharpening strategies:**
+- Add discriminating terms unique to each way's domain
+- Remove shared generic terms that don't differentiate
+- Raise the threshold on the less-specific way
+- Don't blindly expand vocabulary — more terms can *reduce* sparsity by creating new overlaps
 
 ## Which Ways Use Semantic Matching
 

@@ -69,6 +69,12 @@ Good vocabulary terms are domain-specific words that **users would say** when as
 
 Use `/test-way suggest <way>` to find gaps and `/test-way score-all "prompt"` to check for cross-way false positives.
 
+### Sparsity over coverage
+
+The goal of vocabulary design isn't to maximize each way's match rate — it's to maximize the semantic distance *between* ways. Each way should occupy a distinct region of the scoring space with minimal overlap. When a prompt fires exactly one way with a clear margin above others, the system is working well. When multiple ways fire on the same prompt, their vocabularies overlap and need sharpening.
+
+This means expanding vocabulary can be counterproductive. Adding generic terms like `error` to the debugging way might catch more debugging prompts, but it also creates overlap with the errors way. Narrow, specific vocabulary creates sparsity — clean separation between ways — which is more valuable than broad recall on any single way.
+
 ### Which ways use semantic matching
 
 Ways covering broad concepts where keyword matching would be either too narrow or too noisy:
