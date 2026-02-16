@@ -17,7 +17,7 @@ gh repo view &>/dev/null || {
 WORK_DIR=$(mktemp -d)
 trap 'rm -rf "$WORK_DIR"' EXIT
 
-# Repo details (description, topics, permissions, default branch)
+# Repo details (description, topics, permissions, default branch, full_name for badges)
 timeout 3 gh api repos/:owner/:repo \
   --jq '{
     description: .description,
@@ -25,7 +25,8 @@ timeout 3 gh api repos/:owner/:repo \
     default_branch: .default_branch,
     permissions: .permissions,
     has_issues: .has_issues,
-    has_discussions: .has_discussions
+    has_discussions: .has_discussions,
+    full_name: .full_name
   }' >"$WORK_DIR/repo.json" 2>/dev/null &
 
 # Community profile (README, license, CoC, contributing, templates, security)
@@ -60,6 +61,7 @@ TOPICS=$(jq -r '.topics | length' "$WORK_DIR/repo.json" 2>/dev/null)
 DEFAULT_BRANCH=$(jq -r '.default_branch // "main"' "$WORK_DIR/repo.json" 2>/dev/null)
 CAN_PUSH=$(jq -r '.permissions.push // false' "$WORK_DIR/repo.json" 2>/dev/null)
 CAN_ADMIN=$(jq -r '.permissions.admin // false' "$WORK_DIR/repo.json" 2>/dev/null)
+REPO_FULL_NAME=$(jq -r '.full_name // empty' "$WORK_DIR/repo.json" 2>/dev/null)
 
 # Community profile checks — normalize to "yes" or "" for clean truthiness
 HAS_README=$(jq -r 'if .files.readme then "yes" else "" end' "$WORK_DIR/community.json" 2>/dev/null)
@@ -81,6 +83,15 @@ if [[ -n "$DEFAULT_BRANCH" ]]; then
     --jq '.url' >"$WORK_DIR/protection.txt" 2>/dev/null
   if [[ $? -eq 0 ]] && [[ -s "$WORK_DIR/protection.txt" ]]; then
     HAS_BRANCH_PROTECTION="yes"
+  fi
+fi
+
+# README badges (shields.io)
+HAS_BADGES=""
+README_PATH=$(git rev-parse --show-toplevel 2>/dev/null)/README.md
+if [[ -f "$README_PATH" ]]; then
+  if grep -qiE 'img\.shields\.io|badge\.fury\.io|badgen\.net' "$README_PATH" 2>/dev/null; then
+    HAS_BADGES="yes"
   fi
 fi
 
@@ -145,6 +156,7 @@ add_check "PR template"         "$HAS_PR_TEMPLATE"        "false"
 add_check "Security policy"     "$HAS_SECURITY_POLICY"    "false"
 add_check "Custom labels"       "$CUSTOM_LABELS"          "false"
 add_check "Branch protection"   "$HAS_BRANCH_PROTECTION"  "true"
+add_check "README badges"       "$HAS_BADGES"             "false"
 
 # Count passes and failures
 TOTAL=${#CHECK_NAMES[@]}
@@ -227,4 +239,15 @@ else
     fi
     echo "| $NAME | $STATUS | $FIXABLE |"
   done
+fi
+
+# --- Badge recommendation when missing ---
+if [[ -z "$HAS_BADGES" ]] && [[ -n "$REPO_FULL_NAME" ]] && [[ "$CAN_PUSH" == "true" ]]; then
+  echo ""
+  echo "**Recommended README badges** (add below the H1 title):"
+  echo '```markdown'
+  echo "![License](https://img.shields.io/github/license/${REPO_FULL_NAME})"
+  echo "![GitHub stars](https://img.shields.io/github/stars/${REPO_FULL_NAME}?style=social)"
+  echo "![Latest Release](https://img.shields.io/github/v/release/${REPO_FULL_NAME}?include_prereleases&label=version)"
+  echo '```'
 fi

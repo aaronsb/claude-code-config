@@ -76,9 +76,10 @@ gh pr create --title "ADR-003: Decision Title" \
 
 ## Repo Health
 
-The macro checks repository configuration (README, license, templates, branch protection, etc.) and reports what's missing. If the report shows gaps:
+The macro checks repository configuration (README, license, templates, branch protection, badges, etc.) and reports what's missing. If the report shows gaps:
 - Offer to help configure items the user has rights to fix
 - For items needing admin access, note them but don't push
+- When badges are missing, suggest adding shields.io badges below the README title (license, stars, version)
 
 ## What to Avoid
 - Complex project boards
