@@ -76,3 +76,5 @@ Lowering BM25 threshold increases recall (more matches) but risks false positive
 - **Gap ratio**: gaps / (gaps + coverage). High ratio = vocabulary may be too narrow.
 - **Unused ratio**: unused / total vocabulary. High ratio isn't bad — unused terms serve user-facing matching.
 - **0 FP**: The test harness must maintain zero false positives. Accuracy can vary but FP cannot.
+
+Stop when vocabulary changes stop changing test outcomes.
