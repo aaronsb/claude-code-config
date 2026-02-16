@@ -80,6 +80,8 @@
 !tools/
 !tools/way-match/
 !tools/way-match/*
+!tools/way-match/snowball/
+!tools/way-match/snowball/*
 
 # Built binaries (checked in, cross-platform APE)
 !bin/
