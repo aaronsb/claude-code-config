@@ -62,7 +62,7 @@ Claude reads the test file (avoiding prompt-hook contamination), then walks you 
 | 5 | User types prompt | Co-activation of multiple related ways (delivery/migrations + others) |
 | 6 | User types prompt | Negative control (no false positives) |
 | 7 | Claude | Subagent injection (Testing Way via SubagentStart) |
-| 8 | Claude | Subagent negative (no injection on irrelevant prompt) |
+| 8 | Claude | Subagent negative (no fresh injection; parent context OK) |
 | 9 | Claude | Summary table |
 
 Takes about 5 minutes. **Current baseline**: 8/8 PASS (steps 1-8).

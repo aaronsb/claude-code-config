@@ -107,7 +107,9 @@ If the subagent sees NO injected content beyond the base configuration, the inje
 >
 > Report the subagent's findings.
 
-**Expected**: The subagent should NOT receive domain-specific procedural content. The background phrase has no relevance to any hook vocabulary. Only base configuration content should appear. If domain-specific content (about code, operations, or tooling) appears, that is a false positive.
+**Expected**: The SubagentStart **injection pipeline** should NOT fire — no stash is created because "what time is it in Tokyo" has zero overlap with any way vocabulary. However, `general-purpose` subagents inherit the parent conversation context, so they will see ways that fired earlier in the session (e.g., Performance Way from Step 4). This is context inheritance, not injection.
+
+**How to evaluate**: The subagent should report seeing parent-context content (expected) but should NOT report a SubagentStart system-reminder block with new domain-specific content beyond what already appeared in the parent session. Compare against Step 7 — that subagent should have received a *fresh* Testing Way block via SubagentStart injection. This subagent should have no such fresh injection.
 
 ---
 
@@ -124,7 +126,7 @@ If the subagent sees NO injected content beyond the base configuration, the inje
 > | 5 | Co-activation | delivery+architecture | Migrations fires, others may join | ? |
 > | 6 | Negative (no match) | — | Nothing fires | ? |
 > | 7 | Subagent injection | code | Testing Way received | ? |
-> | 8 | Subagent negative | — | No domain content received | ? |
+> | 8 | Subagent negative | — | No fresh injection (parent context OK) | ? |
 >
 > Report the final pass/fail count and any observations about:
 > - Whether the taxonomy restructure affected hook delivery
