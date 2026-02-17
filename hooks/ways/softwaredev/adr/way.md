@@ -36,16 +36,50 @@ provenance:
 - Security or performance decisions
 - Anything you'll need to remember "why we did it this way"
 
+## ADR Tooling
+
+**Always use `docs/scripts/adr` to manage ADRs.** It handles numbering, domain routing, and templates.
+
+| Command | Purpose |
+|---------|---------|
+| `docs/scripts/adr new <domain> <title>` | Create new ADR |
+| `docs/scripts/adr list [--group]` | List all ADRs |
+| `docs/scripts/adr view <number>` | View an ADR |
+| `docs/scripts/adr lint [--check]` | Validate ADRs |
+| `docs/scripts/adr index -y` | Regenerate index |
+| `docs/scripts/adr domains` | Show domain number series |
+
+## Directory Structure
+
+```
+docs/
+├── scripts/adr              # CLI tool (symlink to hooks/ways/softwaredev/adr/adr-tool)
+└── architecture/
+    ├── adr.yaml              # Domain config: number ranges, statuses, defaults
+    ├── INDEX.md              # Auto-generated index (adr index -y)
+    ├── system/               # ADR 100-199: Ways, matching, hooks, lifecycle
+    ├── governance/           # ADR 200-299: Provenance, controls, compliance
+    ├── documentation/        # ADR 300-399: Doc structure, tooling
+    └── legacy/               # ADR 1-99: Pre-domain numbering
+```
+
+Projects define their own domains and ranges in `adr.yaml`. Run `docs/scripts/adr domains` to see the active configuration.
+
 ## ADR Format
 
-Store in: `docs/architecture/ADR-NNN-description.md`
+ADRs use **YAML frontmatter** for metadata and a standard body structure:
 
 ```markdown
-# ADR-NNN: Decision Title
+---
+status: Draft
+date: 2026-02-17
+deciders:
+  - aaronsb
+  - claude
+related: []
+---
 
-Status: Proposed | Accepted | Deprecated | Superseded
-Date: YYYY-MM-DD
-Deciders: @user, @claude
+# ADR-NNN: Decision Title
 
 ## Context
 Why this decision is needed. What forces are at play.
@@ -54,6 +88,7 @@ Why this decision is needed. What forces are at play.
 What we're doing and how.
 
 ## Consequences
+
 ### Positive
 - Benefits and wins
 
@@ -68,10 +103,12 @@ What we're doing and how.
 - Why they were rejected
 ```
 
+Statuses: `Draft` | `Proposed` | `Accepted` | `Superseded` | `Deprecated`
+
 ## ADR Workflow
 1. **Debate**: Discuss problem and potential solutions
-2. **Draft**: Create ADR documenting decision
+2. **Draft**: `docs/scripts/adr new <domain> <title>` — creates numbered ADR in correct subdirectory
 3. **PR**: Create pull request for ADR review
 4. **Review**: User reviews, comments, iterates
-5. **Merge**: ADR becomes accepted, ready to reference
+5. **Merge**: ADR becomes accepted, update index with `docs/scripts/adr index -y`
 6. **Implement**: Create branch, reference ADR in work
