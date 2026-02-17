@@ -40,7 +40,7 @@ The wizard is a Claude Code skill (`commands/ways.md`) that directs Claude throu
 
 5. **Validate**: Lint the new way. If semantic, score it against sample prompts from the conversation. Show the result.
 
-6. **Handoff**: Point to `/test-way` for ongoing tuning. Explain that the way will fire automatically in future sessions when the trigger conditions are met.
+6. **Handoff**: Point to `/ways-tests` for ongoing tuning. Explain that the way will fire automatically in future sessions when the trigger conditions are met.
 
 ### Session commitment
 

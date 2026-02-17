@@ -67,7 +67,7 @@ Good vocabulary terms are domain-specific words that **users would say** when as
 - **Skip**: Generic terms that don't discriminate — `code`, `use`, `make`, `change`
 - **Keep unused terms**: Vocabulary terms that don't appear in the way body are often intentional — they catch user prompts, not body text
 
-Use `/test-way suggest <way>` to find gaps and `/test-way score-all "prompt"` to check for cross-way false positives.
+Use `/ways-tests suggest <way>` to find gaps and `/ways-tests score-all "prompt"` to check for cross-way false positives.
 
 ### Sparsity over coverage
 

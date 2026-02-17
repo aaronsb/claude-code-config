@@ -26,10 +26,10 @@ provenance:
 suggest → interpret → apply → test → verify
 ```
 
-1. **Survey**: `/test-way suggest --all` (or `--all --summary` for overview)
+1. **Survey**: `/ways-tests suggest --all` (or `--all --summary` for overview)
 2. **Interpret**: Gaps vs intentional unused (see below)
-3. **Apply**: `/test-way suggest <way> --apply` (git-safe, shows diff)
-4. **Test**: `/test-way score-all "<sample prompt>"` to verify discrimination
+3. **Apply**: `/ways-tests suggest <way> --apply` (git-safe, shows diff)
+4. **Test**: `/ways-tests score-all "<sample prompt>"` to verify discrimination
 5. **Verify**: `bash tools/way-match/test-harness.sh --bm25-only` for regression
 
 ## Reading Suggest Output
@@ -49,7 +49,7 @@ suggest → interpret → apply → test → verify
 The goal isn't to maximize each way's score — it's to maximize the **semantic distance between ways**. Narrow, distinct vocabularies create sparsity: each way occupies its own region of the scoring space with minimal overlap. This means prompts activate exactly the right guidance, not a cluster of partially-relevant ways.
 
 ```bash
-/test-way score-all "the ambiguous prompt"
+/ways-tests score-all "the ambiguous prompt"
 ```
 
 Ideal outcome: one way scores well above threshold, others score well below. If two ways both match the same prompt, their semantic regions overlap — they need sharpening.
