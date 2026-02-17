@@ -2,7 +2,29 @@
 
 Ways are compiled policy. A human reads a policy document, interprets it for the agent context, and writes a way.md file — compressed, directive, stripped of rationale. The guidance that reaches the agent is the object code. The policy document is the source.
 
-This page documents how to make that compilation traceable.
+This page documents how to make that compilation traceable. For running governance reports, see [governance/README.md](../../governance/README.md).
+
+## Quick Start: Add Provenance to a Way
+
+Add a `provenance:` block to your way's YAML frontmatter. The runtime strips it before injection — zero tokens, zero latency:
+
+```yaml
+---
+match: regex
+pattern: commit|push
+provenance:
+  policy:
+    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+      type: governance-doc
+  controls:
+    - id: NIST SP 800-53 CM-3
+      justifications:
+        - Conventional commits create structured change records
+  verified: 2026-02-17
+---
+```
+
+Then verify it's picked up: `bash governance/governance.sh --trace softwaredev/commits`
 
 ## The Full Chain
 

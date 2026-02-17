@@ -6,6 +6,25 @@
 
 ---
 
+## Getting Started
+
+```bash
+# See what's covered
+bash governance/governance.sh
+
+# Trace a single way end-to-end
+bash governance/governance.sh --trace softwaredev/security
+
+# Query by control framework
+bash governance/governance.sh --control OWASP
+```
+
+For adding provenance to your own ways, see [provenance.md](../docs/hooks-and-ways/provenance.md).
+
+> **Current state:** Governance output is ephemeral — reports go to stdout, manifests to local files. There is no CI integration or tracked output. The provenance metadata lives in way frontmatter and the reporting tools work, but the pipeline between them is run-on-demand.
+
+---
+
 The [main project](../README.md) manages what happens on the severed floor — how agents receive guidance, how teams coordinate, how context flows. This directory is concerned with the floor above: where the policies come from, why they exist, and whether the guidance actually implements what the institution intended.
 
 ## The Problem It Solves
