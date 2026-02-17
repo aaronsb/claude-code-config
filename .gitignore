@@ -42,6 +42,13 @@
 !docs/*.md
 !docs/adr/
 !docs/adr/*.md
+!docs/architecture/
+!docs/architecture/*.yaml
+!docs/architecture/*.md
+!docs/architecture/*/
+!docs/architecture/**/*.md
+!docs/scripts/
+!docs/scripts/*
 !docs/hooks-and-ways/
 !docs/hooks-and-ways/*.md
 !docs/hooks-and-ways/softwaredev/

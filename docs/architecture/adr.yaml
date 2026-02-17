@@ -1,0 +1,49 @@
+# ADR Configuration
+# Defines domain numbering and validation rules.
+# Used by: docs/scripts/adr
+
+# Project name (used in generated index)
+project_name: Claude Code Configuration
+
+# Domain Number Series
+domains:
+  system:
+    range: [100, 199]
+    name: System
+    description: Ways architecture, matching, macros, hooks, session lifecycle
+    folder: system
+
+  governance:
+    range: [200, 299]
+    name: Governance
+    description: Provenance, traceability, controls, compliance mapping
+    folder: governance
+
+  docs:
+    range: [300, 399]
+    name: Documentation
+    description: Documentation structure, tooling, coherence
+    folder: documentation
+
+# Valid ADR statuses
+statuses:
+  - Draft
+  - Proposed
+  - Accepted
+  - Superseded
+  - Deprecated
+
+# Default values for new ADRs
+defaults:
+  deciders:
+    - aaronsb
+    - claude
+  status: Draft
+
+# Legacy ADR range (pre-domain numbering)
+legacy:
+  range: [1, 99]
+  label: "Legacy (Pre-Domain Numbering)"
+
+# Viewer command for `adr view`
+viewer: cat {file}
