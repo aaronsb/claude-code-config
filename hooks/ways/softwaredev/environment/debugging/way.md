@@ -1,5 +1,5 @@
 ---
-description: debugging code issues, troubleshooting errors, investigating broken behavior, fixing bugs
+description: debugging code issues, troubleshooting failures, investigating broken behavior, fixing bugs
 vocabulary: debug breakpoint stacktrace investigate troubleshoot regression bisect crash error fail bug log trace exception segfault hang timeout
 threshold: 2.0
 scope: agent, subagent

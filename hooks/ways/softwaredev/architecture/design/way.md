@@ -1,6 +1,6 @@
 ---
 description: software system design architecture patterns database schema component modeling
-vocabulary: architecture pattern database schema modeling interface component modules factory observer strategy monolith microservice domain layer coupling cohesion abstraction singleton
+vocabulary: architecture pattern database schema modeling interface component modules factory observer strategy monolith microservice domain layer coupling cohesion abstraction singleton proposal rfc sketch deliberation whiteboard
 threshold: 2.0
 scope: agent, subagent
 ---
@@ -15,6 +15,14 @@ scope: agent, subagent
 5. **Decision**: What do we choose and why?
 
 When the design involves architectural trade-offs worth documenting, escalate to an ADR (see ADR Way).
+
+## RFCs and Proposals
+
+RFCs are the "before" to an ADR's "after" — they capture deliberation while the design is still open. Use them for changes that affect multiple teams or systems.
+
+- **RFC**: Proposes a change, invites feedback, converges on a decision
+- **ADR**: Records the decision after deliberation is complete
+- Start with a sketch or whiteboard session, formalize as an RFC if the scope warrants it
 
 ## Common Patterns
 
