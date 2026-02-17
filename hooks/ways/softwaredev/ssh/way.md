@@ -4,7 +4,7 @@ commands: ^ssh\ |^scp\ |^rsync.*:|\bsshpass\b
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/operations.md
+    - uri: governance/policies/operations.md
       type: governance-doc
   controls:
     - id: NIST SP 800-53 AC-17 (Remote Access)

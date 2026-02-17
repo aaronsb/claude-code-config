@@ -5,7 +5,7 @@ threshold: 2.0
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/operations.md
+    - uri: governance/policies/operations.md
       type: governance-doc
   controls:
     - id: OWASP Top 10 2021 A03:Injection

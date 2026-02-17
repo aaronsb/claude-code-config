@@ -6,7 +6,7 @@ threshold: 2.0
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/operations.md
+    - uri: governance/policies/operations.md
       type: governance-doc
   controls:
     - id: NIST SP 800-53 CM-6 (Configuration Settings)

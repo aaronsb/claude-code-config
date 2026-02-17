@@ -6,7 +6,7 @@ threshold: 2.0
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+    - uri: governance/policies/code-lifecycle.md
       type: governance-doc
   controls:
     - id: NIST SP 800-53 SA-11 (Developer Testing and Evaluation)

@@ -49,8 +49,6 @@
 !docs/scripts/*
 !docs/hooks-and-ways/
 !docs/hooks-and-ways/*.md
-!docs/hooks-and-ways/softwaredev/
-!docs/hooks-and-ways/softwaredev/*.md
 !docs/hooks-and-ways/**/
 !docs/hooks-and-ways/**/*.md
 !docs/images/
@@ -80,6 +78,10 @@
 !governance/README.md
 !governance/*.py
 !governance/*.sh
+!governance/policies/
+!governance/policies/*.md
+!governance/policies/*/
+!governance/policies/**/*.md
 
 # Tools (source, tests, build artifacts)
 !tools/

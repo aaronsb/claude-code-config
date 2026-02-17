@@ -5,7 +5,7 @@ scan_exclude: \.md$|\.lock$|\.min\.(js|css)$|\.generated\.|\.bundle\.|vendor/|no
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+    - uri: governance/policies/code-lifecycle.md
       type: governance-doc
   controls:
     - id: ISO/IEC 25010:2011 (Maintainability - Analyzability, Modifiability)

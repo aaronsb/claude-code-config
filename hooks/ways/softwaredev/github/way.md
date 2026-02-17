@@ -5,7 +5,7 @@ macro: prepend
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+    - uri: governance/policies/code-lifecycle.md
       type: governance-doc
   controls:
     - id: SOC 2 CC8.1 (Change Management)

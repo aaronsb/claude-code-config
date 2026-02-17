@@ -54,7 +54,7 @@ As part of this ADR's development:
 | **Landing** | `README.md` | First-time visitor | "What is this? How do I try it?" |
 | **Guide** | `docs/hooks-and-ways/` | Practitioner | "How do I do X?" |
 | **Reference** | `docs/hooks-and-ways.md`, `docs/architecture.md` | Contributor/debugger | "How does X work internally?" |
-| **Policy source** | `docs/hooks-and-ways/softwaredev/*.md` | Governance chain | Source docs referenced by way provenance |
+| **Policy source** | `governance/policies/*.md` | Governance chain | Source docs referenced by way provenance |
 | **ADRs** | `docs/architecture/` | Decision record | Design decisions with context and consequences |
 | **Machine layer** | `hooks/ways/*/way.md` | LLM runtime | Injected context — self-contained by design |
 
@@ -95,7 +95,7 @@ Seven files in `docs/hooks-and-ways/` describe domains with zero way.md implemen
 
 These are aspirational — they describe what ways *could* exist, not what does exist. A reader encountering `cloud.md` expects to find cloud ways and doesn't. Remove these files. When ways are built for new domains, documentation should accompany the implementation.
 
-The `docs/hooks-and-ways/softwaredev/` policy docs stay — they're referenced by governance provenance.
+Policy source docs moved to `governance/policies/` — they're governance chain artifacts, not system documentation.
 
 ### 4. Address governance pipeline gap
 

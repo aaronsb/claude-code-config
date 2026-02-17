@@ -5,7 +5,7 @@ macro: prepend
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+    - uri: governance/policies/code-lifecycle.md
       type: governance-doc
   controls:
     - id: NIST SP 800-53 CM-3 (Configuration Change Control)

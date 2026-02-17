@@ -1,6 +1,8 @@
 # Teams
 
-> *The work is mysterious and important.*
+<img src="../images/lumon-office-team-working.jpg" alt="Separate workstations, shared protocols, coordinated output" width="100%" />
+
+<sub>Each one sees their own screen. None of them chose the procedures. All of them follow them.</sub>
 
 When you go from one agent to a team of them, each teammate arrives with no prior context, receives injected guidance it didn't ask for, follows structured procedures, communicates through approved channels, and gets observed through telemetry. This started as something I built for myself because I got tired of agents going off-script. It turns out the problem — consistent governance across multiple autonomous agents — is the same whether you're one person with a side project or an organization managing a fleet.
 

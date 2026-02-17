@@ -21,11 +21,18 @@ Two things named `hooks-and-ways` — they serve different layers:
 
 ## Governance
 
+Same pattern: guide, reference, implementation.
+
+- **[../governance/README.md](../governance/README.md)** — guide. Getting started, operator commands.
+- **[governance.md](governance.md)** — reference. Compilation chain, data flow, tool mechanics.
+- **[../governance/](../governance/)** — implementation. Scripts, policies, manifests.
+
 | Path | What's there |
 |------|-------------|
-| [../governance/README.md](../governance/README.md) | Governance traceability — provenance chain, reporting tools |
-| [hooks-and-ways/provenance.md](hooks-and-ways/provenance.md) | Adding provenance to your ways |
-| [hooks-and-ways/softwaredev/](hooks-and-ways/softwaredev/) | Policy source documents (governance chain targets) |
+| [governance.md](governance.md) | Reference: compilation chain, data flow, tool internals |
+| [../governance/README.md](../governance/README.md) | Guide: getting started, operator commands |
+| [../governance/policies/](../governance/policies/) | Policy source documents (governance chain targets) |
+| [hooks-and-ways/provenance.md](hooks-and-ways/provenance.md) | How-to: adding provenance to your ways |
 
 ## Other docs
 

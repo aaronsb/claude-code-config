@@ -3,7 +3,7 @@ pattern: error.?handl|exception|try.?catch|throw|catch
 scope: agent, subagent
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+    - uri: governance/policies/code-lifecycle.md
       type: governance-doc
   controls:
     - id: OWASP Top 10 2021 A09 (Security Logging and Monitoring Failures)

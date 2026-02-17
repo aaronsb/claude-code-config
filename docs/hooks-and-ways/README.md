@@ -53,15 +53,19 @@ flowchart TD
     classDef ref fill:#2196F3,stroke:#1565C0,color:#fff
     classDef machine fill:#4CAF50,stroke:#2E7D32,color:#fff
 
-    subgraph POL ["Policy Layer (human prose)"]
+    subgraph GUIDE ["Guide Layer (human prose)"]
         direction TB
         R[rationale.md]
         M[matching.md]
         MA[macros.md]
         E[extending.md]
-        SD["softwaredev/*.md"]
         IT[itops.md]
         ME[meta.md]
+    end
+
+    subgraph GOV ["Policy Source (governance chain)"]
+        direction TB
+        SD["governance/policies/*.md"]
     end
 
     subgraph REF ["Reference Layer (human-machine bridge)"]
@@ -83,7 +87,8 @@ flowchart TD
 
 | Layer | Location | Read by | Purpose |
 |-------|----------|---------|---------|
-| Policy | `docs/hooks-and-ways/*.md` | Humans | Rationale, 5W1H, governance interpretation |
+| Guide | `docs/hooks-and-ways/*.md` | Humans | Rationale, 5W1H, how-to guides |
+| Policy source | `governance/policies/*.md` | Governance chain | Source docs that ways compile from |
 | Reference | `docs/hooks-and-ways.md` | Humans + Claude | System mechanics, diagrams, data flow |
 | Machine | `hooks/ways/*/way.md` | Claude (via hooks) | Terse, directive, context-optimized guidance |
 
@@ -190,4 +195,4 @@ If you're running agent teams:
 
 If you care about governance traceability:
 1. **[provenance.md](provenance.md)** — the full chain from regulatory framework to agent context
-2. **[../adr/ADR-005-governance-traceability.md](../adr/ADR-005-governance-traceability.md)** — the design decision
+2. **[ADR-005: Governance Traceability](../architecture/legacy/ADR-005-governance-traceability.md)** — the design decision

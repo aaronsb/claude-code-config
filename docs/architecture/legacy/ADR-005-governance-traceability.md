@@ -60,7 +60,7 @@ provenance:
   policy:
     - uri: github://acme-corp/sdlc-controls/docs/architecture/change/ADR-150.md
       type: adr
-    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+    - uri: governance/policies/code-lifecycle.md
       type: governance-doc
   controls:
     - NIST SP 800-53 CM-3 (Configuration Change Control)

@@ -45,7 +45,7 @@ match: regex
 pattern: commit|push
 provenance:
   policy:
-    - uri: docs/hooks-and-ways/softwaredev/code-lifecycle.md
+    - uri: governance/policies/code-lifecycle.md
       type: governance-doc
   controls:
     - id: NIST SP 800-53 CM-3 (Configuration Change Control)
@@ -174,6 +174,6 @@ Your compliance repo owns the policies. Your ways repo owns the guidance. This d
 
 ## Further Reading
 
-- [ADR-005: Governance Traceability](../docs/adr/ADR-005-governance-traceability.md) — the design decision
+- [ADR-005: Governance Traceability](../docs/architecture/legacy/ADR-005-governance-traceability.md) — the design decision
 - [Provenance documentation](../docs/hooks-and-ways/provenance.md) — the full reference
 - [The Cost of Bad Instructions](../docs/hooks-and-ways/rationale.md) — why this matters economically and environmentally
