@@ -13,7 +13,7 @@ Three layers, from fast/automated to slow/interactive. See [way-match/results.md
 
 ### 1. Fixture Tests (BM25 vs NCD scorer comparison)
 
-Runs 54 test prompts against a fixed 18-way corpus (all softwaredev ways with BM25 semantic matching). Compares BM25 binary against gzip NCD baseline. Reports TP/FP/TN/FN for each scorer.
+Runs 70 test prompts against a fixed 20-way corpus (all softwaredev ways with BM25 semantic matching). Compares BM25 binary against gzip NCD baseline. Reports TP/FP/TN/FN for each scorer. Includes co-activation fixtures that validate multi-way triggering.
 
 ```bash
 tests/way-match/run-tests.sh fixture --verbose
@@ -23,13 +23,13 @@ bash tools/way-match/test-harness.sh --verbose
 
 Options: `--bm25-only`, `--ncd-only`, `--verbose`
 
-**What it covers**: Scorer accuracy, false positive rate, head-to-head comparison. Tests direct vocabulary matches, synonym/paraphrase variants, and negative controls.
+**What it covers**: Scorer accuracy, false positive rate, head-to-head comparison. Tests direct vocabulary matches, synonym/paraphrase variants, negative controls, and co-activation (multi-way expected sets).
 
-**Current baseline**: BM25 48/54, 0 FP.
+**Current baseline**: BM25 63/70, 0 FP. Co-activation: 6/6 FULL.
 
 ### 2. Integration Tests (real way files)
 
-Scores 31 test prompts against actual `way.md` files extracted from the live ways directory. Tests the real frontmatter extraction pipeline.
+Scores 34 test prompts (including 3 co-activation) against actual `way.md` files extracted from the live ways directory. Tests the real frontmatter extraction pipeline.
 
 ```bash
 tests/way-match/run-tests.sh integration
@@ -39,7 +39,7 @@ bash tools/way-match/test-integration.sh
 
 **What it covers**: End-to-end scoring with real way vocabulary, multi-way discrimination (does the right way win?), threshold behavior with actual threshold values.
 
-**Current baseline**: BM25 27/31 (0 FP), NCD 15/31 (3 FP).
+**Current baseline**: BM25 28/34 (0 FP), NCD 16/34 (3 FP).
 
 ### 3. Activation Test (live agent + subagent)
 

@@ -94,6 +94,10 @@ TEST_CASES=(
   "softwaredev-code-security|are our API keys exposed anywhere"
   "softwaredev-architecture-design|should we use a monolith or microservices architecture"
   "softwaredev-environment-config|the database connection string needs updating"
+  # Co-activation cases — comma-separated expected ways
+  "softwaredev-environment-debugging,softwaredev-code-errors|debug the unhandled exception and add proper error handling"
+  "softwaredev-environment-deps,softwaredev-code-security|audit our dependencies for security vulnerabilities"
+  "softwaredev-architecture-design,softwaredev-delivery-migrations|design the database schema for the new microservice"
 )
 
 # --- Run tests ---
@@ -136,6 +140,11 @@ for test_case in "${TEST_CASES[@]}"; do
     fi
   done
 
+  # Parse expected: comma-separated for co-activation (e.g., "way-a,way-b")
+  IFS=',' read -ra expected_list <<< "$expected"
+  is_coact=false
+  [[ ${#expected_list[@]} -gt 1 ]] && is_coact=true
+
   # Evaluate BM25
   bm25_ok=false
   if [[ "$expected" == "NONE" ]]; then
@@ -145,11 +154,15 @@ for test_case in "${TEST_CASES[@]}"; do
       bm25_fp=$((bm25_fp + 1))
     fi
   else
-    found=false
-    for m in "${bm25_matches[@]}"; do
-      [[ "$m" == "$expected" ]] && found=true
+    all_found=true
+    for exp in "${expected_list[@]}"; do
+      found=false
+      for m in "${bm25_matches[@]}"; do
+        [[ "$m" == "$exp" ]] && found=true && break
+      done
+      [[ "$found" == false ]] && all_found=false
     done
-    if [[ "$found" == true ]]; then
+    if [[ "$all_found" == true ]]; then
       bm25_tp=$((bm25_tp + 1)); bm25_ok=true
     else
       bm25_fn=$((bm25_fn + 1))
@@ -165,11 +178,15 @@ for test_case in "${TEST_CASES[@]}"; do
       ncd_fp=$((ncd_fp + 1))
     fi
   else
-    found=false
-    for m in "${ncd_matches[@]}"; do
-      [[ "$m" == "$expected" ]] && found=true
+    all_found=true
+    for exp in "${expected_list[@]}"; do
+      found=false
+      for m in "${ncd_matches[@]}"; do
+        [[ "$m" == "$exp" ]] && found=true && break
+      done
+      [[ "$found" == false ]] && all_found=false
     done
-    if [[ "$found" == true ]]; then
+    if [[ "$all_found" == true ]]; then
       ncd_tp=$((ncd_tp + 1)); ncd_ok=true
     else
       ncd_fn=$((ncd_fn + 1))
@@ -193,6 +210,8 @@ for test_case in "${TEST_CASES[@]}"; do
 
   if [[ "$expected" == "NONE" ]]; then
     printf "expect=NONE "
+  elif $is_coact; then
+    printf "expect=[%s] " "$(echo "$expected" | sed 's/softwaredev-//g')"
   else
     printf "expect=%-28s " "$(echo "$expected" | sed 's/softwaredev-//')"
   fi

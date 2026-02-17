@@ -52,3 +52,19 @@
 {"prompt": "what time zone is Tokyo in", "expected": null, "match": false, "category": "negative"}
 {"prompt": "summarize this document for me", "expected": null, "match": false, "category": "negative"}
 {"prompt": "translate this paragraph to Spanish", "expected": null, "match": false, "category": "negative"}
+{"prompt": "create a migration to alter the users table and add an index on email", "expected": ["softwaredev-delivery-migrations", "softwaredev-delivery-patches"], "match": true, "category": "coactivation", "note": "delivery domain overlap: migrations schema + patches diff"}
+{"prompt": "write tests to verify the exception handling works correctly", "expected": ["softwaredev-code-testing", "softwaredev-code-errors"], "match": true, "category": "coactivation", "note": "testing verify + errors exception handling"}
+{"prompt": "audit our dependencies for security vulnerabilities", "expected": ["softwaredev-environment-deps", "softwaredev-code-security"], "match": true, "category": "coactivation", "note": "shared vulnerability and audit terms"}
+{"prompt": "debug the unhandled exception and add proper error handling", "expected": ["softwaredev-environment-debugging", "softwaredev-code-errors"], "match": true, "category": "coactivation", "note": "debugging investigate + errors exception handling"}
+{"prompt": "design the database schema for the new microservice", "expected": ["softwaredev-architecture-design", "softwaredev-delivery-migrations"], "match": true, "category": "coactivation", "note": "shared schema/database terms across architecture and delivery"}
+{"prompt": "refactor this module to reduce coupling and improve cohesion", "expected": ["softwaredev-code-quality", "softwaredev-architecture-design"], "match": true, "category": "coactivation", "note": "shared coupling/cohesion between quality metrics and design patterns"}
+{"prompt": "perform a STRIDE analysis on the authentication flow", "expected": "softwaredev-architecture-threat-modeling", "match": true, "category": "direct"}
+{"prompt": "document the trust boundaries between services", "expected": "softwaredev-architecture-threat-modeling", "match": true, "category": "direct"}
+{"prompt": "update the risk register with the new attack surface", "expected": "softwaredev-architecture-threat-modeling", "match": true, "category": "direct"}
+{"prompt": "establish coding standards for the team", "expected": "softwaredev-docs-standards", "match": true, "category": "direct"}
+{"prompt": "write a dependency policy with evaluation guidelines", "expected": "softwaredev-docs-standards", "match": true, "category": "direct"}
+{"prompt": "define accessibility guidelines for the frontend", "expected": "softwaredev-docs-standards", "match": true, "category": "direct"}
+{"prompt": "write an RFC for the new caching architecture", "expected": "softwaredev-architecture-design", "match": true, "category": "direct", "note": "RFC vocabulary expansion"}
+{"prompt": "sketch out a proposal for the event-driven refactoring", "expected": "softwaredev-architecture-design", "match": true, "category": "synonym", "note": "design way RFC/proposal expansion"}
+{"prompt": "what are the risks of going to the beach today", "expected": null, "match": false, "category": "negative", "note": "risk is in threat-modeling but context is non-technical"}
+{"prompt": "follow the standard operating procedure for checkout", "expected": null, "match": false, "category": "negative", "note": "standard is in standards way but context is non-technical"}

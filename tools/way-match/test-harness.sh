@@ -24,7 +24,7 @@ WAY_DESC[softwaredev-docs-api]="designing REST APIs, HTTP endpoints, API version
 WAY_VOCAB[softwaredev-docs-api]="endpoint api rest route http status pagination versioning graphql request response header payload crud webhook"
 WAY_THRESH[softwaredev-docs-api]="2.0"
 
-WAY_DESC[softwaredev-environment-debugging]="debugging code issues, troubleshooting errors, investigating broken behavior, fixing bugs"
+WAY_DESC[softwaredev-environment-debugging]="debugging code issues, troubleshooting failures, investigating broken behavior, fixing bugs"
 WAY_VOCAB[softwaredev-environment-debugging]="debug breakpoint stacktrace investigate troubleshoot regression bisect crash error fail bug log trace exception segfault hang timeout"
 WAY_THRESH[softwaredev-environment-debugging]="2.0"
 
@@ -33,7 +33,7 @@ WAY_VOCAB[softwaredev-code-security]="authentication secrets password credential
 WAY_THRESH[softwaredev-code-security]="2.0"
 
 WAY_DESC[softwaredev-architecture-design]="software system design architecture patterns database schema component modeling"
-WAY_VOCAB[softwaredev-architecture-design]="architecture pattern database schema modeling interface component modules factory observer strategy monolith microservice domain layer coupling cohesion abstraction singleton"
+WAY_VOCAB[softwaredev-architecture-design]="architecture pattern database schema modeling interface component modules factory observer strategy monolith microservice domain layer coupling cohesion abstraction singleton proposal rfc sketch deliberation whiteboard"
 WAY_THRESH[softwaredev-architecture-design]="2.0"
 
 WAY_DESC[softwaredev-environment-config]="application configuration, environment variables, dotenv files, config file management"
@@ -88,7 +88,15 @@ WAY_DESC[softwaredev-docs]="README authoring, docstrings, technical prose, Merma
 WAY_VOCAB[softwaredev-docs]="readme docstring technical writing mermaid diagram flowchart sequence onboarding"
 WAY_THRESH[softwaredev-docs]="2.0"
 
-WAY_IDS=(softwaredev-code-testing softwaredev-docs-api softwaredev-environment-debugging softwaredev-code-security softwaredev-architecture-design softwaredev-environment-config softwaredev-architecture-adr-context softwaredev-delivery-commits softwaredev-delivery-github softwaredev-delivery-patches softwaredev-delivery-release softwaredev-delivery-migrations softwaredev-code-errors softwaredev-code-quality softwaredev-code-performance softwaredev-environment-deps softwaredev-environment-ssh softwaredev-docs)
+WAY_DESC[softwaredev-architecture-threat-modeling]="threat modeling, STRIDE analysis, trust boundaries, attack surface assessment, security design review"
+WAY_VOCAB[softwaredev-architecture-threat-modeling]="threat model stride attack surface trust boundary mitigation adversary dread spoofing tampering repudiation elevation"
+WAY_THRESH[softwaredev-architecture-threat-modeling]="2.0"
+
+WAY_DESC[softwaredev-docs-standards]="establishing team norms, coding conventions, testing philosophy, dependency policy, accessibility requirements"
+WAY_VOCAB[softwaredev-docs-standards]="convention norm guideline accessibility style guide linting rule agreement philosophy"
+WAY_THRESH[softwaredev-docs-standards]="2.0"
+
+WAY_IDS=(softwaredev-code-testing softwaredev-docs-api softwaredev-environment-debugging softwaredev-code-security softwaredev-architecture-design softwaredev-environment-config softwaredev-architecture-adr-context softwaredev-delivery-commits softwaredev-delivery-github softwaredev-delivery-patches softwaredev-delivery-release softwaredev-delivery-migrations softwaredev-code-errors softwaredev-code-quality softwaredev-code-performance softwaredev-environment-deps softwaredev-environment-ssh softwaredev-docs softwaredev-architecture-threat-modeling softwaredev-docs-standards)
 
 # --- Options ---
 RUN_NCD=true
@@ -117,6 +125,7 @@ fi
 ncd_tp=0 ncd_fp=0 ncd_tn=0 ncd_fn=0
 bm25_tp=0 bm25_fp=0 bm25_tn=0 bm25_fn=0
 bm25_wins=0 ncd_wins=0 ties=0
+coact_full=0 coact_partial=0 coact_miss=0 coact_total=0
 total=0
 
 # --- NCD scorer ---
@@ -214,71 +223,109 @@ echo ""
 
 while IFS= read -r line; do
   prompt=$(echo "$line" | jq -r '.prompt')
-  expected=$(echo "$line" | jq -r '.expected // "none"')
-  should_match=$(echo "$line" | jq -r '.match')
   category=$(echo "$line" | jq -r '.category')
   note=$(echo "$line" | jq -r '.note // ""')
 
+  # Parse expected: null → negative, string → single, array → co-activation
+  expected_type=$(echo "$line" | jq -r '.expected | type')
+  expected_list=()
+  is_negative=false
+  is_coact=false
+
+  case "$expected_type" in
+    null)   is_negative=true ;;
+    string) expected_list=("$(echo "$line" | jq -r '.expected')") ;;
+    array)  mapfile -t expected_list < <(echo "$line" | jq -r '.expected[]')
+            [[ ${#expected_list[@]} -gt 1 ]] && is_coact=true ;;
+  esac
+
   total=$((total + 1))
+  $is_coact && coact_total=$((coact_total + 1))
 
   ncd_result="skip"
   bm25_result="skip"
 
-  # NCD scoring
-  if [[ "$RUN_NCD" == true ]]; then
-    if [[ "$expected" == "none" ]]; then
+  # --- Scorer evaluation function ---
+  # Usage: eval_scorer <scorer_name> <prompt> <expected_list...>
+  # Sets: ${scorer}_result variable
+  eval_scorer() {
+    local scorer="$1" prompt="$2"
+    shift 2
+    local exp_list=("$@")
+    local result=""
+
+    if $is_negative; then
       # Negative test: check no way matches
-      any_match=false
+      local any_match=false
       for way_id in "${WAY_IDS[@]}"; do
-        if ncd_matches_way "$prompt" "$way_id"; then
+        if "${scorer}_matches_way" "$prompt" "$way_id"; then
           any_match=true
-          ncd_result="FP:$way_id"
+          result="FP:$way_id"
           break
         fi
       done
       if [[ "$any_match" == false ]]; then
-        ncd_result="TN"
-        ncd_tn=$((ncd_tn + 1))
+        result="TN"
+      fi
+    elif $is_coact; then
+      # Co-activation: check ALL expected ways match
+      local matched=0
+      local missed=""
+      for exp in "${exp_list[@]}"; do
+        if "${scorer}_matches_way" "$prompt" "$exp"; then
+          matched=$((matched + 1))
+        else
+          missed+="${exp##*-} "
+        fi
+      done
+      if [[ $matched -eq ${#exp_list[@]} ]]; then
+        result="FULL"
+      elif [[ $matched -gt 0 ]]; then
+        result="PARTIAL:${missed% }"
       else
-        ncd_fp=$((ncd_fp + 1))
+        result="MISS"
       fi
     else
-      # Positive test: check expected way matches
-      if ncd_matches_way "$prompt" "$expected"; then
-        ncd_result="TP"
-        ncd_tp=$((ncd_tp + 1))
+      # Single-expected: check the one expected way matches
+      if "${scorer}_matches_way" "$prompt" "${exp_list[0]}"; then
+        result="TP"
       else
-        ncd_result="FN"
-        ncd_fn=$((ncd_fn + 1))
+        result="FN"
       fi
     fi
+
+    echo "$result"
+  }
+
+  # NCD scoring
+  if [[ "$RUN_NCD" == true ]]; then
+    ncd_result=$(eval_scorer "ncd" "$prompt" "${expected_list[@]+"${expected_list[@]}"}")
+    case "$ncd_result" in
+      TP|FULL) ncd_tp=$((ncd_tp + 1)) ;;
+      TN)      ncd_tn=$((ncd_tn + 1)) ;;
+      FN|MISS) ncd_fn=$((ncd_fn + 1)) ;;
+      FP:*)      ncd_fp=$((ncd_fp + 1)) ;;
+      PARTIAL:*) ncd_fn=$((ncd_fn + 1)) ;;
+    esac
   fi
 
   # BM25 scoring
   if [[ "$RUN_BM25" == true ]]; then
-    if [[ "$expected" == "none" ]]; then
-      any_match=false
-      for way_id in "${WAY_IDS[@]}"; do
-        if bm25_matches_way "$prompt" "$way_id"; then
-          any_match=true
-          bm25_result="FP:$way_id"
-          break
-        fi
-      done
-      if [[ "$any_match" == false ]]; then
-        bm25_result="TN"
-        bm25_tn=$((bm25_tn + 1))
-      else
-        bm25_fp=$((bm25_fp + 1))
-      fi
-    else
-      if bm25_matches_way "$prompt" "$expected"; then
-        bm25_result="TP"
-        bm25_tp=$((bm25_tp + 1))
-      else
-        bm25_result="FN"
-        bm25_fn=$((bm25_fn + 1))
-      fi
+    bm25_result=$(eval_scorer "bm25" "$prompt" "${expected_list[@]+"${expected_list[@]}"}")
+    case "$bm25_result" in
+      TP|FULL) bm25_tp=$((bm25_tp + 1)) ;;
+      TN)      bm25_tn=$((bm25_tn + 1)) ;;
+      FN|MISS) bm25_fn=$((bm25_fn + 1)) ;;
+      FP:*)      bm25_fp=$((bm25_fp + 1)) ;;
+      PARTIAL:*) bm25_fn=$((bm25_fn + 1)) ;;
+    esac
+    # Track co-activation detail for BM25
+    if $is_coact; then
+      case "$bm25_result" in
+        FULL)      coact_full=$((coact_full + 1)) ;;
+        PARTIAL:*) coact_partial=$((coact_partial + 1)) ;;
+        MISS)      coact_miss=$((coact_miss + 1)) ;;
+      esac
     fi
   fi
 
@@ -286,8 +333,8 @@ while IFS= read -r line; do
   if [[ "$RUN_NCD" == true ]] && [[ "$RUN_BM25" == true ]]; then
     ncd_correct=false
     bm25_correct=false
-    [[ "$ncd_result" == "TP" || "$ncd_result" == "TN" ]] && ncd_correct=true
-    [[ "$bm25_result" == "TP" || "$bm25_result" == "TN" ]] && bm25_correct=true
+    [[ "$ncd_result" == "TP" || "$ncd_result" == "TN" || "$ncd_result" == "FULL" ]] && ncd_correct=true
+    [[ "$bm25_result" == "TP" || "$bm25_result" == "TN" || "$bm25_result" == "FULL" ]] && bm25_correct=true
 
     if [[ "$bm25_correct" == true ]] && [[ "$ncd_correct" == false ]]; then
       bm25_wins=$((bm25_wins + 1))
@@ -298,26 +345,31 @@ while IFS= read -r line; do
     fi
   fi
 
-  # Output
-  if [[ "$VERBOSE" == true ]] || [[ "$ncd_result" == "FN" ]] || [[ "$ncd_result" == FP:* ]] || [[ "$bm25_result" == "FN" ]] || [[ "$bm25_result" == FP:* ]]; then
+  # Output — show failures always, everything in verbose
+  show=false
+  if [[ "$VERBOSE" == true ]]; then show=true; fi
+  case "$ncd_result" in FN|MISS|FP:*|PARTIAL:*) show=true ;; esac
+  case "$bm25_result" in FN|MISS|FP:*|PARTIAL:*) show=true ;; esac
+
+  if $show; then
     printf "%-3s " "$total"
-    printf "[%-7s] " "$category"
+    printf "[%-12s] " "$category"
 
     # NCD result
     if [[ "$RUN_NCD" == true ]]; then
       case "$ncd_result" in
-        TP|TN) printf "${GREEN}NCD:%-6s${NC} " "$ncd_result" ;;
-        FN)    printf "${RED}NCD:%-6s${NC} " "$ncd_result" ;;
-        FP:*)  printf "${YELLOW}NCD:%-6s${NC} " "$ncd_result" ;;
+        TP|TN|FULL)       printf "${GREEN}NCD:%-10s${NC} " "$ncd_result" ;;
+        FN|MISS)           printf "${RED}NCD:%-10s${NC} " "$ncd_result" ;;
+        FP:*|PARTIAL:*)    printf "${YELLOW}NCD:%-10s${NC} " "$ncd_result" ;;
       esac
     fi
 
     # BM25 result
     if [[ "$RUN_BM25" == true ]]; then
       case "$bm25_result" in
-        TP|TN) printf "${GREEN}BM25:%-6s${NC} " "$bm25_result" ;;
-        FN)    printf "${RED}BM25:%-6s${NC} " "$bm25_result" ;;
-        FP:*)  printf "${YELLOW}BM25:%-6s${NC} " "$bm25_result" ;;
+        TP|TN|FULL)       printf "${GREEN}BM25:%-10s${NC} " "$bm25_result" ;;
+        FN|MISS)           printf "${RED}BM25:%-10s${NC} " "$bm25_result" ;;
+        FP:*|PARTIAL:*)    printf "${YELLOW}BM25:%-10s${NC} " "$bm25_result" ;;
       esac
     fi
 
@@ -348,4 +400,9 @@ fi
 if [[ "$RUN_NCD" == true ]] && [[ "$RUN_BM25" == true ]]; then
   echo ""
   echo "Head-to-head: BM25 wins=$bm25_wins  NCD wins=$ncd_wins  ties=$ties"
+fi
+
+if [[ $coact_total -gt 0 ]]; then
+  echo ""
+  echo "Co-activation ($coact_total tests):  full=$coact_full  partial=$coact_partial  miss=$coact_miss"
 fi
