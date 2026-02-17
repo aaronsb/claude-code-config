@@ -67,7 +67,7 @@ Good vocabulary terms are domain-specific words that **users would say** when as
 - **Skip**: Generic terms that don't discriminate — `code`, `use`, `make`, `change`
 - **Keep unused terms**: Vocabulary terms that don't appear in the way body are often intentional — they catch user prompts, not body text
 
-Use `/test-way suggest <way>` to find gaps and `/test-way score-all "prompt"` to check for cross-way false positives.
+Use `/ways-tests suggest <way>` to find gaps and `/ways-tests score-all "prompt"` to check for cross-way false positives.
 
 ### Sparsity over coverage
 
@@ -88,6 +88,54 @@ Ways covering broad concepts where keyword matching would be either too narrow o
 - `knowledge/optimization` (2.0) — vocabulary tuning, way health analysis
 
 All use threshold 2.0. The test harness maintains 0 false positives as a hard constraint.
+
+## What This Actually Is
+
+The vocabulary tuning workflow — choosing terms, measuring precision, eliminating false positives, running test fixtures — has a name. Several names, in fact, depending on which decade of research you're reading.
+
+### The lineage
+
+The matching system is a **text retrieval** system. The user's prompt is the query; the ways are the document collection; the BM25 scorer ranks documents by relevance. This is the core problem of information retrieval, studied continuously since the 1950s.
+
+| What we do | Established term | Field |
+|------------|-----------------|-------|
+| Choosing which terms to include/exclude per way | Feature selection / controlled vocabulary design | ML / library science |
+| Tuning vocabularies so ways occupy distinct scoring regions | Discriminative feature engineering | ML |
+| Removing terms like "risk" or "standard" after false positive detection | Precision optimization with hard constraint | IR evaluation |
+| The 0 FP constraint with tolerable FN | High-precision classifier tuning | Classification theory |
+| TP/FP/TN/FN tracking per scorer | Confusion matrix evaluation | Statistics (1940s+) |
+| Co-activation fixtures with array expected values | Multi-label classification evaluation | ML |
+| The test fixtures file with known-good judgments | Test collection / qrels | IR (Cranfield, 1960s) |
+
+The test harness is essentially the **Cranfield evaluation paradigm**: a fixed test collection (`test-fixtures.jsonl`) + relevance judgments (expected values) + evaluation metrics (TP/FP/TN/FN). Cyril Cleverdon developed this at Cranfield University in the early 1960s. TREC (Text REtrieval Conference) has been running standardized evaluations on the same model since 1992. Our harness is a miniature TREC track.
+
+BM25 itself — Okapi BM25 — comes from Robertson and Sparck Jones (1976), refined through the 1990s at City University London's Okapi system. It remains competitive with neural approaches for precision-critical retrieval at small scale.
+
+### Why this matters
+
+The broader Claude Code ecosystem has developed its own vocabulary for agent steering: [Ralph Wiggum loops](https://github.com/ghuntley/how-to-ralph-wiggum), CLAUDE.md "constitutions," PROMPT.md steering files, AGENTS.md orchestration, "vibe coding." These are practical techniques — legitimate and useful — but the informal naming can obscure what's actually happening underneath.
+
+What's happening underneath is information retrieval. The vocabulary tuning loop is **relevance engineering**: the iterative process of adjusting document representations to improve retrieval quality against a test collection with known-good judgments. The matching system is a **ranked retrieval** system with a precision-first objective. The sparsity principle is a restatement of **discriminative power** — terms that distinguish one document from others contribute more than terms that appear everywhere (which is exactly what BM25's IDF component measures).
+
+This isn't to diminish the newer work. Ralph Wiggum loops are a genuine contribution to autonomous agent workflows. CLAUDE.md files are effective cognitive scaffolds (see [rationale.md](rationale.md) for the situated cognition framing). But the matching and evaluation layer of this system draws from a 60-year research tradition, and knowing that tradition helps when you're stuck:
+
+- If ways are cross-firing, you have a **discrimination** problem — read about IDF weighting and feature selection
+- If a way isn't catching enough prompts, you have a **recall** problem — but expanding vocabulary trades recall for precision, so measure both
+- If you're unsure whether your test fixtures are good enough, look at TREC's methodology for building test collections
+- If the manual tuning feels unsustainable, the next step is **Learning to Rank** (LambdaMART et al.) — but at 20 ways and 70 test cases, hand-tuning is arguably more appropriate than ML
+
+### Scale-appropriate methods
+
+At our scale — ~20 ways, ~70 test fixtures — the manual approach isn't a compromise. It's the right tool. Learning to Rank, dense retrieval, and neural re-ranking shine at thousands of queries against millions of documents. We'd overfit immediately. What we built is closer to a hand-crafted decision tree, which is exactly what works when the domain is small, well-understood, and the humans have strong intuition about the categories.
+
+The field term for where we sit: **manual relevance engineering** with **Cranfield-style evaluation**. If it was good enough for the researchers who built the foundations of web search, it's good enough for 20 ways.
+
+### References
+
+- Cleverdon, C. W. (1967). The Cranfield tests on index language devices. *Aslib Proceedings*, 19(6), 173-194.
+- Robertson, S. E., & Sparck Jones, K. (1976). Relevance weighting of search terms. *Journal of the American Society for Information Science*, 27(3), 129-146.
+- Robertson, S. E., Walker, S., et al. (1995). Okapi at TREC-3. *Proceedings of TREC-3*, NIST.
+- Voorhees, E. M. (2002). The philosophy of information retrieval evaluation. *CLEF 2001*, LNCS 2406, 355-370.
 
 ## State Triggers
 

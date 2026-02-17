@@ -192,7 +192,7 @@ After creating or tuning a way, verify it matches what you expect — and doesn'
 
 ```bash
 # Quick check: score a prompt against all semantic ways
-/test-way "write some unit tests for this module"
+/ways-tests "write some unit tests for this module"
 
 # Automated: BM25 vs NCD against synthetic corpus (32 tests)
 tests/way-match/run-tests.sh fixture --verbose

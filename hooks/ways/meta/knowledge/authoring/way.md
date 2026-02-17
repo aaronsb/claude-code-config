@@ -100,11 +100,11 @@ For state transitions and process flows, prefer Cypher-style notation over ASCII
 
 ## Testing Your Way
 
-Use `/test-way` to validate matching quality:
-- `/test-way score <way> "sample prompt"` — test a specific way
-- `/test-way score-all "sample prompt"` — rank all ways against a prompt
-- `/test-way suggest <way>` — analyze vocabulary gaps
-- `/test-way lint <way>` — validate frontmatter
+Use `/ways-tests` to validate matching quality:
+- `/ways-tests score <way> "sample prompt"` — test a specific way
+- `/ways-tests score-all "sample prompt"` — rank all ways against a prompt
+- `/ways-tests suggest <way>` — analyze vocabulary gaps
+- `/ways-tests lint <way>` — validate frontmatter
 
 For vocabulary tuning workflows, see the optimization sub-way (triggers on vocabulary/optimization discussion).
 

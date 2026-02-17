@@ -47,17 +47,17 @@ This isn't sentimental. It's functional. An agent that understands "we do this b
 
 ### Testing a way
 
-Use `/test-way` to validate matching quality without trial-and-error:
+Use `/ways-tests` to validate matching quality without trial-and-error:
 
 ```
-/test-way score <way> "sample prompt"       # test one way against a prompt
-/test-way score-all "sample prompt"         # rank all ways — check for false positives
-/test-way suggest <way>                     # find vocabulary gaps
-/test-way suggest --all                     # survey all ways at once
-/test-way lint <way>                        # validate frontmatter
+/ways-tests score <way> "sample prompt"       # test one way against a prompt
+/ways-tests score-all "sample prompt"         # rank all ways — check for false positives
+/ways-tests suggest <way>                     # find vocabulary gaps
+/ways-tests suggest --all                     # survey all ways at once
+/ways-tests lint <way>                        # validate frontmatter
 ```
 
-For semantic ways, `/test-way suggest` analyzes the way body text and recommends vocabulary additions. Not all suggestions should be added — body terms like "code" or "use" don't discriminate between ways. Add terms that are *domain-specific* words users would say.
+For semantic ways, `/ways-tests suggest` analyzes the way body text and recommends vocabulary additions. Not all suggestions should be added — body terms like "code" or "use" don't discriminate between ways. Add terms that are *domain-specific* words users would say.
 
 To verify the live system, include the way's keywords in a prompt and check that it fires (appears in system-reminder). Use `/ways` to see which ways have fired in the current session.
 
@@ -79,7 +79,7 @@ If you just ask "what are ways?" you get the 60-line overview. The authoring spe
 
 **Macros for live state**: A sub-way with `macro: prepend` can run a script that injects current state. The optimization way does this — its macro runs `way-match suggest` across all semantic ways and includes the results. The agent gets both the workflow guidance and the data it needs, without constructing any ad-hoc code.
 
-This pattern is self-improving: the tools that analyze the system (`way-match suggest`, `/test-way`) are themselves documented in ways that fire when you use them. You optimize ways by talking about optimizing ways.
+This pattern is self-improving: the tools that analyze the system (`way-match suggest`, `/ways-tests`) are themselves documented in ways that fire when you use them. You optimize ways by talking about optimizing ways.
 
 ## Project-Local Ways
 

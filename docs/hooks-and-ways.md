@@ -420,8 +420,8 @@ Three test layers verify the matching and injection pipeline. See [tests/README.
 | **Integration** | `bash tools/way-match/test-integration.sh` | Real way files, frontmatter extraction, multi-way discrimination |
 | **Activation** | `read and run the activation test at tests/way-activation-test.md` | Live hook pipeline: regex, BM25, negative control, subagent injection |
 
-The `/test-way` skill provides ad-hoc scoring for vocabulary tuning:
+The `/ways-tests` skill provides ad-hoc scoring for vocabulary tuning:
 
 ```
-/test-way "write some unit tests for this module"
+/ways-tests "write some unit tests for this module"
 ```

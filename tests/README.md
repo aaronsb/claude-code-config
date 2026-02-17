@@ -69,10 +69,10 @@ Takes about 5 minutes. **Current baseline**: 8/8 PASS (steps 1-8).
 
 ### Ad-Hoc Vocabulary Testing
 
-The `/test-way` skill scores a prompt against all semantic ways and reports BM25 scores. Use it during vocabulary tuning to check discrimination between ways.
+The `/ways-tests` skill scores a prompt against all semantic ways and reports BM25 scores. Use it during vocabulary tuning to check discrimination between ways.
 
 ```
-/test-way "write some unit tests for this module"
+/ways-tests "write some unit tests for this module"
 ```
 
 ## Documentation Tests
@@ -107,9 +107,9 @@ bash governance/governance.sh --lint         # full governance lint
 | Scenario | Test |
 |----------|------|
 | Changed `way-match.c` or rebuilt binary | Fixture tests + integration tests |
-| Changed a way's vocabulary or threshold | Integration tests + `/test-way` |
+| Changed a way's vocabulary or threshold | Integration tests + `/ways-tests` |
 | Changed hook scripts (check-*.sh, inject-*.sh, match-way.sh) | Activation test |
-| Added a new way | Integration tests + `/test-way` + activation test |
+| Added a new way | Integration tests + `/ways-tests` + activation test |
 | Restructured way directories | All three test layers + symlink/path verification |
 | Added semantic matching to a way | Fixture tests + integration tests + activation test (step 4) |
 | Renamed or moved documentation files | Doc-graph |

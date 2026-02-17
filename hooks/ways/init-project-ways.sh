@@ -73,8 +73,8 @@ Matching is additive — a way can have both pattern and semantic triggers.
 
 - Keep guidance compact and actionable
 - Include the *why* — agents apply better judgment when they understand the reason
-- Use `/test-way score <way> "sample prompt"` to verify matching
-- Use `/test-way suggest <way>` to find vocabulary gaps
+- Use `/ways-tests score <way> "sample prompt"` to verify matching
+- Use `/ways-tests suggest <way>` to find vocabulary gaps
 EOF
     echo "Created project ways template: $TEMPLATE"
   fi

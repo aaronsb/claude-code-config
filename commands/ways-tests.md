@@ -1,43 +1,43 @@
 ---
-description: Test way matching scores and suggest vocabulary improvements
+description: Score way matching, analyze vocabulary, and validate frontmatter
 ---
 
-# test-way: Way Authoring Tool
+# ways-tests: Way Matching & Vocabulary Tool
 
 Test how well a way matches sample prompts, or analyze its vocabulary for gaps.
 
 ## Usage
 
-The user invokes `/test-way` with one of these patterns:
+The user invokes `/ways-tests` with one of these patterns:
 
 ### Score mode: test a way against prompts
 ```
-/test-way score <path/to/way.md> "sample prompt here"
-/test-way score security "how do i hash passwords with bcrypt"
+/ways-tests score <path/to/way.md> "sample prompt here"
+/ways-tests score security "how do i hash passwords with bcrypt"
 ```
 
 ### Score all ways: rank all ways against a prompt
 ```
-/test-way score-all "sample prompt here"
+/ways-tests score-all "sample prompt here"
 ```
 
 ### Suggest mode: analyze vocabulary gaps
 ```
-/test-way suggest <path/to/way.md>
-/test-way suggest security
-/test-way suggest --all
+/ways-tests suggest <path/to/way.md>
+/ways-tests suggest security
+/ways-tests suggest --all
 ```
 
 ### Suggest + apply: update vocabulary in-place
 ```
-/test-way suggest <path/to/way.md> --apply
-/test-way suggest --all --apply
+/ways-tests suggest <path/to/way.md> --apply
+/ways-tests suggest --all --apply
 ```
 
 ### Lint mode: validate way frontmatter
 ```
-/test-way lint <path/to/way.md>
-/test-way lint --all
+/ways-tests lint <path/to/way.md>
+/ways-tests lint --all
 ```
 
 ## Implementation
