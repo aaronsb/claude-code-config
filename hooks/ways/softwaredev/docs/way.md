@@ -1,4 +1,7 @@
 ---
+description: README authoring, docstrings, technical prose, Mermaid diagrams, project guides
+vocabulary: readme docstring technical writing mermaid diagram flowchart sequence onboarding
+threshold: 2.0
 pattern: readme|documentation|docs|document.*project|explain.*repo|docstring|mermaid|diagram
 files: README\.md$|docs/.*\.md$
 scope: agent, subagent

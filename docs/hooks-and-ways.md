@@ -368,9 +368,9 @@ macro: append    # macro output after static content
 ```
 
 Macros generate dynamic content. Examples:
-- `softwaredev/adr/macro.sh` - Tri-state detection: no tooling, tooling available, tooling installed
-- `softwaredev/quality/macro.sh` - Scans for long files in the project, outputs priority list
-- `softwaredev/github/macro.sh` - Detects solo vs team project, adjusts PR guidance
+- `softwaredev/architecture/adr/macro.sh` - Tri-state detection: no tooling, tooling available, tooling installed
+- `softwaredev/code/quality/macro.sh` - Scans for long files in the project, outputs priority list
+- `softwaredev/delivery/github/macro.sh` - Detects solo vs team project, adjusts PR guidance
 
 **Security**: Project-local macros only run if the project is listed in `~/.claude/trusted-project-macros`.
 
@@ -385,11 +385,11 @@ flowchart TD
     classDef marker fill:#00695C,stroke:#004D40,color:#fff
     classDef result fill:#2E7D32,stroke:#1B5E20,color:#fff
 
-    T["Trigger fires for softwaredev/github"] --> PL
+    T["Trigger fires for softwaredev/delivery/github"] --> PL
 
-    PL{"$PROJECT/.claude/ways/<br/>softwaredev/github/way.md<br/>exists?"}
+    PL{"$PROJECT/.claude/ways/<br/>softwaredev/delivery/github/way.md<br/>exists?"}
     PL -->|yes| USE_P["Use project-local way"]:::project
-    PL -->|no| GL{"~/.claude/hooks/ways/<br/>softwaredev/github/way.md<br/>exists?"}:::global
+    PL -->|no| GL{"~/.claude/hooks/ways/<br/>softwaredev/delivery/github/way.md<br/>exists?"}:::global
     GL -->|yes| USE_G["Use global way"]:::global
     GL -->|no| SKIP["No output"]
 

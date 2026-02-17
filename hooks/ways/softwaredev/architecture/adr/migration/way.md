@@ -42,13 +42,13 @@ mkdir -p docs/architecture docs/scripts
 
 2. Create `docs/architecture/adr.yaml` from the template:
 ```bash
-cp hooks/ways/softwaredev/adr/adr.yaml.template docs/architecture/adr.yaml
+cp hooks/ways/softwaredev/architecture/adr/adr.yaml.template docs/architecture/adr.yaml
 # Edit: set project_name, define domains for your project
 ```
 
 3. Symlink or copy the ADR tool:
 ```bash
-ln -s ../../hooks/ways/softwaredev/adr/adr-tool docs/scripts/adr
+ln -s ../../hooks/ways/softwaredev/architecture/adr/adr-tool docs/scripts/adr
 chmod +x docs/scripts/adr
 ```
 
@@ -162,7 +162,7 @@ viewer: cat {file}               # Command for `adr view` ({file} is placeholder
 - Don't overlap ranges — the tool assigns the next available number within a domain's range
 - `folder` can be a string or list (for domains spanning multiple directories)
 
-**A template is available** at `hooks/ways/softwaredev/adr/adr.yaml.template`.
+**A template is available** at `hooks/ways/softwaredev/architecture/adr/adr.yaml.template`.
 
 ## Validation
 

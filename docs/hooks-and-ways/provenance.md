@@ -131,9 +131,9 @@ In an enterprise, policy documents and way implementations typically live in sep
 ```
 compliance-repo/              your-claude-config/
 ├── docs/architecture/        ├── hooks/ways/
-│   ├── ADR-150.md           │   ├── softwaredev/commits/way.md
+│   ├── ADR-150.md           │   ├── softwaredev/delivery/commits/way.md
 │   └── ADR-200.md           │   │   (provenance: → ADR-150)
-├── audit-ledger.json        │   └── softwaredev/security/way.md
+├── audit-ledger.json        │   └── softwaredev/code/security/way.md
 └── controls.xlsx            └── provenance-manifest.json
 ```
 

@@ -1,4 +1,7 @@
 ---
+description: dependency management, package installation, library evaluation, security auditing of third-party code
+vocabulary: dependency package library install upgrade outdated audit vulnerability license bundle npm pip cargo
+threshold: 2.0
 pattern: dependenc|package|library|npm.?install|pip.?install|upgrade.*version
 commands: npm\ install|yarn\ add|pip\ install|cargo\ add|go\ get
 scope: agent, subagent

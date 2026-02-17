@@ -16,35 +16,79 @@ BM25_BINARY="$SCRIPT_DIR/../../bin/way-match"
 
 # Way corpus: id|description|vocabulary|threshold
 declare -A WAY_DESC WAY_VOCAB WAY_THRESH
-WAY_DESC[softwaredev-testing]="writing unit tests, test coverage, mocking dependencies, test-driven development"
-WAY_VOCAB[softwaredev-testing]="unittest coverage mock tdd assertion jest pytest rspec testcase spec fixture describe expect verify"
-WAY_THRESH[softwaredev-testing]="2.0"
+WAY_DESC[softwaredev-code-testing]="writing unit tests, test coverage, mocking dependencies, test-driven development"
+WAY_VOCAB[softwaredev-code-testing]="unittest coverage mock tdd assertion jest pytest rspec testcase spec fixture describe expect verify"
+WAY_THRESH[softwaredev-code-testing]="2.0"
 
-WAY_DESC[softwaredev-api]="designing REST APIs, HTTP endpoints, API versioning, request response structure"
-WAY_VOCAB[softwaredev-api]="endpoint api rest route http status pagination versioning graphql request response header payload crud webhook"
-WAY_THRESH[softwaredev-api]="2.0"
+WAY_DESC[softwaredev-docs-api]="designing REST APIs, HTTP endpoints, API versioning, request response structure"
+WAY_VOCAB[softwaredev-docs-api]="endpoint api rest route http status pagination versioning graphql request response header payload crud webhook"
+WAY_THRESH[softwaredev-docs-api]="2.0"
 
-WAY_DESC[softwaredev-debugging]="debugging code issues, troubleshooting errors, investigating broken behavior, fixing bugs"
-WAY_VOCAB[softwaredev-debugging]="debug breakpoint stacktrace investigate troubleshoot regression bisect crash error fail bug log trace exception segfault hang timeout"
-WAY_THRESH[softwaredev-debugging]="2.0"
+WAY_DESC[softwaredev-environment-debugging]="debugging code issues, troubleshooting errors, investigating broken behavior, fixing bugs"
+WAY_VOCAB[softwaredev-environment-debugging]="debug breakpoint stacktrace investigate troubleshoot regression bisect crash error fail bug log trace exception segfault hang timeout"
+WAY_THRESH[softwaredev-environment-debugging]="2.0"
 
-WAY_DESC[softwaredev-security]="application security, authentication, secrets management, input validation, vulnerability prevention"
-WAY_VOCAB[softwaredev-security]="authentication secrets password credentials owasp injection xss sql sanitize vulnerability bcrypt hash encrypt token cert ssl tls csrf cors rotate login expose"
-WAY_THRESH[softwaredev-security]="2.0"
+WAY_DESC[softwaredev-code-security]="application security, authentication, secrets management, input validation, vulnerability prevention"
+WAY_VOCAB[softwaredev-code-security]="authentication secrets password credentials owasp injection xss sql sanitize vulnerability bcrypt hash encrypt token cert ssl tls csrf cors rotate login expose"
+WAY_THRESH[softwaredev-code-security]="2.0"
 
-WAY_DESC[softwaredev-design]="software system design architecture patterns database schema component modeling"
-WAY_VOCAB[softwaredev-design]="architecture pattern database schema modeling interface component modules factory observer strategy monolith microservice domain layer coupling cohesion abstraction singleton"
-WAY_THRESH[softwaredev-design]="2.0"
+WAY_DESC[softwaredev-architecture-design]="software system design architecture patterns database schema component modeling"
+WAY_VOCAB[softwaredev-architecture-design]="architecture pattern database schema modeling interface component modules factory observer strategy monolith microservice domain layer coupling cohesion abstraction singleton"
+WAY_THRESH[softwaredev-architecture-design]="2.0"
 
-WAY_DESC[softwaredev-config]="application configuration, environment variables, dotenv files, config file management"
-WAY_VOCAB[softwaredev-config]="dotenv environment configuration envvar config.json config.yaml connection port host url setting variable"
-WAY_THRESH[softwaredev-config]="2.0"
+WAY_DESC[softwaredev-environment-config]="application configuration, environment variables, dotenv files, config file management"
+WAY_VOCAB[softwaredev-environment-config]="dotenv environment configuration envvar config.json config.yaml connection port host url setting variable"
+WAY_THRESH[softwaredev-environment-config]="2.0"
 
-WAY_DESC[softwaredev-adr-context]="planning how to implement a feature, deciding an approach, understanding existing project decisions, starting work on an item, investigating why something was built a certain way"
-WAY_VOCAB[softwaredev-adr-context]="plan approach debate implement build work pick understand investigate why how decision context tradeoff evaluate option consider scope"
-WAY_THRESH[softwaredev-adr-context]="2.0"
+WAY_DESC[softwaredev-architecture-adr-context]="planning how to implement a feature, deciding an approach, understanding existing project decisions, starting work on an item, investigating why something was built a certain way"
+WAY_VOCAB[softwaredev-architecture-adr-context]="plan approach debate implement build work pick understand investigate why how decision context tradeoff evaluate option consider scope"
+WAY_THRESH[softwaredev-architecture-adr-context]="2.0"
 
-WAY_IDS=(softwaredev-testing softwaredev-api softwaredev-debugging softwaredev-security softwaredev-design softwaredev-config softwaredev-adr-context)
+WAY_DESC[softwaredev-delivery-commits]="git commit messages, branch naming, conventional commits, atomic changes"
+WAY_VOCAB[softwaredev-delivery-commits]="commit message branch conventional feat fix refactor scope atomic squash amend stash rebase cherry"
+WAY_THRESH[softwaredev-delivery-commits]="2.0"
+
+WAY_DESC[softwaredev-delivery-github]="GitHub pull requests, issues, code review, CI checks, repository management"
+WAY_VOCAB[softwaredev-delivery-github]="pr pullrequest issue review checks ci label milestone fork repository upstream draft"
+WAY_THRESH[softwaredev-delivery-github]="2.0"
+
+WAY_DESC[softwaredev-delivery-patches]="creating and applying patch files, git diff generation, patch series management"
+WAY_VOCAB[softwaredev-delivery-patches]="patch diff apply hunk unified series format-patch"
+WAY_THRESH[softwaredev-delivery-patches]="2.0"
+
+WAY_DESC[softwaredev-delivery-release]="software releases, changelog generation, version bumping, semantic versioning, tagging"
+WAY_VOCAB[softwaredev-delivery-release]="release changelog version bump semver tag publish ship major minor breaking"
+WAY_THRESH[softwaredev-delivery-release]="2.0"
+
+WAY_DESC[softwaredev-delivery-migrations]="database migrations, schema changes, table alterations, rollback procedures"
+WAY_VOCAB[softwaredev-delivery-migrations]="migration schema alter table column index rollback seed ddl prisma alembic knex flyway"
+WAY_THRESH[softwaredev-delivery-migrations]="2.0"
+
+WAY_DESC[softwaredev-code-errors]="error handling patterns, exception management, try-catch boundaries, error wrapping and propagation"
+WAY_VOCAB[softwaredev-code-errors]="exception handling catch throw boundary wrap rethrow fallback graceful recovery propagate unhandled"
+WAY_THRESH[softwaredev-code-errors]="2.0"
+
+WAY_DESC[softwaredev-code-quality]="code quality, refactoring, SOLID principles, code review standards, technical debt, maintainability"
+WAY_VOCAB[softwaredev-code-quality]="refactor quality solid principle decompose extract method responsibility coupling cohesion maintainability readability"
+WAY_THRESH[softwaredev-code-quality]="2.0"
+
+WAY_DESC[softwaredev-code-performance]="performance optimization, profiling, benchmarking, latency reduction, memory efficiency"
+WAY_VOCAB[softwaredev-code-performance]="optimize profile benchmark latency throughput memory cache bottleneck flamegraph allocation heap"
+WAY_THRESH[softwaredev-code-performance]="2.0"
+
+WAY_DESC[softwaredev-environment-deps]="dependency management, package installation, library evaluation, security auditing of third-party code"
+WAY_VOCAB[softwaredev-environment-deps]="dependency package library install upgrade outdated audit vulnerability license bundle npm pip cargo"
+WAY_THRESH[softwaredev-environment-deps]="2.0"
+
+WAY_DESC[softwaredev-environment-ssh]="SSH remote access, key management, secure file transfer, non-interactive authentication"
+WAY_VOCAB[softwaredev-environment-ssh]="ssh remote key agent scp rsync bastion jumphost tunnel forwarding batchmode noninteractive"
+WAY_THRESH[softwaredev-environment-ssh]="2.0"
+
+WAY_DESC[softwaredev-docs]="README authoring, docstrings, technical prose, Mermaid diagrams, project guides"
+WAY_VOCAB[softwaredev-docs]="readme docstring technical writing mermaid diagram flowchart sequence onboarding"
+WAY_THRESH[softwaredev-docs]="2.0"
+
+WAY_IDS=(softwaredev-code-testing softwaredev-docs-api softwaredev-environment-debugging softwaredev-code-security softwaredev-architecture-design softwaredev-environment-config softwaredev-architecture-adr-context softwaredev-delivery-commits softwaredev-delivery-github softwaredev-delivery-patches softwaredev-delivery-release softwaredev-delivery-migrations softwaredev-code-errors softwaredev-code-quality softwaredev-code-performance softwaredev-environment-deps softwaredev-environment-ssh softwaredev-docs)
 
 # --- Options ---
 RUN_NCD=true

@@ -7,7 +7,7 @@ You can't manage what you can't see. The ways system logs every firing event and
 Every time a way fires, `log-event.sh` appends a line to `~/.claude/stats/events.jsonl`:
 
 ```json
-{"ts":"2026-02-05T19:00:34Z","event":"way_fired","way":"softwaredev/commits","domain":"softwaredev","trigger":"bash","scope":"agent","project":"/home/you/myproject","session":"abc-123"}
+{"ts":"2026-02-05T19:00:34Z","event":"way_fired","way":"softwaredev/delivery/commits","domain":"softwaredev","trigger":"bash","scope":"agent","project":"/home/you/myproject","session":"abc-123"}
 ```
 
 Session start events are also logged. For teammates, the team name is included:
@@ -39,8 +39,8 @@ Top ways:
   meta/todos                      96  ████████████████████
   meta/memory                     96  ████████████████████
   meta/knowledge                  30  ██████
-  softwaredev/commits             19  ███
-  softwaredev/design              18  ███
+  softwaredev/delivery/commits    19  ███
+  softwaredev/architecture/design 18  ███
 
 By scope:
   agent        319

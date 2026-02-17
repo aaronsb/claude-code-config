@@ -101,7 +101,7 @@ These are discovered alongside global ways and follow the same matching rules.
 
 A project-local way with the same domain/name path as a global way takes precedence. They share a single marker, so only the project-local version fires.
 
-Example: If a project has `.claude/ways/softwaredev/testing/way.md`, it replaces `~/.claude/hooks/ways/softwaredev/testing/way.md` for that project.
+Example: If a project has `.claude/ways/softwaredev/code/testing/way.md`, it replaces `~/.claude/hooks/ways/softwaredev/code/testing/way.md` for that project.
 
 ### Macros in project-local ways
 

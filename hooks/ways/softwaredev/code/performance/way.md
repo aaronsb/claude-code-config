@@ -1,4 +1,7 @@
 ---
+description: performance optimization, profiling, benchmarking, latency reduction, memory efficiency
+vocabulary: optimize profile benchmark latency throughput memory cache bottleneck flamegraph allocation heap
+threshold: 2.0
 pattern: slow|optimi|latency|profile|performance|speed.?up|benchmark|bottleneck|throughput|memory.?leak
 scope: agent, subagent
 ---

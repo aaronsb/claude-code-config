@@ -13,7 +13,7 @@ Three layers, from fast/automated to slow/interactive. See [way-match/results.md
 
 ### 1. Fixture Tests (BM25 vs NCD scorer comparison)
 
-Runs 32 test prompts against a fixed 7-way corpus. Compares BM25 binary against gzip NCD baseline. Reports TP/FP/TN/FN for each scorer.
+Runs 32 test prompts against a fixed 7-way corpus (testing, api, debugging, security, design, config, adr-context). Compares BM25 binary against gzip NCD baseline. Reports TP/FP/TN/FN for each scorer.
 
 ```bash
 tests/way-match/run-tests.sh fixture --verbose
