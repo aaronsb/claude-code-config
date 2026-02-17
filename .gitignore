@@ -53,6 +53,8 @@
 !docs/hooks-and-ways/**/*.md
 !docs/images/
 !docs/images/*
+!docs/research/
+!docs/research/*.md
 
 # Hooks and ways
 !hooks/
