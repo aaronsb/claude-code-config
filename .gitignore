@@ -40,8 +40,6 @@
 # Documentation
 !docs/
 !docs/*.md
-!docs/adr/
-!docs/adr/*.md
 !docs/architecture/
 !docs/architecture/*.yaml
 !docs/architecture/*.md
