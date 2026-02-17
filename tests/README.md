@@ -1,13 +1,24 @@
-# Testing the Ways System
+# Testing
 
-Three test layers, from fast/automated to slow/interactive.
+Tests live here and in the tools they validate. This page covers all test types across the project.
 
-## 1. Fixture Tests (BM25 vs NCD scorer comparison)
+```bash
+# Run all automated tests from one place
+tests/run-all.sh
+```
+
+## Way Matching Tests
+
+Three layers, from fast/automated to slow/interactive. See [way-match/results.md](way-match/results.md) for typical output with BM25 vs NCD comparison and interpretation.
+
+### 1. Fixture Tests (BM25 vs NCD scorer comparison)
 
 Runs 32 test prompts against a fixed 7-way corpus. Compares BM25 binary against gzip NCD baseline. Reports TP/FP/TN/FN for each scorer.
 
 ```bash
-bash tools/way-match/test-harness.sh
+tests/way-match/run-tests.sh fixture --verbose
+# or directly:
+bash tools/way-match/test-harness.sh --verbose
 ```
 
 Options: `--bm25-only`, `--ncd-only`, `--verbose`
@@ -16,11 +27,13 @@ Options: `--bm25-only`, `--ncd-only`, `--verbose`
 
 **Current baseline**: BM25 26/32, NCD 24/32, 0 FP for both.
 
-## 2. Integration Tests (real way files)
+### 2. Integration Tests (real way files)
 
 Scores 31 test prompts against actual `way.md` files extracted from the live ways directory. Tests the real frontmatter extraction pipeline.
 
 ```bash
+tests/way-match/run-tests.sh integration
+# or directly:
 bash tools/way-match/test-integration.sh
 ```
 
@@ -28,7 +41,7 @@ bash tools/way-match/test-integration.sh
 
 **Current baseline**: BM25 27/31 (0 FP), NCD 15/31 (3 FP).
 
-## 3. Activation Test (live agent + subagent)
+### 3. Activation Test (live agent + subagent)
 
 Interactive test protocol that verifies the full hook pipeline in a running Claude Code session. Tests regex matching, BM25 semantic matching, negative controls, and subagent injection.
 
@@ -52,13 +65,40 @@ Claude reads the test file (avoiding prompt-hook contamination), then walks you 
 
 Takes about 3 minutes. **Current baseline**: 6/6 PASS.
 
-## Ad-Hoc Vocabulary Testing
+### Ad-Hoc Vocabulary Testing
 
 The `/test-way` skill scores a prompt against all semantic ways and reports BM25 scores. Use it during vocabulary tuning to check discrimination between ways.
 
 ```
 /test-way "write some unit tests for this module"
 ```
+
+## Documentation Tests
+
+### Doc-Graph (link integrity)
+
+Builds a link graph from all git-tracked markdown files. Finds dead ends, orphans, and broken internal links.
+
+```bash
+bash scripts/doc-graph.sh --stats     # broken links, orphans, dead ends
+bash scripts/doc-graph.sh --mermaid   # Mermaid diagram of link graph
+bash scripts/doc-graph.sh --json      # JSON adjacency list
+bash scripts/doc-graph.sh --all       # all outputs
+```
+
+**What it covers**: Every internal markdown link resolves to a real file. No orphaned docs (unreachable from any other doc). No dead ends (docs with no outgoing links to the rest of the tree).
+
+### Governance Provenance Verification
+
+Validates that provenance metadata in way frontmatter is structurally sound: policy URIs point to real files, verified dates aren't stale, controls have justifications.
+
+```bash
+bash governance/provenance-verify.sh         # human-readable report
+bash governance/provenance-verify.sh --json  # machine-readable
+bash governance/governance.sh --lint         # full governance lint
+```
+
+**What it covers**: Provenance chain integrity — every `policy.uri` in way frontmatter resolves, every control has justifications, verified dates are within staleness window.
 
 ## When to Run Which
 
@@ -68,4 +108,7 @@ The `/test-way` skill scores a prompt against all semantic ways and reports BM25
 | Changed a way's vocabulary or threshold | Integration tests + `/test-way` |
 | Changed hook scripts (check-*.sh, inject-*.sh, match-way.sh) | Activation test |
 | Added a new way | Integration tests + `/test-way` + activation test |
-| Sanity check after merge | All three |
+| Renamed or moved documentation files | Doc-graph |
+| Changed provenance metadata in way frontmatter | Governance verification |
+| Changed policy source documents | Governance verification |
+| Sanity check after merge | All of the above |

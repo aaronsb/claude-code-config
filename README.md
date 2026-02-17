@@ -186,6 +186,28 @@ Matching is **additive** — regex and semantic are OR'd. A way with both can fi
 
 For the full authoring guide: [extending.md](docs/hooks-and-ways/extending.md) | For matching strategy: [matching.md](docs/hooks-and-ways/matching.md) | For macros: [macros.md](docs/hooks-and-ways/macros.md)
 
+## Testing Ways
+
+After creating or tuning a way, verify it matches what you expect — and doesn't match what it shouldn't.
+
+```bash
+# Quick check: score a prompt against all semantic ways
+/test-way "write some unit tests for this module"
+
+# Automated: BM25 vs NCD against synthetic corpus (32 tests)
+tests/way-match/run-tests.sh fixture --verbose
+
+# Automated: score against real way.md files (31 tests)
+tests/way-match/run-tests.sh integration
+
+# Interactive: full hook pipeline with subagent injection (6 steps)
+# Start a fresh session, then: read and run tests/way-activation-test.md
+```
+
+The fixture and integration tests compare BM25 accuracy against the gzip NCD fallback. Typical results: BM25 81-87% accuracy with 0 false positives, NCD 48-75% with occasional false positives on unrelated prompts. See [tests/way-match/results.md](tests/way-match/results.md) for detailed output and interpretation.
+
+Other test tools: `scripts/doc-graph.sh --stats` checks documentation link integrity; `governance/provenance-verify.sh` validates provenance metadata. Full test guide: [tests/README.md](tests/README.md).
+
 ## What's Included
 
 This repo ships with **20+ ways** across three domains (softwaredev, itops, meta) — covering commits, security, testing, debugging, dependencies, documentation, and more. The live index is generated at session start. **Replace these entirely** if your domain isn't software dev.

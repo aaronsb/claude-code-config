@@ -94,9 +94,12 @@
 !bin/
 !bin/*
 
-# Integration tests
+# Tests
 !tests/
 !tests/*.md
+!tests/*/
+!tests/**/*.md
+!tests/**/*.sh
 
 # Plugin config (not runtime data)
 !plugins/
