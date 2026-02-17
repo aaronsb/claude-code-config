@@ -1,4 +1,7 @@
 ---
+description: creating and applying patch files, git diff generation, patch series management
+vocabulary: patch diff apply hunk unified series format-patch
+threshold: 2.0
 pattern: patch|\.diff|apply.*change
 files: \.(patch|diff)$
 commands: git\ apply|git\ diff.*\>

@@ -9,7 +9,7 @@
 #                         │  keywords match │
 #                         └─────────────────┘
 #
-# Ways are nested: domain/wayname/way.md (e.g., softwaredev/github/way.md)
+# Ways are nested: domain/wayname/way.md (e.g., softwaredev/delivery/github/way.md)
 # Multiple ways can match a single command - CONTEXT accumulates
 # all matching way outputs. Markers prevent duplicate content.
 # Output is returned as additionalContext JSON for Claude to see.
@@ -33,7 +33,7 @@ scan_ways() {
 
   # Find all way.md files recursively
   while IFS= read -r -d '' wayfile; do
-    # Extract way path relative to ways dir (e.g., "softwaredev/github")
+    # Extract way path relative to ways dir (e.g., "softwaredev/delivery/github")
     waypath="${wayfile#$dir/}"
     waypath="${waypath%/way.md}"
 

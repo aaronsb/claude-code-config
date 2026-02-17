@@ -40,7 +40,7 @@ if [[ -n "$ADR_SCRIPT" ]]; then
   echo "**Always use \`$ADR_SCRIPT new\` to create ADRs** — it handles numbering, domain routing, and templates."
 
   # Check if project script differs from universal template
-  UNIVERSAL="${HOME}/.claude/hooks/ways/softwaredev/adr/adr-tool"
+  UNIVERSAL="${HOME}/.claude/hooks/ways/softwaredev/architecture/adr/adr-tool"
   if [[ -f "$UNIVERSAL" ]] && ! diff -q "$PROJECT_DIR/$ADR_SCRIPT" "$UNIVERSAL" &>/dev/null; then
     echo ""
     echo "_Note: Project script differs from the universal template. This is expected for customized setups._"
@@ -58,6 +58,6 @@ echo "- Template generation with frontmatter"
 echo "- Linting and validation"
 echo "- Index generation"
 echo ""
-echo "To install: \`mkdir -p docs/scripts && cp ~/.claude/hooks/ways/softwaredev/adr/adr-tool docs/scripts/adr && chmod +x docs/scripts/adr && mkdir -p docs/architecture && cp ~/.claude/hooks/ways/softwaredev/adr/adr.yaml.template docs/architecture/adr.yaml\`"
+echo "To install: \`mkdir -p docs/scripts && cp ~/.claude/hooks/ways/softwaredev/architecture/adr/adr-tool docs/scripts/adr && chmod +x docs/scripts/adr && mkdir -p docs/architecture && cp ~/.claude/hooks/ways/softwaredev/architecture/adr/adr.yaml.template docs/architecture/adr.yaml\`"
 echo ""
 echo "To decline permanently: \`mkdir -p .claude && touch .claude/no-adr-tooling\`"

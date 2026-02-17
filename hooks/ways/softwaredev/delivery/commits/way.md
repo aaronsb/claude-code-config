@@ -1,4 +1,7 @@
 ---
+description: git commit messages, branch naming, conventional commits, atomic changes
+vocabulary: commit message branch conventional feat fix refactor scope atomic squash amend stash rebase cherry
+threshold: 2.0
 pattern: commit|push.*(remote|origin|upstream)
 commands: git\ commit
 scope: agent, subagent

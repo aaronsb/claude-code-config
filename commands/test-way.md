@@ -97,7 +97,7 @@ Use the `way-match suggest` command:
 Output is section-delimited (GAPS, COVERAGE, UNUSED, VOCABULARY). Parse and display in a readable format:
 
 ```
-=== Vocabulary Analysis: softwaredev/security ===
+=== Vocabulary Analysis: softwaredev/code/security ===
 
 Gaps (body terms not in vocabulary, freq >= 2):
   parameterized  freq=3

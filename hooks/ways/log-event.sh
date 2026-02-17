@@ -1,7 +1,7 @@
 #!/bin/bash
 # Log a ways event to ~/.claude/stats/events.jsonl
 # Usage: log-event.sh key=value key=value ...
-# Example: log-event.sh event=way_fired way=softwaredev/github trigger=prompt
+# Example: log-event.sh event=way_fired way=softwaredev/delivery/github trigger=prompt
 #
 # All values are safely JSON-encoded via jq. Event log is append-only JSONL.
 

@@ -53,7 +53,7 @@ provenance:
 
 ```
 docs/
-├── scripts/adr              # CLI tool (symlink to hooks/ways/softwaredev/adr/adr-tool)
+├── scripts/adr              # CLI tool (symlink to hooks/ways/softwaredev/architecture/adr/adr-tool)
 └── architecture/
     ├── adr.yaml              # Domain config: number ranges, statuses, defaults
     ├── INDEX.md              # Auto-generated index (adr index -y)

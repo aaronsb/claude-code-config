@@ -1,4 +1,7 @@
 ---
+description: code quality, refactoring, SOLID principles, code review standards, technical debt, maintainability
+vocabulary: refactor quality solid principle decompose extract method responsibility coupling cohesion maintainability readability
+threshold: 2.0
 pattern: solid.?principle|refactor|code.?review|code.?quality|clean.?up|simplify|decompos|extract.?method|tech.?debt
 macro: append
 scan_exclude: \.md$|\.lock$|\.min\.(js|css)$|\.generated\.|\.bundle\.|vendor/|node_modules/|dist/|build/|__pycache__/

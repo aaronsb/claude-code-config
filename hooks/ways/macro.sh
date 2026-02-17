@@ -12,7 +12,7 @@ CURRENT_DOMAIN=""
 
 # Find all way.md files, sorted by path
 while IFS= read -r wayfile; do
-  # Extract relative path (e.g., "softwaredev/github")
+  # Extract relative path (e.g., "softwaredev/delivery/github")
   relpath="${wayfile#$WAYS_DIR/}"
   relpath="${relpath%/way.md}"
 

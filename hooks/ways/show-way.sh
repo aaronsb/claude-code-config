@@ -2,7 +2,7 @@
 # Show a "way" once per session (strips frontmatter, runs macro if configured)
 # Usage: show-way.sh <way-path> <session-id>
 #
-# Way paths can be nested: "softwaredev/github", "awsops/iam", etc.
+# Way paths can be nested: "softwaredev/delivery/github", "awsops/iam", etc.
 # Looks for: {way-path}/way.md and optionally {way-path}/macro.sh
 #
 # STATE MACHINE:
@@ -34,7 +34,7 @@ TEAM=$(detect_team "$SESSION_ID")
 # Check if domain is disabled via ~/.claude/ways.json
 # Example: { "disabled": ["itops", "softwaredev"] }
 WAYS_CONFIG="${HOME}/.claude/ways.json"
-DOMAIN="${WAY%%/*}"  # First path component (e.g., "softwaredev" from "softwaredev/github")
+DOMAIN="${WAY%%/*}"  # First path component (e.g., "softwaredev" from "softwaredev/delivery/github")
 if [[ -f "$WAYS_CONFIG" ]]; then
   if jq -e --arg d "$DOMAIN" '.disabled | index($d) != null' "$WAYS_CONFIG" >/dev/null 2>&1; then
     exit 0
