@@ -13,7 +13,7 @@ Three layers, from fast/automated to slow/interactive. See [way-match/results.md
 
 ### 1. Fixture Tests (BM25 vs NCD scorer comparison)
 
-Runs 32 test prompts against a fixed 7-way corpus (testing, api, debugging, security, design, config, adr-context). Compares BM25 binary against gzip NCD baseline. Reports TP/FP/TN/FN for each scorer.
+Runs 54 test prompts against a fixed 18-way corpus (all softwaredev ways with BM25 semantic matching). Compares BM25 binary against gzip NCD baseline. Reports TP/FP/TN/FN for each scorer.
 
 ```bash
 tests/way-match/run-tests.sh fixture --verbose
@@ -25,7 +25,7 @@ Options: `--bm25-only`, `--ncd-only`, `--verbose`
 
 **What it covers**: Scorer accuracy, false positive rate, head-to-head comparison. Tests direct vocabulary matches, synonym/paraphrase variants, and negative controls.
 
-**Current baseline**: BM25 26/32, NCD 24/32, 0 FP for both.
+**Current baseline**: BM25 48/54, 0 FP.
 
 ### 2. Integration Tests (real way files)
 
@@ -43,7 +43,7 @@ bash tools/way-match/test-integration.sh
 
 ### 3. Activation Test (live agent + subagent)
 
-Interactive test protocol that verifies the full hook pipeline in a running Claude Code session. Tests regex matching, BM25 semantic matching, negative controls, and subagent injection.
+Interactive test protocol that verifies the full hook pipeline in a running Claude Code session. Tests regex matching, BM25 semantic matching (established and newly-added vocabularies), co-activation of related ways, negative controls, and subagent injection.
 
 **To run**: Start a fresh session from `~/.claude/` and type:
 
@@ -51,19 +51,21 @@ Interactive test protocol that verifies the full hook pipeline in a running Clau
 read and run the activation test at tests/way-activation-test.md
 ```
 
-Claude reads the test file (avoiding prompt-hook contamination), then walks you through 7 steps:
+Claude reads the test file (avoiding prompt-hook contamination), then walks you through 9 steps:
 
 | Step | Who | Tests |
 |------|-----|-------|
 | 1 | Claude | Session baseline (no premature domain activation) |
-| 2 | User types prompt | Regex pattern matching (commits way) |
-| 3 | User types prompt | BM25 semantic matching (security way) |
-| 4 | User types prompt | Negative control (no false positives) |
-| 5 | Claude | Subagent injection (Testing Way via SubagentStart) |
-| 6 | Claude | Subagent negative (no injection on irrelevant prompt) |
-| 7 | Claude | Summary table |
+| 2 | User types prompt | Regex pattern matching (delivery/commits) |
+| 3 | User types prompt | BM25 semantic matching, established way (code/security) |
+| 4 | User types prompt | BM25 semantic matching, newly-semantic way (code/performance) |
+| 5 | User types prompt | Co-activation of multiple related ways (delivery/migrations + others) |
+| 6 | User types prompt | Negative control (no false positives) |
+| 7 | Claude | Subagent injection (Testing Way via SubagentStart) |
+| 8 | Claude | Subagent negative (no injection on irrelevant prompt) |
+| 9 | Claude | Summary table |
 
-Takes about 3 minutes. **Current baseline**: 6/6 PASS.
+Takes about 5 minutes. **Current baseline**: 8/8 PASS (steps 1-8).
 
 ### Ad-Hoc Vocabulary Testing
 
@@ -108,6 +110,8 @@ bash governance/governance.sh --lint         # full governance lint
 | Changed a way's vocabulary or threshold | Integration tests + `/test-way` |
 | Changed hook scripts (check-*.sh, inject-*.sh, match-way.sh) | Activation test |
 | Added a new way | Integration tests + `/test-way` + activation test |
+| Restructured way directories | All three test layers + symlink/path verification |
+| Added semantic matching to a way | Fixture tests + integration tests + activation test (step 4) |
 | Renamed or moved documentation files | Doc-graph |
 | Changed provenance metadata in way frontmatter | Governance verification |
 | Changed policy source documents | Governance verification |
