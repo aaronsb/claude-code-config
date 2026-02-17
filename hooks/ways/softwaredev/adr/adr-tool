@@ -149,7 +149,8 @@ def parse_adr(path: Path) -> ADRInfo:
     lines = content.split('\n')
 
     # Parse YAML frontmatter
-    if lines and lines[0].strip() == '---':
+    has_frontmatter = lines and lines[0].strip() == '---'
+    if has_frontmatter:
         end_idx = None
         for i, line in enumerate(lines[1:], 1):
             if line.strip() == '---':
@@ -167,6 +168,18 @@ def parse_adr(path: Path) -> ADRInfo:
                 info.related = data.get('related', [])
             except yaml.YAMLError as e:
                 info.issues.append(Issue(f"YAML error: {e}", 'error'))
+        else:
+            info.issues.append(Issue("Opening --- found but no closing --- for frontmatter", 'error'))
+    else:
+        # Check for inline metadata (pre-YAML pattern)
+        inline_meta = any(re.match(r'^(Status|Date|Deciders):\s', line) for line in lines[:15])
+        if inline_meta:
+            info.issues.append(Issue(
+                "No YAML frontmatter — found inline metadata (Status:/Date:/Deciders:). "
+                "Convert to YAML frontmatter: wrap in --- delimiters, use lowercase keys",
+                'error'))
+        else:
+            info.issues.append(Issue("No YAML frontmatter found", 'error'))
 
     # Find title
     for line in lines:
@@ -198,17 +211,19 @@ def parse_adr(path: Path) -> ADRInfo:
                 pass
 
     # Validation
-    valid_statuses = get_statuses()
     if not info.number:
         info.issues.append(Issue("Missing ADR number in title", 'error'))
-    if not info.status:
-        info.issues.append(Issue("Missing status", 'error'))
-    elif info.status not in valid_statuses:
-        info.issues.append(Issue(f"Invalid status: {info.status} (valid: {', '.join(sorted(valid_statuses))})", 'warning'))
-    if not info.date:
-        info.issues.append(Issue("Missing date", 'error'))
-    if not info.deciders:
-        info.issues.append(Issue("Missing deciders", 'warning'))
+    # Skip field-level checks if no frontmatter — root cause already reported
+    if has_frontmatter:
+        valid_statuses = get_statuses()
+        if not info.status:
+            info.issues.append(Issue("Missing status in frontmatter", 'error'))
+        elif info.status not in valid_statuses:
+            info.issues.append(Issue(f"Invalid status: {info.status} (valid: {', '.join(sorted(valid_statuses))})", 'warning'))
+        if not info.date:
+            info.issues.append(Issue("Missing date in frontmatter", 'error'))
+        if not info.deciders:
+            info.issues.append(Issue("Missing deciders in frontmatter", 'warning'))
 
     return info
 

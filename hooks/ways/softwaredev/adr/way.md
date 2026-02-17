@@ -105,6 +105,16 @@ What we're doing and how.
 
 Statuses: `Draft` | `Proposed` | `Accepted` | `Superseded` | `Deprecated`
 
+## Fixing ADR Issues
+
+**Run `docs/scripts/adr lint` before editing ADR files.** The linter identifies exactly what's wrong (missing frontmatter, invalid status, missing fields). Use its output to guide targeted fixes rather than opening files and guessing.
+
+The linter detects:
+- Missing YAML frontmatter (including inline metadata that needs conversion)
+- Missing or invalid status, date, deciders
+- Unclosed frontmatter delimiters
+- Invalid YAML syntax
+
 ## ADR Workflow
 1. **Debate**: Discuss problem and potential solutions
 2. **Draft**: `docs/scripts/adr new <domain> <title>` — creates numbered ADR in correct subdirectory
