@@ -69,6 +69,7 @@
 !hooks/ways/**/*.md
 !hooks/ways/**/*.sh
 !hooks/ways/**/*.yaml.template
+!hooks/ways/**/adr-tool
 
 # Scripts (shared utilities for hooks, macros, skills)
 !scripts/
