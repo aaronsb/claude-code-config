@@ -94,6 +94,22 @@ In docs files, we use Mermaid diagrams instead of ASCII art. Mermaid is diffable
 
 The most common mistake is using flowchart for everything. If the content has a time axis, it's a sequence diagram. If things transition between states, it's a state diagram.
 
+## Mermaid GitHub Compatibility
+
+**Line breaks in node labels:** GitHub's Mermaid renderer does not support `\n` for line breaks — it renders the literal text `\n`. Use `<br>` or `<br/>` inside quoted strings instead:
+
+```mermaid
+%% Wrong — GitHub renders literal \n
+flowchart LR
+    A["First line\nSecond line"]
+
+%% Correct — GitHub renders a line break
+flowchart LR
+    A["First line<br>Second line"]
+```
+
+When reviewing or writing Mermaid diagrams, replace any `\n` in node labels with `<br>`.
+
 ## Mermaid Styling
 
 We want diagrams that are legible in both dark and light mode contexts, with good color saturation to help readers differentiate processes and concerns.
