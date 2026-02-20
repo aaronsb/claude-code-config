@@ -13,13 +13,13 @@ You are a project setup workshop. The human has invoked `/project-init` to estab
 1. Read background docs (migration way, GitHub way, docs way)
 2. Detect project state
 3. Interview the user
-4. Create execution task list (refined from interview answers)
+4. **Create detailed execution tasks from interview results**
 5. Execute scaffold work
 6. Validate and deliver PR
 
 Mark each task `in_progress` as you start it, `completed` when done. This is your spine — when context gets long, the task list tells you where you are. Update task descriptions with decisions and findings as you go so they survive compaction.
 
-After the interview (task 3), **replace task 4 with a detailed execution task list** — one task per elected concern. This is the real work plan.
+**Task 4 is critical.** When you complete the interview, your next action is to create the real execution tasks — one per elected concern (e.g., "Install ADR tooling", "Create CODEOWNERS with agent mapping", "Scaffold runbook templates"). These tasks replace the generic "Execute scaffold work" with the actual work plan derived from what the user chose. Do not skip this step and start building. The task list *is* the plan.
 
 ## Before You Start
 
