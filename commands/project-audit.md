@@ -182,7 +182,7 @@ Delegate to `/ways-tests lint --all` logic:
 
 ---
 
-### 5. Documentation State
+### 5. Documentation & Artifacts State
 
 **Check: README exists and isn't boilerplate?**
 
@@ -208,6 +208,31 @@ Compare project complexity (file count, directory depth, language count) against
 If `.env` patterns exist (`.env`, `.env.local`, `.env.development`):
 - Does `.env.example` exist?
 - Is `.env` in `.gitignore`?
+
+**Check: Elected artifacts still present?**
+
+If the scaffold ADR exists, read its Decision section to determine which artifacts were elected. Then verify each one still exists and isn't stale:
+
+| Artifact | Check |
+|----------|-------|
+| Runbooks (`docs/runbooks/`) | Directory exists, at least one runbook |
+| Postmortem template (`docs/postmortems/TEMPLATE.md`) | Template file exists |
+| SLO/SLA (`docs/operations/slos.md`) | File exists and isn't empty placeholder |
+| Test plan (`docs/testing/test-plan.md`) | File exists |
+| Threat model (`docs/security/threat-model.md`) | File exists |
+| Tech debt register (`docs/tech-debt.md`) | File exists; check if entries have been added |
+| Dependency policy (`docs/policies/dependencies.md`) | File exists |
+| Migration guide (`docs/migration/`) | Directory exists (for libraries) |
+| System context diagram (`docs/architecture/context.mmd`) | File exists; check if it's still the starter template |
+
+For artifacts that exist but haven't been updated since scaffold (git log shows only the initial commit touching them), flag as "scaffolded but never used — consider removing or populating."
+
+**Check: RFC domain health** (if `rfc` domain exists in `adr.yaml`)
+
+- Are there RFCs in the domain?
+- Do any RFCs have stale `Discussing` status (open for more than 90 days)?
+- Do RFCs with `Accepted` status have corresponding implementation ADRs or linked PRs?
+- Do any RFCs reference external sources? Are those links still valid? (optional — only if few enough to check)
 
 ---
 
@@ -258,12 +283,14 @@ Calculate an overall health score:
 
 | Category | Weight | Max Points |
 |----------|--------|------------|
-| ADR Health | 25% | 5 checks |
-| GitHub Repo Health | 25% | 12 checks |
-| CODEOWNERS | 15% | 4-5 checks |
-| Ways | 15% | 3 checks |
-| Documentation | 15% | 3 checks |
-| Scaffold ADR | 5% | 1 check |
+| ADR Health | 20% | 5 checks |
+| GitHub Repo Health | 20% | 12 checks |
+| CODEOWNERS | 10% | 4-5 checks |
+| Ways | 10% | 3 checks |
+| Documentation & Artifacts | 20% | 3 base + elected artifacts |
+| Scaffold ADR & Drift | 20% | 1 existence + drift checks |
+
+**Artifact checks are dynamic** — only check what was elected in the scaffold ADR. A project that elected 3 artifacts and has all 3 scores the same as one that elected 8 and has all 8. Missing an elected artifact is a failure; not electing one is not.
 
 ### Tiered Reporting
 

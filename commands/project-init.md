@@ -144,6 +144,42 @@ Then interview about the mapping:
 - Standard CODEOWNERS with GitHub usernames
 - Map paths based on directory structure and contributor history
 
+### Repository Artifacts Menu
+
+After entry questions and ADR domains, present the **full artifact menu** with recommendations starred based on project type. Use `AskUserQuestion` with `multiSelect: true`.
+
+Show as: "Based on your project type, I'd recommend the starred items. Select everything you want to set up."
+
+| Artifact | Service | Library | CLI | Monorepo | Research |
+|----------|:-------:|:-------:|:---:|:--------:|:--------:|
+| **Design & Architecture** | | | | | |
+| RFCs (as ADR domain) | * | * | | * | |
+| System context diagram (Mermaid C4) | * | | | * | |
+| **Operational** | | | | | |
+| Runbooks (`docs/runbooks/`) | * | | | * | |
+| Postmortem template (`docs/postmortems/`) | * | | | | |
+| SLO/SLA definitions (`docs/operations/`) | * | | | | |
+| **Process & Contribution** | | | | | |
+| CONTRIBUTING.md | * | * | * | * | |
+| SECURITY.md | * | * | | * | |
+| LICENSE | * | * | * | * | * |
+| **Testing & Quality** | | | | | |
+| Test plan (`docs/testing/`) | * | * | | * | |
+| Threat model (`docs/security/`) | * | | | * | |
+| **Project & Planning** | | | | | |
+| Tech debt register | * | * | * | * | |
+| Dependency policy (`docs/policies/`) | * | * | | * | |
+| Migration guide template (`docs/migration/`) | | * | | * | |
+
+**RFCs as an ADR domain**: If the user selects RFCs, add an `rfc` domain to `adr.yaml` with its own range. RFCs use the same tooling but with an extended status flow: `Proposed → Discussing → Accepted → Rejected → Withdrawn`. The ADR tool handles this naturally — it's just a domain with different status conventions documented in the scaffold ADR.
+
+RFCs can reference internal or external sources — an RFC might propose adopting an external standard (linking to the spec), or it might be an internal design document that lives entirely in the repo. The `related:` frontmatter field supports both: internal ADR cross-references and external URLs. Ask during the interview whether the project uses external references (specs, standards, upstream RFCs) so the scaffold ADR can document the convention.
+
+**Items always included** (not shown in menu, just done):
+- `.gitignore` updates
+- `.env.example` if config patterns detected
+- README structure (scaled to project type)
+
 ### Ways Interview
 
 If ways don't exist yet:
@@ -361,6 +397,108 @@ README structure (gist-first):
 2. One-paragraph problem statement
 3. Quick Start
 4. Links to docs/ for depth
+
+### Operational Artifacts (if elected)
+
+**Runbooks** — `docs/runbooks/`:
+```markdown
+# Runbook: [Title]
+
+## Purpose
+What this runbook is for.
+
+## Prerequisites
+- Access requirements
+- Tools needed
+
+## Steps
+1. Step with command
+2. Step with verification
+
+## Rollback
+How to undo if something goes wrong.
+
+## Escalation
+Who to contact if this doesn't resolve the issue.
+```
+Create a starter runbook relevant to the project (e.g., "Deploy to production", "Rotate secrets", "Database migration").
+
+**Postmortem template** — `docs/postmortems/TEMPLATE.md`:
+```markdown
+# Postmortem: [Incident Title]
+
+**Date**: YYYY-MM-DD
+**Duration**: X hours
+**Severity**: P1/P2/P3
+**Author**: @name
+
+## Summary
+One-paragraph description of what happened.
+
+## Timeline
+- HH:MM — Event
+- HH:MM — Detection
+- HH:MM — Resolution
+
+## Root Cause
+What actually went wrong.
+
+## Impact
+Who/what was affected and how.
+
+## Action Items
+| Action | Owner | Due | Status |
+|--------|-------|-----|--------|
+| ...    | ...   | ... | ...    |
+
+## Lessons Learned
+What we'll do differently.
+```
+
+**SLO/SLA definitions** — `docs/operations/slos.md`:
+Scaffold with prompts for the user to fill in: which services, what metrics (latency, availability, error rate), what targets, how they're measured.
+
+### Testing & Quality Artifacts (if elected)
+
+**Test plan** — `docs/testing/test-plan.md`:
+Document what's covered (unit, integration, e2e), what's manual vs automated, risk areas, and coverage targets. Scale to project complexity.
+
+**Threat model** — `docs/security/threat-model.md`:
+Use STRIDE framework scaffold: identify assets, trust boundaries, data flows, and threats per category (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege).
+
+### Planning Artifacts (if elected)
+
+**Tech debt register** — `docs/tech-debt.md`:
+```markdown
+# Tech Debt Register
+
+| ID | Description | Context (why it exists) | Impact | Effort | When to Address |
+|----|-------------|------------------------|--------|--------|-----------------|
+| TD-001 | ... | ... | High/Med/Low | S/M/L | ... |
+```
+Alternatively, if the project uses GitHub Issues, create a `tech-debt` label and document the convention in CONTRIBUTING.md.
+
+**Dependency policy** — `docs/policies/dependencies.md`:
+Cover: criteria for adopting new dependencies, licensing requirements (MIT/Apache/etc.), upgrade cadence, security scanning expectations, and who approves new dependencies.
+
+**Migration guide template** — `docs/migration/TEMPLATE.md`:
+For libraries with consumers. Template covers: version range, breaking changes, step-by-step migration, code examples (before/after), and deprecation timeline.
+
+### System Context Diagram (if elected)
+
+Create `docs/architecture/context.mmd` as a Mermaid C4 context diagram:
+```mermaid
+C4Context
+    title System Context Diagram — [Project Name]
+
+    Person(user, "User", "Description")
+    System(system, "This System", "What it does")
+    System_Ext(ext, "External System", "What it provides")
+
+    Rel(user, system, "Uses")
+    Rel(system, ext, "Calls API")
+```
+Use the docs way color palette for consistency. Interview the user about boundaries, external systems, and user types.
 
 ## Phase 4: Validate & Deliver
 
