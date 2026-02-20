@@ -290,37 +290,37 @@ This is the key value of the scaffold ADR — it makes drift visible and forces 
 
 ## Report
 
-### Scoring
+### Scoring — Per Category, Not Composite
 
-Calculate an overall health score:
+**Do not calculate a composite percentage.** Weighted scores produce inconsistent numbers across sessions and obscure what actually matters. Instead, assign each category a status:
 
-| Category | Weight | Max Points |
-|----------|--------|------------|
-| ADR Health | 20% | 5 checks |
-| GitHub Repo Health | 20% | 12 checks |
-| CODEOWNERS | 10% | 4-5 checks |
-| Ways | 10% | 3 checks |
-| Documentation & Artifacts | 20% | 3 base + elected artifacts |
-| Scaffold ADR & Drift | 20% | 1 existence + drift checks |
+| Status | Meaning |
+|--------|---------|
+| **Pass** | All checks pass, or only minor info-level notes |
+| **Warn** | Some checks fail but the category is functional |
+| **Fail** | Critical checks fail — this category needs attention |
+| **N/A** | Category doesn't apply (no GitHub remote, no scaffold ADR, etc.) |
 
-**Artifact checks are dynamic** — only check what was elected in the scaffold ADR. A project that elected 3 artifacts and has all 3 scores the same as one that elected 8 and has all 8. Missing an elected artifact is a failure; not electing one is not.
+**Artifact checks are dynamic** — only check what was elected in the scaffold ADR. A project that elected 3 artifacts and has all 3 is the same as one that elected 8 and has all 8. Missing an elected artifact is a failure; not electing one is not.
 
 ### Tiered Reporting
 
-**90-100% — All clean:**
-> "Looking good. [N] checks pass across [M] categories. [brief note about any minor items]."
+Determine the overall tone from the category statuses:
 
-**70-89% — Few issues:**
-> "[N] items need attention."
-> Then list each issue with a one-line fix suggestion.
+**All Pass — Clean:**
+> "Looking good. All [M] categories pass. [brief note about any info-level items]."
 
-**50-69% — Needs work:**
-> "There's some cleanup to do here. [N] items across [M] categories need attention."
-> Full table of issues with severity and suggested fixes.
+**Some Warn, no Fail — Attention needed:**
+> "[N] areas need attention."
+> List each warn-level issue with a one-line fix suggestion.
 
-**Below 50% — Honest assessment:**
-> "This project needs significant attention — [N] of [total] checks are failing. Here's what I'd prioritize:"
-> Prioritized list with quick wins first, then structural fixes.
+**Any Fail — Needs work:**
+> "There are [N] areas that need attention, [F] of which are critical."
+> Full table per category showing status and issues. Quick wins first, then structural fixes.
+
+**Multiple Fail — Honest assessment:**
+> "This project needs significant attention across [F] categories."
+> Prioritized remediation list. Point to `/project-init` if the gaps are structural.
 
 ### Report Format
 

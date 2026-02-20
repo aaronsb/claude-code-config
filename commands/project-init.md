@@ -79,6 +79,25 @@ If ADRs exist in any form, classify the starting state per the migration way:
 | **Different tool** | Using adr-tools, Log4brains, or similar |
 | **Already ours** | `adr.yaml` exists with domain config — just needs tuning |
 
+### Idempotency — Re-run Detection
+
+If the project was already scaffolded (scaffold ADR exists, `adr.yaml` configured, artifacts in place):
+
+- **Don't re-scaffold from scratch.** Present what exists and ask: "This project was previously scaffolded. Want to update specific areas, add new artifacts, or do a full review?"
+- For each concern in the interview, check if it already exists. Show "already configured" vs "not yet set up" in the state report.
+- If artifacts exist, ask per-artifact: "This already exists — skip, regenerate, or update?"
+- Point to `/project-audit` if the user just wants a health check rather than changes.
+
+### Error Recovery
+
+If a step fails during execution (e.g., `gh` command fails due to permissions, symlink fails, API error):
+
+1. Report the failure clearly — what was attempted, what went wrong
+2. Note it in the task description (so it survives compaction)
+3. Skip the step and continue with the next task
+4. Collect all skipped items and list them in the PR body under "Deferred / Manual Follow-up"
+5. Do not retry the same failing command repeatedly
+
 ### State Report
 
 Present findings as a concise table before asking any questions:
@@ -161,28 +180,33 @@ Then interview about the mapping:
 
 After entry questions and ADR domains, present the **full artifact menu** with recommendations starred based on project type. Use `AskUserQuestion` with `multiSelect: true`.
 
-Show as: "Based on your project type, I'd recommend the starred items. Select everything you want to set up."
+**Pre-filter by project type.** Don't show the full 15-item matrix. Instead, present the recommended items for their project type as defaults, then offer "anything else you'd want to add?"
 
-| Artifact | Service | Library | CLI | Monorepo | Research |
-|----------|:-------:|:-------:|:---:|:--------:|:--------:|
-| **Design & Architecture** | | | | | |
-| RFCs (as ADR domain) | * | * | | * | |
-| System context diagram (Mermaid C4) | * | | | * | |
-| **Operational** | | | | | |
-| Runbooks (`docs/runbooks/`) | * | | | * | |
-| Postmortem template (`docs/postmortems/`) | * | | | | |
-| SLO/SLA definitions (`docs/operations/`) | * | | | | |
-| **Process & Contribution** | | | | | |
-| CONTRIBUTING.md | * | * | * | * | |
-| SECURITY.md | * | * | | * | |
-| LICENSE | * | * | * | * | * |
-| **Testing & Quality** | | | | | |
-| Test plan (`docs/testing/`) | * | * | | * | |
-| Threat model (`docs/security/`) | * | | | * | |
-| **Project & Planning** | | | | | |
-| Tech debt register | * | * | * | * | |
-| Dependency policy (`docs/policies/`) | * | * | | * | |
-| Migration guide template (`docs/migration/`) | | * | | * | |
+**Recommendations by project type:**
+
+- **Service**: CONTRIBUTING.md, SECURITY.md, LICENSE, runbooks, postmortem template, SLO/SLA, test plan, threat model, tech debt register, dependency policy, RFCs, system context diagram
+- **Library**: CONTRIBUTING.md, SECURITY.md, LICENSE, test plan, tech debt register, dependency policy, migration guide template, RFCs
+- **CLI tool**: CONTRIBUTING.md, LICENSE, tech debt register
+- **Monorepo**: CONTRIBUTING.md, SECURITY.md, LICENSE, runbooks, test plan, threat model, tech debt register, dependency policy, migration guide template, RFCs, system context diagram
+- **Research / experimental**: LICENSE
+
+**Full artifact catalog** (for "anything else?" follow-up):
+
+| Category | Artifact | Location |
+|----------|----------|----------|
+| Design | RFCs (as ADR domain) | ADR domain in `adr.yaml` |
+| Design | System context diagram | `docs/architecture/context.mmd` (Mermaid C4) |
+| Operational | Runbooks | `docs/runbooks/` |
+| Operational | Postmortem template | `docs/postmortems/TEMPLATE.md` |
+| Operational | SLO/SLA definitions | `docs/operations/slos.md` |
+| Process | CONTRIBUTING.md | root |
+| Process | SECURITY.md | root |
+| Process | LICENSE | root |
+| Quality | Test plan | `docs/testing/test-plan.md` |
+| Quality | Threat model | `docs/security/threat-model.md` (STRIDE framework) |
+| Planning | Tech debt register | `docs/tech-debt.md` or GitHub Issues with label |
+| Planning | Dependency policy | `docs/policies/dependencies.md` |
+| Planning | Migration guide template | `docs/migration/TEMPLATE.md` |
 
 **RFCs as an ADR domain**: If the user selects RFCs, add an `rfc` domain to `adr.yaml` with its own range. RFCs use the same tooling but with an extended status flow: `Proposed → Discussing → Accepted → Rejected → Withdrawn`. The ADR tool handles this naturally — it's just a domain with different status conventions documented in the scaffold ADR.
 
@@ -273,11 +297,12 @@ We adopt the following practices:
 
 ### Sub-Agent Delegation
 
-Use sub-agents for parallelizable work:
+Dispatch independent file creation to sub-agents where it saves context. Serialize work that has dependencies — don't try to parallelize everything.
 
-- **`workspace-curator`** — organize `docs/` directory, manage `.claude/` structure, create `.claude/.gitignore`
-- **`system-architect`** — draft ADR domain config, evaluate domain boundaries, suggest initial ADRs (like ADR-001: "Adopt ADR-driven decision recording")
-- Direct work for GitHub API operations (these need `gh` commands)
+These are `subagent_type` values for the `Task` tool:
+- **`workspace-curator`** — organize `docs/` directory, manage `.claude/` structure, create `.claude/.gitignore` (contents: `settings.local.json`, `todo-*.md`, `memory/`, `projects/`, `plans/`)
+- **`system-architect`** — draft ADR domain config, evaluate domain boundaries, suggest initial ADRs
+- Do GitHub API operations (`gh` commands) directly — they need sequential interaction
 
 ### ADR Setup
 
@@ -411,107 +436,21 @@ README structure (gist-first):
 3. Quick Start
 4. Links to docs/ for depth
 
-### Operational Artifacts (if elected)
+### Elected Artifacts (if any)
 
-**Runbooks** — `docs/runbooks/`:
-```markdown
-# Runbook: [Title]
+For each elected artifact, create the file with standard sections. **Don't over-template** — use the section headings below as scaffolding, not full boilerplate. The user will fill in the substance.
 
-## Purpose
-What this runbook is for.
-
-## Prerequisites
-- Access requirements
-- Tools needed
-
-## Steps
-1. Step with command
-2. Step with verification
-
-## Rollback
-How to undo if something goes wrong.
-
-## Escalation
-Who to contact if this doesn't resolve the issue.
-```
-Create a starter runbook relevant to the project (e.g., "Deploy to production", "Rotate secrets", "Database migration").
-
-**Postmortem template** — `docs/postmortems/TEMPLATE.md`:
-```markdown
-# Postmortem: [Incident Title]
-
-**Date**: YYYY-MM-DD
-**Duration**: X hours
-**Severity**: P1/P2/P3
-**Author**: @name
-
-## Summary
-One-paragraph description of what happened.
-
-## Timeline
-- HH:MM — Event
-- HH:MM — Detection
-- HH:MM — Resolution
-
-## Root Cause
-What actually went wrong.
-
-## Impact
-Who/what was affected and how.
-
-## Action Items
-| Action | Owner | Due | Status |
-|--------|-------|-----|--------|
-| ...    | ...   | ... | ...    |
-
-## Lessons Learned
-What we'll do differently.
-```
-
-**SLO/SLA definitions** — `docs/operations/slos.md`:
-Scaffold with prompts for the user to fill in: which services, what metrics (latency, availability, error rate), what targets, how they're measured.
-
-### Testing & Quality Artifacts (if elected)
-
-**Test plan** — `docs/testing/test-plan.md`:
-Document what's covered (unit, integration, e2e), what's manual vs automated, risk areas, and coverage targets. Scale to project complexity.
-
-**Threat model** — `docs/security/threat-model.md`:
-Use STRIDE framework scaffold: identify assets, trust boundaries, data flows, and threats per category (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege).
-
-### Planning Artifacts (if elected)
-
-**Tech debt register** — `docs/tech-debt.md`:
-```markdown
-# Tech Debt Register
-
-| ID | Description | Context (why it exists) | Impact | Effort | When to Address |
-|----|-------------|------------------------|--------|--------|-----------------|
-| TD-001 | ... | ... | High/Med/Low | S/M/L | ... |
-```
-Alternatively, if the project uses GitHub Issues, create a `tech-debt` label and document the convention in CONTRIBUTING.md.
-
-**Dependency policy** — `docs/policies/dependencies.md`:
-Cover: criteria for adopting new dependencies, licensing requirements (MIT/Apache/etc.), upgrade cadence, security scanning expectations, and who approves new dependencies.
-
-**Migration guide template** — `docs/migration/TEMPLATE.md`:
-For libraries with consumers. Template covers: version range, breaking changes, step-by-step migration, code examples (before/after), and deprecation timeline.
-
-### System Context Diagram (if elected)
-
-Create `docs/architecture/context.mmd` as a Mermaid C4 context diagram:
-```mermaid
-C4Context
-    title System Context Diagram — [Project Name]
-
-    Person(user, "User", "Description")
-    System(system, "This System", "What it does")
-    System_Ext(ext, "External System", "What it provides")
-
-    Rel(user, system, "Uses")
-    Rel(system, ext, "Calls API")
-```
-Use the docs way color palette for consistency. Interview the user about boundaries, external systems, and user types.
+| Artifact | Location | Sections |
+|----------|----------|----------|
+| Runbooks | `docs/runbooks/{name}.md` | Purpose, Prerequisites, Steps, Rollback, Escalation. Create one starter runbook relevant to the project. |
+| Postmortem template | `docs/postmortems/TEMPLATE.md` | Summary, Timeline, Root Cause, Impact, Action Items (table: Action/Owner/Due/Status), Lessons Learned. Include metadata: Date, Duration, Severity, Author. |
+| SLO/SLA | `docs/operations/slos.md` | Service name, Metrics (latency/availability/error rate), Targets, Measurement method. Scaffold with prompts for the user to fill in. |
+| Test plan | `docs/testing/test-plan.md` | Coverage (unit/integration/e2e), Manual vs automated, Risk areas, Coverage targets. Scale to project complexity. |
+| Threat model | `docs/security/threat-model.md` | Assets, Trust boundaries, Data flows, STRIDE threats (Spoofing, Tampering, Repudiation, Info Disclosure, DoS, Elevation). |
+| Tech debt register | `docs/tech-debt.md` | Table: ID, Description, Context (why it exists), Impact, Effort, When to Address. Or if GitHub Issues preferred, create `tech-debt` label and document convention in CONTRIBUTING.md. |
+| Dependency policy | `docs/policies/dependencies.md` | Adoption criteria, Licensing requirements, Upgrade cadence, Security scanning, Approval process. |
+| Migration guide | `docs/migration/TEMPLATE.md` | Version range, Breaking changes, Step-by-step migration, Before/after code examples, Deprecation timeline. |
+| System context diagram | `docs/architecture/context.mmd` | Mermaid C4Context diagram. Interview user about boundaries, external systems, and user types. Use docs way color palette. |
 
 ## Phase 4: Validate & Deliver
 
@@ -580,10 +519,10 @@ After the PR is created:
 
 ## Principles
 
-- **The human doesn't need to know the plumbing** — ask about their project, translate to implementation
-- **Recommend, don't quiz** — "I'd suggest these 4 ADR domains based on your code structure..." not "What domains do you want?"
-- **Progressive disclosure** — start with the most impactful concerns, don't overwhelm
-- **Delegate aggressively** — use sub-agents for parallel work, track with tasks
-- **The session is a workshop** — context spent on detection, reading docs, and interviewing is well spent
-- **Branch everything** — never modify main directly
-- **Brownfield empathy** — existing repos have history and reasons. Interview before reorganizing.
+- **Ask about intent, translate to implementation** — the human doesn't need to know about frontmatter, symlinks, or domain ranges. They tell you about their project; you build the scaffold.
+- **Recommend with rationale** — "I'd suggest these 4 ADR domains based on your code structure because..." not "What domains do you want?" Make a call, explain it, let them adjust.
+- **Show recommended, offer the rest** — pre-filter artifacts by project type. Don't dump 15 items and ask the user to sort through them.
+- **Dispatch independent work, serialize dependencies** — sub-agents save context for parallel file creation. Don't force parallelism where ordering matters.
+- **The task list is the plan** — invest in good task descriptions. They survive compaction; your reasoning doesn't.
+- **Branch everything** — never modify main directly. All scaffold work in a branch, delivered as a PR.
+- **Existing repos have history** — interview before reorganizing. A flat ADR directory was someone's decision. Understand it before replacing it.
