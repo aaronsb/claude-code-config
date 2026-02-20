@@ -148,8 +148,11 @@ If ADRs need setup or reorganization:
 
 **For brownfield with existing ADRs:**
 - List what exists: how many ADRs, what format, what topics they cover
-- Propose domain mapping: which existing ADRs belong to which domain
+- **Lint them immediately** — run the ADR tool's linter (or manually check frontmatter) and show the user what's broken: missing frontmatter, inline metadata that needs conversion, invalid statuses, missing fields
+- **Offer to fix the existing ADRs first** before proposing reorganization. "I found 8 ADRs — 3 are missing frontmatter, 2 have inline metadata instead of YAML. Want me to fix these up before we talk about domain organization?"
+- Show a proposed domain mapping: which existing ADRs belong to which domain based on their content
 - Ask about the migration approach: park as legacy and go forward, or reorganize everything
+- If reorganizing: show the move plan (which files go where) and get approval before touching anything
 
 ### GitHub Interview
 
