@@ -39,6 +39,8 @@ sequenceDiagram
 
 **Ways** = policy and process encoded as contextual guidance. Triggered by keywords, commands, and file patterns — they fire once per session, before tools execute, and carry into subagents.
 
+**Why this works:** System prompt adherence decays as a power law over conversation turns — instructions at position zero lose influence as context grows. Ways sidestep this by injecting small, relevant guidance near the attention cursor at the moment it matters, maintaining steady-state adherence instead of a damped sawtooth. It's [progressive disclosure](docs/hooks-and-ways/context-decay.md) applied to the model itself.
+
 This repo ships with software development ways, but the mechanism is general-purpose. You could have ways for:
 - Excel/Office productivity
 - AWS operations
@@ -267,7 +269,7 @@ Policy-as-code for AI agents — lightweight, portable, deterministic.
 | **Domain-agnostic** | Swap software dev ways for finance, ops, research, anything |
 | **Fully hackable** | Plain text files, fork and customize in minutes |
 
-For the cognitive science rationale: [docs/hooks-and-ways/rationale.md](docs/hooks-and-ways/rationale.md)
+For the attention mechanics: [context-decay.md](docs/hooks-and-ways/context-decay.md) | For the cognitive science rationale: [rationale.md](docs/hooks-and-ways/rationale.md)
 
 ## Updating
 
