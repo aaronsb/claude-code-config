@@ -8,15 +8,15 @@ During inference, a model's adherence to system prompt instructions decays with 
 
 1. **Turn decay** ($n^{-\alpha}$): As conversation turns accumulate, the system prompt recedes in positional distance. Each turn pushes it further from the attention cursor. The model's peak adherence to those instructions drops monotonically.
 
-2. **Within-generation decay** ($t_{\text{local}}^{-\beta}$): Within a single generation, attention to the system prompt fades as more tokens are produced. Each token the model generates competes for the same attention budget.
+2. **Within-generation decay** ($t_\mathrm{local}^{\ -\beta}$): Within a single generation, attention to the system prompt fades as more tokens are produced. Each token the model generates competes for the same attention budget.
 
 The combined effect:
 
-$$A(t) \approx A_0 \cdot n^{-\alpha} \cdot t_{\text{local}}^{-\beta}$$
+$$A(t) \approx A_0 \cdot n^{-\alpha} \cdot t_\mathrm{local}^{\ -\beta}$$
 
-Where $A(t)$ is effective adherence at time $t$, $A_0$ is initial adherence strength, $n$ is the conversation turn count, and $t_{\text{local}}$ is token count since the last user message.
+Where $A(t)$ is effective adherence at time $t$, $A_0$ is initial adherence strength, $n$ is the conversation turn count, and $t_\mathrm{local}$ is token count since the last user message.
 
-Each user message partially resets $t_{\text{local}}$ (the local factor), creating a brief spike in attention to earlier context. But the peak of each spike is lower than the last, because $n$ has incremented. The result is a **damped sawtooth**: attention spikes at each turn boundary, but the envelope of those spikes always drops.
+Each user message partially resets $t_\mathrm{local}$ (the local factor), creating a brief spike in attention to earlier context. But the peak of each spike is lower than the last, because $n$ has incremented. The result is a **damped sawtooth**: attention spikes at each turn boundary, but the envelope of those spikes always drops.
 
 <img src="../images/context-decay-sawtooth.png" alt="Damped sawtooth: system prompt adherence decays over conversation turns, with each peak lower than the last" width="100%" />
 
@@ -36,9 +36,9 @@ The system prompt was the right place for this information. The problem isn't co
 
 Ways change where guidance enters the context. Instead of one large block at position zero, ways deliver small, relevant fragments near the attention cursor at the moment they matter:
 
-$$A(t) \approx \underbrace{A_0 \cdot n^{-\alpha} \cdot t_{\text{local}}^{-\beta}}_{\text{system prompt (decaying)}} + \underbrace{A_{\text{inject}} \cdot t_{\text{since\_inject}}^{-\beta}}_{\text{injected way (fresh)}}$$
+$$A(t) \approx \overbrace{A_0 \cdot n^{-\alpha} \cdot t_\mathrm{local}^{\ -\beta}}^{\mathrm{system\ prompt\ (decaying)}} + \overbrace{A_\mathrm{inject} \cdot t_\mathrm{since}^{\ -\beta}}^{\mathrm{injected\ way\ (fresh)}}$$
 
-The critical difference: the injection term carries only the local decay factor ($t_{\text{since\_inject}}^{-\beta}$), not the turn-count envelope ($n^{-\alpha}$). The injection isn't pinned at position zero — it's near the cursor, regardless of how many turns have elapsed. Its positional distance is always small.
+The critical difference: the injection term carries only the local decay factor ( $t_\mathrm{since}^{\ -\beta}$ ), not the turn-count envelope ( $n^{-\alpha}$ ). The injection isn't pinned at position zero — it's near the cursor, regardless of how many turns have elapsed. Its positional distance is always small.
 
 <img src="../images/context-decay-comparison.png" alt="Side-by-side comparison: without ways (damped to noise floor) vs. with ways (steady-state adherence)" width="100%" />
 
@@ -65,11 +65,11 @@ The design heuristic follows directly: when authoring a way, the question isn't 
 
 ## The Saturation Constraint
 
-The model implies a practical limit. If too many ways fire simultaneously, they compete for the same local attention budget. Each additional injection dilutes the effective $A_{\text{inject}}$ of every other active injection:
+The model implies a practical limit. If too many ways fire simultaneously, they compete for the same local attention budget. Each additional injection dilutes the effective $A_\mathrm{inject}$ of every other active injection:
 
-$$A_{\text{effective}} \approx \frac{A_{\text{inject}}}{1 + k \cdot N_{\text{concurrent}}}$$
+$$A_\mathrm{eff} \approx \frac{A_\mathrm{inject}}{1 + k \cdot N_\mathrm{concurrent}}$$
 
-Where $N_{\text{concurrent}}$ is the number of simultaneously active injections and $k$ is a competition coefficient.
+Where $N_\mathrm{concurrent}$ is the number of simultaneously active injections and $k$ is a competition coefficient.
 
 This is why ways are designed to be small (20-60 lines each), fire once per session (marker-gated deduplication), and trigger selectively (BM25 scoring, not blanket activation). The goal is high signal-to-noise at the cursor position, not maximum information delivered. Three precisely timed injections outperform twenty simultaneous ones.
 
@@ -81,7 +81,7 @@ The combination of these mechanisms — timed injection, once-per-session gating
 
 | Mechanism | What It Controls |
 |---|---|
-| Timed injection | Resets positional decay ($t_{\text{since\_inject}}$) |
+| Timed injection | Resets positional decay ($t_\mathrm{since}$) |
 | Selective triggering | Maintains signal-to-noise ratio |
 | Once-per-session gating | Prevents attention budget saturation |
 | Small injection size | Maximizes per-injection salience |
