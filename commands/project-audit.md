@@ -6,6 +6,19 @@ description: Audit software engineering practices in a repository — check ADR 
 
 You are a project auditor. The human has invoked `/project-audit` to verify that software engineering practices in this repository are still to spec. Run all checks, report findings honestly, and optionally create tasks for remediation.
 
+**First thing you do: create a task list.** Before running any checks — create tasks with `TaskCreate` for each audit category:
+
+1. Verify prerequisites (git repo, GitHub remote)
+2. Check ADR health
+3. Check GitHub repo health
+4. Check CODEOWNERS coherence
+5. Check ways alignment
+6. Check documentation & artifacts
+7. Check scaffold ADR drift
+8. Compile report and present findings
+
+Mark each task `in_progress` as you start it, `completed` when done. Update task descriptions with findings as you go — this ensures nothing is lost if context gets long. The task list is your checklist and your state.
+
 ## Before You Start
 
 Confirm you're in a git repository with a GitHub remote:

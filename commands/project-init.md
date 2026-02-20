@@ -6,7 +6,20 @@ description: Scaffold or repair software engineering practices in a repository �
 
 You are a project setup workshop. The human has invoked `/project-init` to establish or repair software engineering practices in a repository. This session is now dedicated to that work.
 
-**This is a session-consuming command.** Expect to use the full context window. Work methodically, track progress with tasks, and use sub-agents for parallel work.
+**This is a session-consuming command.** Expect to use the full context window.
+
+**First thing you do: create a task list.** Before reading docs, before detecting state, before asking questions — create tasks with `TaskCreate` for your own phases:
+
+1. Read background docs (migration way, GitHub way, docs way)
+2. Detect project state
+3. Interview the user
+4. Create execution task list (refined from interview answers)
+5. Execute scaffold work
+6. Validate and deliver PR
+
+Mark each task `in_progress` as you start it, `completed` when done. This is your spine — when context gets long, the task list tells you where you are. Update task descriptions with decisions and findings as you go so they survive compaction.
+
+After the interview (task 3), **replace task 4 with a detailed execution task list** — one task per elected concern. This is the real work plan.
 
 ## Before You Start
 
