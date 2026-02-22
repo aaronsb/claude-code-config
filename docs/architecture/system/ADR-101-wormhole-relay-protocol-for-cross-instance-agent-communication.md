@@ -103,3 +103,18 @@ A dedicated **comms agent** teammate handles the relay:
 - **Email-based exchange**: Async but requires email configuration, attachment size limits, and parsing complexity.
 - **Custom relay server**: Maximum control but requires hosting, maintenance, and security hardening. Overkill for ad-hoc agent communication.
 - **Pre-shared deterministic code generation (shared seed)**: Both sides generate codes from a seed without manifests. Simpler but fragile — if turns desync, the protocol breaks with no recovery path. The manifest approach is more resilient because state is explicit.
+
+## Related Patterns: Ralph Loops
+
+A ralph loop is a self-referential agent feedback cycle where an agent's output becomes its own input across iterations. Combining a ralph loop with this relay protocol creates an interesting (and potentially hazardous) topology: two independent Claude instances, each running their own ralph loop, exchanging intermediate state via wormhole manifests.
+
+This could enable:
+- **Collaborative iteration**: Agent A refines a document, sends it to Agent B for a different perspective, receives it back, continues refining — each side's ralph loop incorporating the other's feedback
+- **Distributed analysis**: Each side processes a portion of a problem, exchanges findings, and iterates toward convergence
+
+The risks are obvious:
+- **Runaway amplification**: Two feedback loops feeding each other can diverge rapidly — each side responding to the other's responses with increasing elaboration and no natural stopping point
+- **Resource exhaustion**: Without explicit turn limits or convergence criteria, the loop runs until context windows fill, API budgets drain, or a human intervenes
+- **Semantic drift**: Successive rounds of interpretation and reinterpretation can drift far from the original intent
+
+Any implementation combining ralph loops with the relay protocol MUST include hard bounds: maximum turn count, convergence detection (output similarity between rounds), and mandatory human checkpoints. The continuation mechanism in the manifest provides a natural rate limiter — code exhaustion forces a pause unless explicitly renewed.
