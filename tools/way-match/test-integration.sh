@@ -2,7 +2,9 @@
 # Integration test: run way-match against actual way.md files
 # Reads frontmatter from real semantic ways and scores test prompts
 #
-# This tests the real pipeline: way files → frontmatter extraction → BM25 scoring
+# This tests the real pipeline: way files -> frontmatter extraction -> BM25 scoring
+#
+# Compatible with bash 3.2+ (macOS default)
 
 set -euo pipefail
 
@@ -24,8 +26,25 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-# --- Extract frontmatter from actual way files ---
-declare -A WAY_DESC WAY_VOCAB WAY_THRESH WAY_PATH
+# --- Parallel arrays for way data (bash 3.2 compatible) ---
+WAY_IDS=()
+WAY_DESCS=()
+WAY_VOCABS=()
+WAY_THRESHS=()
+WAY_PATHS=()
+
+# Lookup index by way ID; returns via global __idx (-1 if not found)
+__idx=-1
+way_index() {
+  local target="$1"
+  local i
+  for (( i=0; i<${#WAY_IDS[@]}; i++ )); do
+    if [[ "${WAY_IDS[$i]}" == "$target" ]]; then
+      __idx=$i; return 0
+    fi
+  done
+  __idx=-1; return 1
+}
 
 echo -e "${BOLD}=== Integration Test: Real Way Files ===${NC}"
 echo ""
@@ -46,23 +65,24 @@ while IFS= read -r wayfile; do
   # Skip ways without semantic matching fields
   [[ -z "$desc" || -z "$vocab" ]] && continue
 
-  WAY_DESC[$way_id]="$desc"
-  WAY_VOCAB[$way_id]="$vocab"
-  WAY_THRESH[$way_id]="${thresh:-2.0}"
-  WAY_PATH[$way_id]="$wayfile"
+  WAY_IDS+=("$way_id")
+  WAY_DESCS+=("$desc")
+  WAY_VOCABS+=("$vocab")
+  WAY_THRESHS+=("${thresh:-2.0}")
+  WAY_PATHS+=("$wayfile")
 
   printf "  %-30s thresh=%-5s  %s\n" "$way_id" "${thresh:-2.0}" "$(echo "$desc" | cut -c1-60)"
 done < <(find "$WAYS_DIR" -name "way.md" -type f | sort)
 
 echo ""
-echo "Found ${#WAY_DESC[@]} semantic ways"
+echo "Found ${#WAY_IDS[@]} semantic ways"
 echo ""
 
 # --- Test prompts with expected matches ---
 # Format: "expected_way_id|prompt"
 # Use "NONE" for prompts that shouldn't match anything
 TEST_CASES=(
-  # Direct matches — vocabulary terms present
+  # Direct matches -- vocabulary terms present
   "softwaredev-code-testing|write some unit tests for this module"
   "softwaredev-code-testing|run pytest with coverage"
   "softwaredev-code-testing|mock the database connection in tests"
@@ -84,7 +104,7 @@ TEST_CASES=(
   "softwaredev-architecture-adr-context|plan how to build the notification system"
   "softwaredev-architecture-adr-context|why was this feature designed this way"
   "softwaredev-architecture-adr-context|pick up work on the auth implementation"
-  # Negative cases — should not trigger any semantic way
+  # Negative cases -- should not trigger any semantic way
   "NONE|what is the capital of France"
   "NONE|tell me about photosynthesis"
   "NONE|how tall is Mount Everest"
@@ -96,7 +116,7 @@ TEST_CASES=(
   "softwaredev-code-security|are our API keys exposed anywhere"
   "softwaredev-architecture-design|should we use a monolith or microservices architecture"
   "softwaredev-environment-config|the database connection string needs updating"
-  # Co-activation cases — comma-separated expected ways
+  # Co-activation cases -- comma-separated expected ways
   "softwaredev-environment-debugging,softwaredev-code-errors|debug the unhandled exception and add proper error handling"
   "softwaredev-environment-deps,softwaredev-code-security|audit our dependencies for security vulnerabilities"
   "softwaredev-architecture-design,softwaredev-delivery-migrations|design the database schema for the new microservice"
@@ -118,16 +138,16 @@ for test_case in "${TEST_CASES[@]}"; do
   # Score against all ways with BM25
   bm25_matches=()
   bm25_scores=""
-  for way_id in "${!WAY_DESC[@]}"; do
+  for (( i=0; i<${#WAY_IDS[@]}; i++ )); do
+    way_id="${WAY_IDS[$i]}"
     score=$("$BM25_BINARY" pair \
-      --description "${WAY_DESC[$way_id]}" \
-      --vocabulary "${WAY_VOCAB[$way_id]}" \
+      --description "${WAY_DESCS[$i]}" \
+      --vocabulary "${WAY_VOCABS[$i]}" \
       --query "$prompt" \
-      --threshold 0.0 2>&1 | grep -oP 'score=\K[0-9.]+')
-    if (( $(echo "$score > 0" | bc -l 2>/dev/null || echo 0) )); then
+      --threshold 0.0 2>&1 | sed -n 's/.*score=\([0-9.]*\).*/\1/p')
+    if [[ -n "$score" ]] && (( $(echo "$score > 0" | bc -l 2>/dev/null || echo 0) )); then
       bm25_scores="$bm25_scores $way_id=$score"
-      # Check against per-way threshold from way.md
-      thresh="${WAY_THRESH[$way_id]}"
+      thresh="${WAY_THRESHS[$i]}"
       if (( $(echo "$score >= $thresh" | bc -l 2>/dev/null || echo 0) )); then
         bm25_matches+=("$way_id")
       fi
@@ -136,8 +156,9 @@ for test_case in "${TEST_CASES[@]}"; do
 
   # Score against all ways with NCD (uses fixed NCD threshold, not BM25 threshold)
   ncd_matches=()
-  for way_id in "${!WAY_DESC[@]}"; do
-    if bash "$NCD_SCRIPT" "$prompt" "${WAY_DESC[$way_id]}" "${WAY_VOCAB[$way_id]}" "0.55" 2>/dev/null; then
+  for (( i=0; i<${#WAY_IDS[@]}; i++ )); do
+    way_id="${WAY_IDS[$i]}"
+    if bash "$NCD_SCRIPT" "$prompt" "${WAY_DESCS[$i]}" "${WAY_VOCABS[$i]}" "0.55" 2>/dev/null; then
       ncd_matches+=("$way_id")
     fi
   done
@@ -159,7 +180,7 @@ for test_case in "${TEST_CASES[@]}"; do
     all_found=true
     for exp in "${expected_list[@]}"; do
       found=false
-      for m in "${bm25_matches[@]}"; do
+      for m in "${bm25_matches[@]+"${bm25_matches[@]}"}"; do
         [[ "$m" == "$exp" ]] && found=true && break
       done
       [[ "$found" == false ]] && all_found=false
@@ -183,7 +204,7 @@ for test_case in "${TEST_CASES[@]}"; do
     all_found=true
     for exp in "${expected_list[@]}"; do
       found=false
-      for m in "${ncd_matches[@]}"; do
+      for m in "${ncd_matches[@]+"${ncd_matches[@]}"}"; do
         [[ "$m" == "$exp" ]] && found=true && break
       done
       [[ "$found" == false ]] && all_found=false
