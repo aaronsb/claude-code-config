@@ -8,13 +8,37 @@ allowed-tools: Bash, Read, Glob, AskUserQuestion
 
 Secure, simple transfers between computers using magic-wormhole codes.
 
+## When to Suggest Wormhole
+
+| Scenario | Tool |
+|----------|------|
+| Ad-hoc transfer between two machines, no prior setup | **wormhole** |
+| Recurring transfers, SSH already configured | scp, rsync |
+| Transfer within same machine or LAN with shared filesystem | cp, rsync |
+| Transfer to/from cloud storage | provider CLI (aws s3, gsutil, etc.) |
+
 ## Step 0: Check Installation
 
 ```bash
 command -v wormhole 2>/dev/null && echo "installed" || echo "missing"
 ```
 
-If missing, tell the user magic-wormhole needs to be installed first. The `softwaredev/environment/magic-wormhole` way has platform detection and install instructions — it triggers on "installing magic-wormhole". Stop the skill flow until installation succeeds.
+If missing, detect the platform and install:
+
+```bash
+uname -s  # Darwin = macOS, Linux = check distro
+cat /etc/os-release 2>/dev/null | grep -E '^(ID|ID_LIKE)='
+```
+
+| Platform | Command |
+|----------|---------|
+| Arch Linux | `sudo pacman -S magic-wormhole` |
+| macOS (Homebrew) | `brew install magic-wormhole` |
+| Debian / Ubuntu | `sudo apt install magic-wormhole` |
+| Fedora | `sudo dnf install magic-wormhole` |
+| pip (fallback) | `pip install magic-wormhole` |
+
+Use `AskUserQuestion` to confirm the install method before running it. Stop the skill flow until installation succeeds.
 
 ## Step 1: Determine Mode
 
