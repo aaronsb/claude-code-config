@@ -1,6 +1,6 @@
 ---
 description: file transfer between computers, sharing files across machines, magic-wormhole setup and usage
-vocabulary: transfer file send receive share wormhole between computers machines cross-machine exchange relay
+vocabulary: transfer file send receive share between computers machines cross-machine exchange relay
 threshold: 2.0
 pattern: magic.?wormhole|install.*wormhole|wormhole.*install
 scope: agent, subagent
