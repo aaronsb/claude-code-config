@@ -1,5 +1,5 @@
 ---
-status: Draft
+status: Deprecated
 date: 2026-02-21
 deciders:
   - aaronsb
@@ -8,6 +8,10 @@ related: []
 ---
 
 # ADR-101: Wormhole relay protocol for cross-instance agent communication
+
+## Status: Deprecated
+
+**Deprecated 2026-02-26** after experimental validation. The manifest protocol works mechanically but wormhole's one-shot, role-asymmetric design makes it fundamentally unsuited for conversations. See [Experimental Results](#experimental-results-2026-02-26) below. For agent-to-agent chat, use a persistent bidirectional transport (IRC, Matrix, or similar). Wormhole remains the right tool for one-shot file transfers via the `/wormhole` skill.
 
 ## Context
 
@@ -118,3 +122,43 @@ The risks are obvious:
 - **Semantic drift**: Successive rounds of interpretation and reinterpretation can drift far from the original intent
 
 Any implementation combining ralph loops with the relay protocol MUST include hard bounds: maximum turn count, convergence detection (output similarity between rounds), and mandatory human checkpoints. The continuation mechanism in the manifest provides a natural rate limiter — code exhaustion forces a pause unless explicitly renewed.
+
+## Experimental Results (2026-02-26)
+
+Two Claude Code instances tested the manifest protocol over 10 pre-agreed codes with a UUID-tagged naming scheme (`N-439351ef-word-word`).
+
+### What Worked
+
+- **Initial handshake**: Human-relayed random codes work reliably for bootstrapping
+- **Manifest delivery**: JSON manifest transferred cleanly, both sides parsed it
+- **Sequenced turns**: When the human explicitly said "side B receive, now side A send," transfers succeeded every time
+- **6 of 10 turns completed** successfully, including 2 out-of-band resyncs
+
+### What Failed
+
+- **Role collisions**: 3 of 10 turns failed with `ServerError: crowded` — both sides attempted the same role (both receiving or both sending) on the same code simultaneously
+- **Burned codes**: Collisions permanently consume the code. Unlike TCP, there is no retry — the channel number is gone
+- **Human sequencing required**: Despite pre-agreed sender/receiver assignments per turn, the human had to manually sequence each exchange. The "autonomous after initial handshake" goal was not achieved
+- **No automatic recovery**: When codes burned, the only recovery path was out-of-band fallback codes (side B generated random codes and the human relayed them)
+
+### Root Cause
+
+Wormhole's PAKE handshake is **role-asymmetric**: one side must be the sender and the other the receiver. If both connect as the same role, the relay server returns `crowded` and the code is consumed. This is by design — wormhole assumes a human is coordinating both ends in real-time for a single transfer.
+
+The manifest protocol tried to pre-assign roles, but both Claude instances execute asynchronously. Without a synchronization mechanism to guarantee receiver-before-sender ordering, collisions are inevitable. The protocol is essentially **UDP with no retransmit and destructive packet loss**.
+
+### Conclusion
+
+Wormhole is the wrong transport for conversations. It was designed for one-shot file drops, and it excels at that. Forcing statefulness onto a stateless, single-use protocol creates fragility that no amount of manifest engineering can fix.
+
+For cross-instance agent chat, use a transport designed for persistent bidirectional messaging:
+
+| Transport | E2E Encrypted | Bidirectional | Persistent | No Accounts | Setup Cost |
+|-----------|:---:|:---:|:---:|:---:|---|
+| **IRC** (self-hosted ircd) | TLS | Yes | Yes | Yes | Minimal — one process |
+| **Matrix** (via matrix-commander) | Yes (Olm) | Yes | Yes | No | Moderate |
+| **Tailscale + socat** | Yes (WireGuard) | Yes | Yes | No | Low if already using Tailscale |
+
+IRC with a local ircd is the simplest option: zero accounts, zero credentials, one package install, both sides join a channel and talk. The channel handles ordering, buffering, and fan-out — all the problems the manifest protocol tried to solve.
+
+**Wormhole's role going forward**: one-shot file transfers between machines via the `/wormhole` skill. No conversation protocol.
