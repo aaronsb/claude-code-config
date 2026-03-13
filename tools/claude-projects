@@ -37,11 +37,9 @@ def term_width():
         return 80
 
 _ANSI_RE = re.compile(r'\033\[[0-9;]*m')
-_OSC8_RE = re.compile(r'\033\]8;;[^\033]*\033\\')
 
 def vlen(s):
-    """Visible length of a string (ignoring ANSI and OSC 8 escape codes)."""
-    s = _OSC8_RE.sub('', s)
+    """Visible length of a string (ignoring ANSI escape codes)."""
     return len(_ANSI_RE.sub('', s))
 
 def rpad(s, width):
@@ -67,18 +65,12 @@ def yellow(t): return c("33", t)
 def red(t):    return c("31", t)
 def mag(t):    return c("35", t)
 
-def hyperlink(url, text):
-    """OSC 8 terminal hyperlink. Clickable in supported terminals."""
-    if not USE_COLOR:
-        return text
-    return f"\033]8;;{url}\033\\{text}\033]8;;\033\\"
-
-# ── Data helpers ────────────────────────────────────────────────────────────
-
-def path_to_file_url(display_path):
-    """Convert a display path like ~/Projects/foo to file:///home/user/Projects/foo."""
+def as_file_url(display_path):
+    """Convert display path to file:// URL for terminal auto-link detection."""
     expanded = display_path.replace("~", HOME, 1) if display_path.startswith("~") else display_path
     return f"file://{expanded}"
+
+# ── Data helpers ────────────────────────────────────────────────────────────
 
 def decode_project_path(dirname):
     """Best-effort reverse of Claude's path encoding (/ and . → -)."""
@@ -248,13 +240,12 @@ def cmd_list(args):
     print(f"  {'Project':<{path_w}} {'Sessions':>8} {'Size':>6} {'Last':>7} {'Memory':>6}")
     print(f"  {'─' * path_w} {'─' * 8} {'─' * 6} {'─' * 7} {'─' * 6}")
 
+    show_urls = getattr(args, "urls", False)
+
     for p in projects:
         path = p["path"]
         if len(path) > path_w:
             path = "…" + path[-(path_w - 1):]
-
-        # OSC 8 hyperlink to project directory
-        display_path = hyperlink(path_to_file_url(p["path"]), path)
 
         sess = str(p["sessions"]) if p["sessions"] else dim(str(p["jsonl_files"]) + "t") if p["jsonl_files"] else dim("–")
         size = fmt_bytes(p["jsonl_bytes"]) if p["jsonl_bytes"] else dim("–")
@@ -271,7 +262,12 @@ def cmd_list(args):
         elif age:
             age = dim(age)
 
-        print(f"  {rpad(display_path, path_w)} {lpad(sess, 8)} {lpad(size, 6)} {lpad(age, 7)} {lpad(mem, 6)}")
+        if show_urls:
+            # Two-line format: clickable URL + metadata
+            print(f"  {as_file_url(p['path'])}")
+            print(f"    {lpad(sess, 8)} {lpad(size, 6)} {lpad(age, 7)} {lpad(mem, 6)}")
+        else:
+            print(f"  {rpad(path, path_w)} {lpad(sess, 8)} {lpad(size, 6)} {lpad(age, 7)} {lpad(mem, 6)}")
 
     print()
 
@@ -361,8 +357,7 @@ def cmd_search(args):
         path = p["path"]
         sess = f"{p['sessions']}s" if p["sessions"] else f"{p['jsonl_files']}t" if p["jsonl_files"] else "–"
         age = age_str(p["last_active"]) or "–"
-        linked = hyperlink(path_to_file_url(p["path"]), cyan(path))
-        print(f"  {linked}")
+        print(f"  {cyan(as_file_url(p['path']))}")
         print(f"    {dim(sess)} · {dim(age)}")
         for snip in snippets[:2]:
             print(f"    {dim('›')} {snip}")
@@ -385,8 +380,7 @@ def cmd_show(args):
         return
 
     p = match
-    linked = hyperlink(path_to_file_url(p['path']), bold(p['path']))
-    print(f"\n{linked}")
+    print(f"\n{bold(as_file_url(p['path']))}")
     print(f"  {dim('Dir:')} {p['dirname']}")
     print()
 
@@ -673,6 +667,7 @@ def main():
     p_list.add_argument("--active", action="store_true", help="Only projects with sessions")
     p_list.add_argument("--memory", action="store_true", help="Only projects with memory")
     p_list.add_argument("--stale", action="store_true", help="Only empty projects")
+    p_list.add_argument("--urls", action="store_true", help="Show clickable file:// URLs")
 
     # search
     p_search = sub.add_parser("search", aliases=["s", "find"], help="Search projects")
@@ -702,6 +697,7 @@ def main():
             args.active = False
             args.memory = False
             args.stale = False
+            args.urls = False
         cmd_list(args)
     elif args.command in ("search", "s", "find"):
         cmd_search(args)
