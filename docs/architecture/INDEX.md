@@ -22,7 +22,9 @@ _Ways architecture, matching, macros, hooks, session lifecycle_
 |-----|-------|--------|
 | [ADR-100](./system/ADR-100-ways-scaffolding-wizard.md) | Ways Scaffolding Wizard | Draft |
 | [ADR-101](./system/ADR-101-wormhole-relay-protocol-for-cross-instance-agent-communication.md) | Wormhole relay protocol for cross-instance agent communication | Deprecated |
-| [ADR-102](./system/ADR-102-irc-based-local-agent-communication.md) | IRC-based local agent communication | Draft |
+| [ADR-102](./system/ADR-102-irc-based-local-agent-communication.md) | IRC-based local agent communication | Accepted |
+| [ADR-103](./system/ADR-103-checks-epoch-distance-aware-confidence-sensors-for-ways.md) | Checks — Epoch-Distance-Aware Confidence Sensors for Ways | Draft |
+| [ADR-104](./system/ADR-104-token-gated-way-re-disclosure-for-long-context-windows.md) | Token-Gated Way Re-Disclosure for Long Context Windows | Draft |
 
 ## Documentation
 _Documentation structure, tooling, coherence_

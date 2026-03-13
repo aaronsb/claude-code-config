@@ -6,16 +6,22 @@ allowed-tools: Bash
 
 # Context Status
 
-Run this to check your remaining context window budget:
+Run the context usage script and capture the JSON output:
 
 ```bash
-~/.claude/scripts/context-usage.sh "${CLAUDE_PROJECT_DIR:-$PWD}"
+~/.claude/scripts/context-usage.sh --json "${CLAUDE_PROJECT_DIR:-$PWD}"
 ```
 
-Report the result to the user in plain language, e.g.:
+Then render a visual gauge using the chart tool. Build the JSON and pipe it:
 
-> "About 490k tokens remaining (51% of the 1M window)."
+```bash
+# Parse the values from the --json output, then:
+echo '{"type":"hbar","data":{"Used (PCT%)":USED,"Free (RPCT%)":REMAINING},"title":"Context: USEDk / TOTALk tokens (MODEL)","width":60,"format":"human"}' \
+  | ~/.claude/hooks/ways/softwaredev/visualization/charts/chart-tool
+```
 
-The script auto-detects the context window size from the model in the transcript (1M for Opus 4.6 1M, 200k for others). You can override with `CLAUDE_CONTEXT_WINDOW` env var.
+Replace `USED`, `REMAINING`, `TOTAL`, `PCT`, `RPCT`, and `MODEL` with actual values from the JSON output. Use `jq` to extract them.
+
+The script auto-detects the context window size from the model in the transcript (1M for Opus 4.6, 200k for others). Override with `CLAUDE_CONTEXT_WINDOW` env var.
 
 If the remaining percentage is below 20%, mention that compaction is approaching and suggest wrapping up or prioritizing remaining work.

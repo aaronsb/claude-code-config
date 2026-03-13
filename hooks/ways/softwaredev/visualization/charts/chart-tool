@@ -107,10 +107,24 @@ def render_spark(data):
 # Horizontal bar chart
 # ============================================================================
 
+def fmt_val(v, fmt=None):
+    """Format a numeric value. Use 'human' for K/M suffixes, or default to compact."""
+    if fmt == "human":
+        if abs(v) >= 1_000_000:
+            return f"{v/1_000_000:.1f}M"
+        elif abs(v) >= 1_000:
+            return f"{v/1_000:.0f}k"
+        return f"{v:.0f}"
+    # Default: avoid scientific notation for values under 10M
+    if abs(v) < 10_000_000 and v == int(v):
+        return f"{int(v):,}"
+    return f"{v:,.4g}"
+
 def render_hbar(data):
     items = data.get("data", {})
     title = data.get("title", "")
     width = data.get("width", 60)
+    num_fmt = data.get("format")
 
     if not items:
         return
@@ -129,7 +143,7 @@ def render_hbar(data):
         bar_len = int(val / max_val * bar_width) if max_val else 0
         r, g, b = colors[i]
         bar = f"{bg_rgb(r, g, b)}{' ' * bar_len}{RESET}"
-        print(f"  {label:>{label_w}}  {bar} {rgb(r, g, b)}{val:.4g}{RESET}")
+        print(f"  {label:>{label_w}}  {bar} {rgb(r, g, b)}{fmt_val(val, num_fmt)}{RESET}")
 
 # ============================================================================
 # Vertical bar chart
@@ -167,8 +181,9 @@ def render_bar(data):
     # Labels
     print("  " + " ".join(f"{l:^{col_w}}" for l in labels))
     # Values
+    num_fmt = data.get("format")
     val_line = "  " + " ".join(
-        f"{rgb(*colors[i])}{v:^{col_w}.4g}{RESET}" for i, v in enumerate(values)
+        f"{rgb(*colors[i])}{fmt_val(v, num_fmt):^{col_w}}{RESET}" for i, v in enumerate(values)
     )
     print(val_line)
 
@@ -262,6 +277,7 @@ def render_line(data):
 def render_table(data):
     items = data.get("data", {})
     title = data.get("title", "")
+    num_fmt = data.get("format")
 
     if not items:
         return
@@ -271,15 +287,21 @@ def render_table(data):
 
     labels = list(items.keys())
     values = [items[k] for k in labels]
-    max_val = max(abs(v) for v in values) if values else 1
     label_w = max(len(l) for l in labels)
     colors = palette(len(labels), data.get("color"))
 
+    # Separate numeric and string values
+    numeric_vals = [v for v in values if isinstance(v, (int, float))]
+    max_val = max(abs(v) for v in numeric_vals) if numeric_vals else 1
+
     for i, (label, val) in enumerate(zip(labels, values)):
         r, g, b = colors[i]
-        frac = abs(val) / max_val if max_val else 0
-        indicator = SPARK_CHARS[int(frac * (len(SPARK_CHARS) - 1))]
-        print(f"  {label:>{label_w}}  {rgb(r, g, b)}{indicator} {val:>10.4g}{RESET}")
+        if isinstance(val, (int, float)):
+            frac = abs(val) / max_val if max_val else 0
+            indicator = SPARK_CHARS[int(frac * (len(SPARK_CHARS) - 1))]
+            print(f"  {label:>{label_w}}  {rgb(r, g, b)}{indicator} {fmt_val(val, num_fmt):>10}{RESET}")
+        else:
+            print(f"  {label:>{label_w}}  {rgb(r, g, b)}  {str(val):>10}{RESET}")
 
 # ============================================================================
 # Histogram

@@ -56,6 +56,10 @@
 !docs/images/*
 !docs/research/
 !docs/research/*.md
+!docs/reference/
+!docs/reference/*/
+!docs/reference/**/*.md
+!docs/reference/**/*.png
 
 # Hooks and ways
 !hooks/

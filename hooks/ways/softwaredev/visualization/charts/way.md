@@ -42,12 +42,14 @@ echo '{"type":"hbar","data":{"GET":120,"POST":45},"title":"Requests"}' | ~/.clau
   "width": 60,
   "height": 15,
   "color": "auto|red|green|blue|cyan|magenta|yellow|white",
+  "format": "human",
   "bins": 10
 }
 ```
 
-- `data` is for bar/hbar/table (label→value map)
+- `data` is for bar/hbar/table (label→value map; table also accepts string values)
 - `values` is for spark/line/hist (number array)
+- `format`: `"human"` uses K/M suffixes (e.g., `31k`, `1.2M`). Default uses commas.
 - All optional fields have sensible defaults
 
 ### When to Use
