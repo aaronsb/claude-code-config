@@ -21,6 +21,7 @@ Install:
 import argparse
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -34,6 +35,20 @@ def term_width():
         return os.get_terminal_size().columns
     except (ValueError, OSError):
         return 80
+
+_ANSI_RE = re.compile(r'\033\[[0-9;]*m')
+
+def vlen(s):
+    """Visible length of a string (ignoring ANSI escape codes)."""
+    return len(_ANSI_RE.sub('', s))
+
+def rpad(s, width):
+    """Right-pad string to width, accounting for ANSI codes."""
+    return s + ' ' * max(0, width - vlen(s))
+
+def lpad(s, width):
+    """Left-pad (right-align) string to width, accounting for ANSI codes."""
+    return ' ' * max(0, width - vlen(s)) + s
 
 # ── Colors ──────────────────────────────────────────────────────────────────
 
@@ -174,6 +189,8 @@ def age_str(date_str):
         return ""
     try:
         d = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=timezone.utc)
         now = datetime.now(timezone.utc)
         delta = now - d
         days = delta.days
@@ -238,7 +255,7 @@ def cmd_list(args):
         elif age:
             age = dim(age)
 
-        print(f"  {path:<{path_w}} {sess:>8} {size:>6} {age:>7} {mem:>6}")
+        print(f"  {rpad(path, path_w)} {lpad(sess, 8)} {lpad(size, 6)} {lpad(age, 7)} {lpad(mem, 6)}")
 
     print()
 
