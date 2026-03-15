@@ -484,16 +484,17 @@ def cmd_cleanup(args):
         print("No empty projects to clean up.")
         return
 
-    print(f"\n{bold('Empty projects')} ({len(empty)} found)\n")
+    print(f"\n{bold('Empty projects')} ({len(empty)} found)")
+    print(f"  {dim('These are metadata entries in ~/.claude/projects/, NOT your actual project directories.')}\n")
     for p in empty:
-        print(f"  {dim(p['path'])}")
+        print(f"  {dim(p['path'])}  {dim('→')}  {dim(str(PROJECTS_DIR / p['dirname']))}")
 
     if args.dry_run:
         print(f"\n  {dim('(dry run — pass without --dry-run to remove)')}")
         return
 
     print()
-    confirm = input(f"  Remove {len(empty)} empty project directories? [y/N] ")
+    confirm = input(f"  Remove {len(empty)} empty entries from ~/.claude/projects/? [y/N] ")
     if confirm.lower() != "y":
         print("  Cancelled.")
         return
@@ -627,7 +628,7 @@ def cmd_hygiene(args):
     # Interactive cleanup
     if orphans:
         orphan_total = sum(i["size"] for i in orphans)
-        confirm = input(f"  Remove {len(orphans)} orphaned transcripts ({fmt_bytes(orphan_total)})? [y/N] ")
+        confirm = input(f"  Remove {len(orphans)} orphaned transcripts from ~/.claude/projects/ ({fmt_bytes(orphan_total)})? [y/N] ")
         if confirm.lower() == "y":
             removed = 0
             freed = 0
