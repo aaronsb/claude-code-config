@@ -1,5 +1,5 @@
 ---
-pattern: \bway\b|\bways\b|knowledge|guidance|context.?inject
+pattern: way|ways|knowledge|guidance|context.?inject
 scope: agent, subagent
 provenance:
   policy:

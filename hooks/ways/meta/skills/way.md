@@ -1,5 +1,5 @@
 ---
-pattern: \bskill\b|SKILL\.md|skill.?(creation|author|write)|claude.?code.?skill|~\/\.claude\/skills
+pattern: skill|SKILL\.md|skill.?(creation|author|write)|claude.?code.?skill|~\/\.claude\/skills
 scope: agent, subagent
 ---
 # Skills Way

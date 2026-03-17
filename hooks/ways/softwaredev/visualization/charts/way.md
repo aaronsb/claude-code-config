@@ -1,7 +1,7 @@
 ---
 description: Render ANSI terminal charts from data — bar, line, sparkline, histogram, table
 vocabulary: chart visualize graph sparkline histogram plot trend metric compare bar line table render data display summary distribution hbar spark values series braille ansi terminal
-pattern: \bchart\b|visuali[sz]|graph|sparkline|histogram|\bplot\b|bar.?chart|\btrend\b|\bmetric
+pattern: chart|visuali[sz]|graph|sparkline|histogram|plot|bar.?chart|trend|metric
 threshold: 2.0
 scope: agent, subagent
 ---

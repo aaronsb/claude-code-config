@@ -1,5 +1,5 @@
 ---
-pattern: \brunbook\b|runbook.?(automation|executable)|playbook|sop.?(automation|as.?code)|operational.?procedure
+pattern: runbook|runbook.?(automation|executable)|playbook|sop.?(automation|as.?code)|operational.?procedure
 scope: agent, subagent
 ---
 # Runbooks Way

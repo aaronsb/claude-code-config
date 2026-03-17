@@ -2,7 +2,7 @@
 description: GitHub pull requests, issues, code review, CI checks, repository management
 vocabulary: pr pullrequest issue review checks ci label milestone fork repository upstream draft ship land merge
 threshold: 2.0
-pattern: github|\ issue|pull.?request|\ pr\ |\ pr$|review.?(pr|comment)|merge.?request|\bship\s+(it|this|the)\b|\bland\s+(it|this)\b|\bmerge\s+(it|this)\b
+pattern: github|\ issue|pull.?request|\ pr\ |\ pr$|review.?(pr|comment)|merge.?request|ship.?(it|this|the)|land.?(it|this)|merge.?(it|this)
 commands: ^gh\ |^gh$
 macro: prepend
 scope: agent, subagent

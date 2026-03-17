@@ -1,7 +1,7 @@
 ---
 trigger: context-threshold
 threshold: 80
-pattern: \bremember\b|save.?(?:to|this|that).?memory|note.?(?:for|this).?(?:later|next)|don't forget|keep.?in.?mind
+pattern: remember|save.*(to|this|that).*memory|note.*(for|this).*(later|next)|don't forget|keep.*in.*mind
 macro: prepend
 scope: agent
 ---

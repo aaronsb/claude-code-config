@@ -1,7 +1,7 @@
 # Step-Back
 
 ## Signature
-keywords: stuck step back general principle abstract first principles why fundamentally bigger picture
+keywords: stuck step-back general principle abstract first-principles why fundamentally bigger-picture zoom-out
 
 ## Stages
 
