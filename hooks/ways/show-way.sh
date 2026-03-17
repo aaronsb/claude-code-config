@@ -126,6 +126,7 @@ stamp_way_tokens "$WAY_MARKER_NAME" "$SESSION_ID"
 # Stamp epoch for check distance tracking
 source "${HOME}/.claude/hooks/ways/epoch.sh"
 CURRENT_EPOCH=$(cat "/tmp/.claude-epoch-${SESSION_ID}" 2>/dev/null || echo 0)
+EPOCH="$CURRENT_EPOCH"  # stamp_way_epoch uses $EPOCH
 stamp_way_epoch "$WAY_MARKER_NAME" "$SESSION_ID"
 
 # --- Tree disclosure tracking ---

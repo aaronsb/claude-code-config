@@ -101,38 +101,39 @@ The root security way should NOT re-fire (marker exists from Step 1).
 
 ---
 
-## Part B: Think Strategy Activation
+## Part B: Think Strategy Way
 
-### Step 7 — Tree of Thoughts auto-detection
+### Step 7 — Think Strategies way fires on reasoning prompt
 
 > **USER**: Type exactly: `we need to explore different approaches for the caching layer, there are several options to consider`
 
-> **CLAUDE**: Check if a think strategy activated. Look for "Tree of Thoughts" in the additional context. Report:
-1. Did it activate?
-2. What stage was injected?
-3. Was a state file created?
+> **CLAUDE**: Check if the Think Strategies way fired. Look for "# Think Strategies" heading with the strategy selection table. Report:
+1. Did the way fire?
+2. Is the strategy table present (tree-of-thoughts, trilemma, etc.)?
 
-**Expected**: Tree of Thoughts activates automatically (keywords: explore, options, approaches, different). Stage 1 (Problem Reception) guidance should be injected. State file at `/tmp/.claude-think-{session_id}.json`.
-
----
-
-### Step 8 — Think strategy stage advancement
-
-> **USER**: Type exactly: `here are the three approaches I see: redis, memcached, or in-process LRU`
-
-> **CLAUDE**: Check what stage guidance you received on this turn. Read the state file to confirm the stage advanced.
-
-**Expected**: After Step 7's response, the Stop hook should have advanced to stage 2. This turn should inject Stage 2 (Approach Exploration) guidance. After this response, it should advance to stage 3.
+**Expected**: The Think Strategies way fires (vocabulary: explore, options, approaches, trade-off, balance, alternatives). You should see a table of available strategy skills and guidance on when to use each one. No auto-activation of a specific strategy — the way provides the menu, Claude or the user selects.
 
 ---
 
-### Step 9 — Think strategy cancellation
+### Step 8 — Think strategy does NOT auto-activate
 
-> **USER**: Type exactly: `skip that, let's just go with redis`
+> **CLAUDE**: Verify that no think strategy state file was created. The way+skills architecture does not auto-activate — it presents options.
 
-> **CLAUDE**: Check if the strategy was cancelled. Look for "Think strategy cancelled" in the context. Verify the state file was removed.
+```bash
+ls /tmp/.claude-think-*.json 2>/dev/null
+```
 
-**Expected**: The cancellation detection fires ("skip that" matches cancel patterns). State file removed. No more strategy guidance on subsequent turns.
+**Expected**: No state file exists. The way fires as guidance; specific strategies are invoked via skill (e.g., `/think-tree`).
+
+---
+
+### Step 9 — Think strategy way is session-gated
+
+> **USER**: Type exactly: `what are the trade-offs between the three options`
+
+> **CLAUDE**: Check if the Think Strategies way fires again on this related prompt.
+
+**Expected**: The way does NOT re-fire (marker exists from Step 7). This is correct — the way fires once per session. If the user wants a specific strategy, they invoke the skill directly.
 
 ---
 
@@ -148,13 +149,13 @@ The root security way should NOT re-fire (marker exists from Step 1).
 
 ---
 
-### Step 11 — Think strategy doesn't re-activate after completion
-
-> **CLAUDE**: Check if the done marker exists at `/tmp/.claude-think-done-{session_id}`. If so, test that a strategy-matching prompt doesn't re-activate:
+### Step 11 — Way does not re-fire on related prompt
 
 > **USER**: Type exactly: `let's explore multiple options for the database schema`
 
-**Expected**: If the done marker exists, the think strategy should NOT re-activate this session. If it was cancelled (not completed), the marker may not exist — in that case, it MAY re-activate, which is acceptable (cancellation is not completion).
+> **CLAUDE**: Check if the Think Strategies way fires again.
+
+**Expected**: The way does NOT re-fire (already fired in Step 7, marker exists). Other ways may fire (design, migrations) but the Think Strategies way should be silent.
 
 ---
 
@@ -172,14 +173,14 @@ The root security way should NOT re-fire (marker exists from Step 1).
 > | 4 | Sibling fires | Secrets way, coverage 2/3 | ? |
 > | 5 | Docs tree | Mermaid child fires | ? |
 > | 6 | TDD anti-rationalization | Rationalizations table present | ? |
-> | 7 | Think auto-detection | Tree of Thoughts stage 1 | ? |
-> | 8 | Think advancement | Stage progresses | ? |
-> | 9 | Think cancellation | Strategy cancelled, state removed | ? |
+> | 7 | Think way fires | Strategy menu injected | ? |
+> | 8 | No auto-activation | No state file created | ? |
+> | 9 | Think way session-gated | Way does not re-fire | ? |
 > | 10 | Negative test | Nothing fires | ? |
-> | 11 | No re-activation | Done marker prevents repeat | ? |
+> | 11 | Way does not re-fire | Marker prevents repeat | ? |
 >
 > Report pass/fail count and observations about:
 > - Whether progressive disclosure trees deliver the right content at the right depth
 > - Whether anti-rationalization tables appear at the expected specificity level
-> - Whether think strategies activate, advance, and cancel correctly
+> - Whether the think strategies way fires and is session-gated correctly
 > - Whether tree disclosure metrics capture parent-child relationships
