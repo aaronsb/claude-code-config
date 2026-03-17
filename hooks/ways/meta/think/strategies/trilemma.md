@@ -2,6 +2,7 @@
 
 ## Signature
 keywords: balance trade-off competing three objectives tension pick two can't have all sacrifice versus
+threshold: 6.0
 
 ## Stages
 

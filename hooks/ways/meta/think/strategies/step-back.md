@@ -2,6 +2,7 @@
 
 ## Signature
 keywords: stuck step-back general principle abstract first-principles why fundamentally bigger-picture zoom-out
+threshold: 6.0
 
 ## Stages
 

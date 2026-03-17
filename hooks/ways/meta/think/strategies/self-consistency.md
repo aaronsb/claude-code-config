@@ -2,6 +2,7 @@
 
 ## Signature
 keywords: are we sure high stakes verify reasoning double check confident certain risky decision
+threshold: 6.0
 
 ## Stages
 

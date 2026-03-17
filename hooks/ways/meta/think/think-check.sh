@@ -33,6 +33,13 @@ if [[ -f "$STATE_FILE" ]]; then
   total=$(jq -r '.total_stages' "$STATE_FILE" 2>/dev/null)
   strategy_file="${STRATEGIES_DIR}/${strategy}.md"
 
+  # Defensive cleanup: if stage exceeds total, the advance hook missed completion
+  if [[ "$stage" -gt "$total" ]] || [[ -z "$stage" ]] || [[ -z "$total" ]]; then
+    rm -f "$STATE_FILE"
+    touch "/tmp/.claude-think-done-${SESSION_ID}"
+    exit 0
+  fi
+
   if [[ -f "$strategy_file" ]] && [[ "$stage" -le "$total" ]]; then
     # Extract the current stage's content (### N. heading through next ### or EOF)
     stage_content=$(awk -v n="$stage" '
@@ -72,19 +79,21 @@ best_file=""
 for strategy_file in "${STRATEGIES_DIR}"/*.md; do
   [[ ! -f "$strategy_file" ]] && continue
 
-  # Extract keywords from ## Signature section
+  # Extract keywords and threshold from ## Signature section
   keywords=$(awk '/^## Signature/{found=1; next} found && /^keywords:/{gsub(/^keywords: */, ""); print; exit}' "$strategy_file")
   [[ -z "$keywords" ]] && continue
+  strategy_threshold=$(awk '/^## Signature/{found=1; next} found && /^threshold:/{gsub(/^threshold: */, ""); print; exit}' "$strategy_file")
+  strategy_threshold="${strategy_threshold:-6.0}"
 
-  # Use way-match to score
+  # Use way-match to score — same BM25 engine as ways
   score=$("$WAY_MATCH" pair \
     --description "$keywords" \
     --vocabulary "$keywords" \
     --query "$PROMPT" \
     --threshold 0.0 2>&1 | grep -oP 'score=\K[0-9.]+' || echo "0")
 
-  # Threshold for strategy activation: 3.0 (high — avoid false positives)
-  if (( $(echo "$score > 3.0 && $score > $best_score" | bc -l 2>/dev/null || echo 0) )); then
+  # Use per-strategy threshold (author-tunable, same as way thresholds)
+  if (( $(echo "$score > $strategy_threshold && $score > $best_score" | bc -l 2>/dev/null || echo 0) )); then
     best_score="$score"
     best_strategy=$(basename "$strategy_file" .md)
     best_file="$strategy_file"
