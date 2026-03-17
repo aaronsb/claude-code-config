@@ -138,6 +138,7 @@ PARENT_EPOCH=""
 EPOCH_FROM_PARENT=""
 
 # Walk up the directory tree looking for ancestor markers
+# Count all fired ancestors for depth; record nearest for parent info
 _tree_path="$WAY"
 while [[ "$_tree_path" == */* ]]; do
   _tree_path="${_tree_path%/*}"  # strip last component
@@ -145,28 +146,31 @@ while [[ "$_tree_path" == */* ]]; do
   _parent_marker="/tmp/.claude-way-${_parent_marker_name}-${SESSION_ID:-$(date +%Y%m%d)}"
   if [[ -f "$_parent_marker" ]]; then
     TREE_DEPTH=$((TREE_DEPTH + 1))
-    PARENT_MARKER="$_tree_path"
-    # Read parent's epoch
-    PARENT_EPOCH=$(cat "/tmp/.claude-way-epoch-${_parent_marker_name}-${SESSION_ID}" 2>/dev/null || echo 0)
-    EPOCH_FROM_PARENT=$((CURRENT_EPOCH - PARENT_EPOCH))
-    break  # found nearest ancestor
+    # Record nearest parent only (first ancestor found)
+    if [[ -z "$PARENT_MARKER" ]]; then
+      PARENT_MARKER="$_tree_path"
+      PARENT_EPOCH=$(cat "/tmp/.claude-way-epoch-${_parent_marker_name}-${SESSION_ID}" 2>/dev/null || echo 0)
+      EPOCH_FROM_PARENT=$((CURRENT_EPOCH - PARENT_EPOCH))
+    fi
   fi
 done
 
 # Count sibling disclosure coverage (how many siblings of this way have fired?)
 _parent_dir="${WAY%/*}"
 if [[ "$_parent_dir" != "$WAY" ]]; then
-  # Count total sibling way.md files
   _sibling_total=0
   _sibling_fired=0
-  _ways_base="${HOME}/.claude/hooks/ways"
-  for _sib_dir in "${_ways_base}/${_parent_dir}"/*/; do
-    [[ -f "${_sib_dir}way.md" ]] || continue
-    _sibling_total=$((_sibling_total + 1))
-    _sib_name="${_sib_dir#${_ways_base}/}"
-    _sib_name="${_sib_name%/}"
-    _sib_marker_name=$(echo "$_sib_name" | tr '/' '-')
-    [[ -f "/tmp/.claude-way-${_sib_marker_name}-${SESSION_ID:-$(date +%Y%m%d)}" ]] && _sibling_fired=$((_sibling_fired + 1))
+  # Check both project-local and global ways for siblings
+  for _ways_base in "$PROJECT_DIR/.claude/ways" "${HOME}/.claude/hooks/ways"; do
+    [[ -d "${_ways_base}/${_parent_dir}" ]] || continue
+    for _sib_dir in "${_ways_base}/${_parent_dir}"/*/; do
+      [[ -f "${_sib_dir}way.md" ]] || continue
+      _sibling_total=$((_sibling_total + 1))
+      _sib_name="${_sib_dir#${_ways_base}/}"
+      _sib_name="${_sib_name%/}"
+      _sib_marker_name=$(echo "$_sib_name" | tr '/' '-')
+      [[ -f "/tmp/.claude-way-${_sib_marker_name}-${SESSION_ID:-$(date +%Y%m%d)}" ]] && _sibling_fired=$((_sibling_fired + 1))
+    done
   done
 fi
 
@@ -187,7 +191,7 @@ jq -n -c \
     epoch_distance: (if $epoch_distance == "" then null else ($epoch_distance | tonumber) end),
     sibling_total: $sibling_total, sibling_fired: $sibling_fired,
     trigger: $trigger}' \
-  >> "$METRICS_FILE"
+  >> "$METRICS_FILE" 2>/dev/null || true
 
 # Log event
 if $IS_REDISCLOSURE; then

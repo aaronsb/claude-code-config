@@ -77,7 +77,7 @@ scan_ways() {
         _parent_path="${_parent_path%/*}"
         _parent_marker_name=$(echo "$_parent_path" | tr '/' '-')
         if [[ -f "/tmp/.claude-way-${_parent_marker_name}-${SESSION_ID}" ]]; then
-          effective_threshold=$(awk "BEGIN{printf \"%.1f\", $threshold * 0.8}")
+          effective_threshold=$(awk -v t="$threshold" 'BEGIN{printf "%.1f", t * 0.8}')
           break
         fi
       done

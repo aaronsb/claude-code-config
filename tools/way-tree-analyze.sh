@@ -47,14 +47,15 @@ estimate_tokens() {
 jaccard() {
   local a="$1" b="$2"
   python3 -c "
-a = set('$a'.split())
-b = set('$b'.split())
+import sys
+a = set(sys.argv[1].split())
+b = set(sys.argv[2].split())
 if not a and not b:
     print('0.00')
 else:
     j = len(a & b) / len(a | b) if (a | b) else 0
     print(f'{j:.2f}')
-"
+" "$a" "$b"
 }
 
 # Resolve a short name or relative path to absolute ways path
