@@ -25,6 +25,7 @@ _Ways architecture, matching, macros, hooks, session lifecycle_
 | [ADR-102](./system/ADR-102-irc-based-local-agent-communication.md) | IRC-based local agent communication | Accepted |
 | [ADR-103](./system/ADR-103-checks-epoch-distance-aware-confidence-sensors-for-ways.md) | Checks — Epoch-Distance-Aware Confidence Sensors for Ways | Draft |
 | [ADR-104](./system/ADR-104-token-gated-way-re-disclosure-for-long-context-windows.md) | Token-Gated Way Re-Disclosure for Long Context Windows | Draft |
+| [ADR-105](./system/ADR-105-progressive-disclosure-for-way-trees.md) | Progressive Disclosure for Way Trees | Accepted |
 
 ## Documentation
 _Documentation structure, tooling, coherence_

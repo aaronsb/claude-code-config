@@ -98,6 +98,44 @@ For state transitions and process flows, prefer Cypher-style notation over ASCII
 (state_a)-[:EVENT {context}]->(state_b)  // what happens
 ```
 
+## Progressive Disclosure Trees
+
+When a way covers multiple distinct concerns (>80 lines, >2 sub-topics, language/tool-specific variants), decompose into a tree. The supply chain tree (`softwaredev/code/supplychain/`) is the reference implementation.
+
+**Threshold progression** — thresholds increase with depth:
+- Root: `1.8` (broad catch, overview/orientation)
+- Mid-tier: `2.0` (focused, actionable guidance)
+- Leaf/specialist: `2.5` (narrow, specific implementation)
+
+**Vocabulary isolation** — sibling ways MUST NOT share vocabulary:
+- Target Jaccard similarity < 0.15 between siblings
+- Each child owns its own keyword space
+- Use `/ways-tests jaccard <tree>` to verify
+
+**Token awareness** — aim for:
+- Realistic path (root→leaf): ~1200 tokens
+- Worst case (all fire): ~4000 tokens
+- Use `/ways-tests budget <tree>` to measure
+
+**When NOT to tree**: Leave flat if <80 lines, single cohesive concern, or all content is needed together.
+
+## Anti-Rationalization Patterns
+
+For high-stakes ways where the agent is tempted to skip steps (testing, security, supply chain), add a "Common Rationalizations" table:
+
+```markdown
+## Common Rationalizations
+
+| Rationalization | Counter |
+|---|---|
+| "This is simple, tests aren't needed" | If it's simple, the test is trivial. Write it. |
+| "I'll add tests later" | Later never comes. Tests verify understanding NOW. |
+```
+
+**Placement**: In the specific leaf/mid-tier node, not the root. The table should only appear when the agent is actively doing the thing it might skip.
+
+**Tone**: Direct, not preachy. State the fact. 5-7 rows max.
+
 ## Testing Your Way
 
 Use `/ways-tests` to validate matching quality:
@@ -105,6 +143,12 @@ Use `/ways-tests` to validate matching quality:
 - `/ways-tests score-all "sample prompt"` — rank all ways against a prompt
 - `/ways-tests suggest <way>` — analyze vocabulary gaps
 - `/ways-tests lint <way>` — validate frontmatter
+
+**Tree validation**:
+- `/ways-tests tree <path>` — structural analysis (depth, breadth, threshold progression)
+- `/ways-tests budget <path>` — token cost per way, per path, worst-case
+- `/ways-tests crowding "prompt"` — vocabulary overlap detection
+- `/ways-tests metrics` — session disclosure tracking (after live use)
 
 For vocabulary tuning workflows, see the optimization sub-way (triggers on vocabulary/optimization discussion).
 
