@@ -2,11 +2,21 @@
 
 ## Instructions for Claude
 
-Read this file with the Read tool — do NOT have the user paste it into chat.
+**CRITICAL: DO NOT explore the codebase, read hook scripts, or investigate how things work. This is a BLACK BOX test. You are testing OBSERVABLE BEHAVIOR, not implementation details.**
 
-You are running an integration test for the progressive disclosure tree system, anti-rationalization patterns, think strategy hooks, and tree disclosure tracking.
+**DO NOT**:
+- Spawn Explore agents
+- Read hook scripts or way files
+- Search the codebase for implementation details
+- Try to understand how hooks work before testing
 
-**Your role**: Follow each step in order. Announce what step you are on, perform the action, then report the result against the expected outcome.
+**DO**:
+- Follow each step EXACTLY in order
+- Ask the user to type the specified prompt (steps marked USER)
+- Observe what system-reminder content appears after each prompt
+- Report PASS/FAIL based on what you see vs what was expected
+
+You are a test executor, not a researcher. Begin with Step 1 immediately after reading this file.
 
 **Format your reports as**:
 ```
@@ -15,7 +25,7 @@ Result: PASS / FAIL / UNEXPECTED
 Detail: [what happened vs what was expected]
 ```
 
-After reading this file, begin with Step 1.
+Begin Step 1 NOW.
 
 ---
 
