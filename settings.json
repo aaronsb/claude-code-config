@@ -157,6 +157,10 @@
           {
             "type": "command",
             "command": "${HOME}/.claude/hooks/ways/check-state.sh"
+          },
+          {
+            "type": "command",
+            "command": "${HOME}/.claude/hooks/ways/meta/think/think-check.sh"
           }
         ]
       }
@@ -177,6 +181,10 @@
           {
             "type": "command",
             "command": "${HOME}/.claude/hooks/ways/check-response.sh"
+          },
+          {
+            "type": "command",
+            "command": "${HOME}/.claude/hooks/ways/meta/think/think-advance.sh"
           }
         ]
       }

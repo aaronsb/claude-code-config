@@ -68,8 +68,23 @@ scan_ways() {
     scope_raw="${scope_raw:-agent}"
     scope_matches "$scope_raw" "$CURRENT_SCOPE" || continue
 
+    # Parent-aware threshold lowering: if a parent way already fired this session,
+    # reduce the child's threshold by 20% (parent activation is evidence of domain context)
+    effective_threshold="$threshold"
+    if [[ -n "$threshold" ]]; then
+      _parent_path="$waypath"
+      while [[ "$_parent_path" == */* ]]; do
+        _parent_path="${_parent_path%/*}"
+        _parent_marker_name=$(echo "$_parent_path" | tr '/' '-')
+        if [[ -f "/tmp/.claude-way-${_parent_marker_name}-${SESSION_ID}" ]]; then
+          effective_threshold=$(awk "BEGIN{printf \"%.1f\", $threshold * 0.8}")
+          break
+        fi
+      done
+    fi
+
     # Additive matching: pattern OR semantic (either channel can fire)
-    if match_way_prompt "$PROMPT" "$pattern" "$description" "$vocabulary" "$threshold"; then
+    if match_way_prompt "$PROMPT" "$pattern" "$description" "$vocabulary" "$effective_threshold"; then
       ~/.claude/hooks/ways/show-way.sh "$waypath" "$SESSION_ID" "${MATCH_CHANNEL:-prompt}"
     fi
   done < <(find "$dir" -name "way.md" -print0 2>/dev/null)

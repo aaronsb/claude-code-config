@@ -14,3 +14,11 @@ Before installing or building from this repo:
 - Have you audited dependencies against known vulnerabilities?
 
 If this is a trusted, familiar repo you've worked in before, carry on.
+
+## Common Rationalizations
+
+| Rationalization | Counter |
+|---|---|
+| "This is a popular package, it's fine" | event-stream had 1.5M weekly downloads when compromised. Popularity is not safety. |
+| "I've used this before" | Have you used THIS version? Check the changelog and diff since your last use. |
+| "It's in a container, so it's isolated" | Containers have network access. A malicious postinstall can exfiltrate data. |

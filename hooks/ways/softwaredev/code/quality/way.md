@@ -51,3 +51,11 @@ When the file length scan (macro output) shows priority files, call them out exp
   - Rust-style Result/Option in TypeScript
   - Monadic error handling where exceptions are standard
   - Custom implementations of what libraries already provide
+
+## Common Rationalizations
+
+| Rationalization | Counter |
+|---|---|
+| "Splitting this file would make it harder to follow" | A 900-line file is already hard to follow. Split at natural seam lines. |
+| "There's no good place to split" | Can't find a split point = coupling problem worth solving. |
+| "I'll refactor later" | The file will only grow. Split it now while the logic is fresh. |
