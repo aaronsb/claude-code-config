@@ -188,7 +188,8 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "${HOME}/.claude/statusline.sh"
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
