@@ -63,13 +63,14 @@ case "$SEMANTIC_ENGINE" in
     *)    echo "error: no semantic engine available" >&2; exit 1 ;;
 esac
 
-# Extract way ID
+# Extract way ID from file path
 WAY_ID=""
 if [[ "$FILE" == *"/hooks/ways/"* ]]; then
     WAY_ID="${FILE#*hooks/ways/}"; WAY_ID="${WAY_ID%/way.md}"
 elif [[ "$FILE" == *"/.claude/ways/"* ]]; then
     WAY_ID="${FILE#*.claude/ways/}"; WAY_ID="${WAY_ID%/way.md}"
 fi
+[[ -z "$WAY_ID" ]] && { echo "error: could not extract way ID from path: $FILE" >&2; exit 1; }
 
 # Extract frontmatter
 DESCRIPTION=$(awk 'NR==1 && /^---$/{p=1;next} p&&/^---$/{exit} p && /^description:/{gsub(/^description: */,"");print;exit}' "$FILE")
@@ -99,8 +100,8 @@ MAX_CANDIDATES=$((TOP * 2))
 
 IFS='|' read -ra PROMPT_ARRAY <<< "$PROMPTS"
 
-TMPDIR=$(mktemp -d)
-trap 'rm -rf "$TMPDIR"' EXIT
+WORK_DIR=$(mktemp -d)
+trap 'rm -rf "$WORK_DIR"' EXIT
 
 echo "CANDIDATES"
 
@@ -116,7 +117,7 @@ suggest_embedding() {
     echo "term	freq	avg_baseline	avg_augmented	avg_delta	nearest_other	nearest_cos	verdict"
 
     # Baseline: score prompts against the real corpus (once)
-    local baseline_scores_dir="$TMPDIR/baseline"
+    local baseline_scores_dir="$WORK_DIR/baseline"
     mkdir -p "$baseline_scores_dir"
 
     local baseline_sum=0
@@ -130,28 +131,26 @@ suggest_embedding() {
         local self_score
         self_score=$(echo "$scores" | grep -F "${WAY_ID}	" | head -1 | cut -f2)
         [[ -z "$self_score" ]] && self_score="0.0000"
-        baseline_sum=$(awk "BEGIN {printf \"%.6f\", $baseline_sum + $self_score}")
+        baseline_sum=$(awk -v a="$baseline_sum" -v b="$self_score" 'BEGIN {printf "%.6f", a + b}')
         p_idx=$((p_idx + 1))
     done
     local baseline_avg
-    baseline_avg=$(awk "BEGIN {printf \"%.4f\", $baseline_sum / ${#PROMPT_ARRAY[@]}}")
+    baseline_avg=$(awk -v s="$baseline_sum" -v n="${#PROMPT_ARRAY[@]}" 'BEGIN {printf "%.4f", s / n}')
 
     # For each candidate: create single-entry corpus, embed, score prompts
-    # Relax errexit in the loop — individual candidate failures shouldn't kill the run
-    set +e
     for ((i=0; i<MAX_CANDIDATES; i++)); do
         local term="${GAPS[$i]}"
         local freq="${FREQS[$i]}"
 
         # Build single-entry corpus (no embedding — generate will add it)
-        local tmp_in="$TMPDIR/candidate_in.jsonl"
-        local tmp_out="$TMPDIR/candidate_out.jsonl"
+        local tmp_in="$WORK_DIR/candidate_in.jsonl"
+        local tmp_out="$WORK_DIR/candidate_out.jsonl"
         local escaped_desc escaped_vocab
-        escaped_desc=$(printf '%s' "$DESCRIPTION" | sed 's/\\/\\\\/g; s/"/\\"/g')
-        escaped_vocab=$(printf '%s' "$VOCABULARY $term" | sed 's/\\/\\\\/g; s/"/\\"/g')
+        escaped_desc=$(printf '%s' "$DESCRIPTION" | tr -d '\n' | sed 's/\\/\\\\/g; s/"/\\"/g')
+        escaped_vocab=$(printf '%s' "$VOCABULARY $term" | tr -d '\n' | sed 's/\\/\\\\/g; s/"/\\"/g')
         echo "{\"id\":\"${WAY_ID}\",\"description\":\"${escaped_desc}\",\"vocabulary\":\"${escaped_vocab}\",\"threshold\":${THRESHOLD},\"embed_threshold\":0.0}" > "$tmp_in"
 
-        # Embed just this one entry
+        # Embed just this one entry (skip candidate on failure)
         "$WAY_EMBED_BIN" generate --corpus "$tmp_in" --model "$MODEL_PATH" --output "$tmp_out" 2>/dev/null || continue
 
         # Score prompts against single-entry corpus
@@ -159,26 +158,29 @@ suggest_embedding() {
         for prompt in "${PROMPT_ARRAY[@]}"; do
             local self_score
             self_score=$("$WAY_EMBED_BIN" match --corpus "$tmp_out" --model "$MODEL_PATH" \
-                --query "$prompt" --threshold 0.0 2>/dev/null | head -1 | cut -f2 || echo "0.0000")
+                --query "$prompt" --threshold 0.0 2>/dev/null | head -1 | cut -f2) || true
             [[ -z "$self_score" ]] && self_score="0.0000"
-            aug_sum=$(awk "BEGIN {printf \"%.6f\", $aug_sum + $self_score}")
+            aug_sum=$(awk -v a="$aug_sum" -v b="$self_score" 'BEGIN {printf "%.6f", a + b}')
         done
 
         local aug_avg
-        aug_avg=$(awk "BEGIN {printf \"%.4f\", $aug_sum / ${#PROMPT_ARRAY[@]}}")
+        aug_avg=$(awk -v s="$aug_sum" -v n="${#PROMPT_ARRAY[@]}" 'BEGIN {printf "%.4f", s / n}')
         local delta
-        delta=$(awk "BEGIN {printf \"%.4f\", $aug_avg - $baseline_avg}")
+        delta=$(awk -v a="$aug_avg" -v b="$baseline_avg" 'BEGIN {printf "%.4f", a - b}')
 
-        # Crowding: from baseline scores, find nearest other way
-        # (Use the worst across all prompts)
+        # Crowding: from baseline prompt scores, find the nearest OTHER way.
+        # This is per-prompt-set, not per-candidate — it measures how crowded
+        # the neighborhood already is for these prompts, not whether a specific
+        # candidate causes new crowding. Per-candidate crowding would require
+        # scoring the augmented embedding against all other ways' embeddings.
         local worst_other="none" worst_cos="0.0000"
         for ((p=0; p<${#PROMPT_ARRAY[@]}; p++)); do
             local nearest_line
-            nearest_line=$(grep -vF "$WAY_ID" "$baseline_scores_dir/prompt_${p}.tsv" 2>/dev/null | head -1)
+            nearest_line=$(grep -vF "$WAY_ID" "$baseline_scores_dir/prompt_${p}.tsv" 2>/dev/null | head -1) || true
             local n_other n_cos
             n_other=$(echo "$nearest_line" | cut -f1)
             n_cos=$(echo "$nearest_line" | cut -f2)
-            if [[ -n "$n_cos" ]] && awk "BEGIN {exit !($n_cos > $worst_cos)}" 2>/dev/null; then
+            if [[ -n "$n_cos" ]] && awk -v a="$n_cos" -v b="$worst_cos" 'BEGIN {exit !(a > b)}' 2>/dev/null; then
                 worst_other="$n_other"
                 worst_cos="$n_cos"
             fi
@@ -186,14 +188,13 @@ suggest_embedding() {
 
         # Verdict
         local verdict="safe"
-        awk "BEGIN {exit !($worst_cos > 0.50)}" 2>/dev/null && verdict="CROWD"
-        awk "BEGIN {exit !($delta < -0.005)}" 2>/dev/null && verdict="DRIFT"
-        awk "BEGIN {exit !($delta > 0.003 && $worst_cos < 0.45)}" 2>/dev/null && verdict="GOOD"
+        awk -v v="$worst_cos" 'BEGIN {exit !(v > 0.50)}' 2>/dev/null && verdict="CROWD"
+        awk -v v="$delta" 'BEGIN {exit !(v < -0.005)}' 2>/dev/null && verdict="DRIFT"
+        awk -v d="$delta" -v c="$worst_cos" 'BEGIN {exit !(d > 0.003 && c < 0.45)}' 2>/dev/null && verdict="GOOD"
 
         echo "$term	$freq	$baseline_avg	$aug_avg	$delta	$worst_other	$worst_cos	$verdict"
-    done > "$TMPDIR/results.tsv"
-    set -e
-    sort -t$'\t' -k5 -rn "$TMPDIR/results.tsv" | head -"$TOP"
+    done > "$WORK_DIR/results.tsv"
+    sort -t$'\t' -k5 -rn "$WORK_DIR/results.tsv" | head -"$TOP"
 }
 
 # ========================================================================
@@ -211,11 +212,12 @@ suggest_bm25() {
         score=$("$WAY_MATCH_BIN" pair \
             --description "$DESCRIPTION" --vocabulary "$VOCABULARY" \
             --query "$prompt" --threshold 0.0 \
-            "${corpus_args[@]}" 2>&1 | grep -oP 'score=\K[0-9.]+' || echo "0")
-        baseline_total=$(awk "BEGIN {printf \"%.4f\", $baseline_total + $score}")
+            "${corpus_args[@]}" 2>&1 | sed -n 's/.*score=\([0-9.]*\).*/\1/p') || true
+        [[ -z "$score" ]] && score="0"
+        baseline_total=$(awk -v a="$baseline_total" -v b="$score" 'BEGIN {printf "%.4f", a + b}')
     done
     local baseline_avg
-    baseline_avg=$(awk "BEGIN {printf \"%.4f\", $baseline_total / ${#PROMPT_ARRAY[@]}}")
+    baseline_avg=$(awk -v s="$baseline_total" -v n="${#PROMPT_ARRAY[@]}" 'BEGIN {printf "%.4f", s / n}')
 
     for ((i=0; i<MAX_CANDIDATES; i++)); do
         local term="${GAPS[$i]}"
@@ -228,33 +230,37 @@ suggest_bm25() {
             score=$("$WAY_MATCH_BIN" pair \
                 --description "$DESCRIPTION" --vocabulary "$aug_vocab" \
                 --query "$prompt" --threshold 0.0 \
-                "${corpus_args[@]}" 2>&1 | grep -oP 'score=\K[0-9.]+' || echo "0")
-            aug_total=$(awk "BEGIN {printf \"%.4f\", $aug_total + $score}")
+                "${corpus_args[@]}" 2>&1 | sed -n 's/.*score=\([0-9.]*\).*/\1/p') || true
+            [[ -z "$score" ]] && score="0"
+            aug_total=$(awk -v a="$aug_total" -v b="$score" 'BEGIN {printf "%.4f", a + b}')
         done
         local aug_avg
-        aug_avg=$(awk "BEGIN {printf \"%.4f\", $aug_total / ${#PROMPT_ARRAY[@]}}")
+        aug_avg=$(awk -v s="$aug_total" -v n="${#PROMPT_ARRAY[@]}" 'BEGIN {printf "%.4f", s / n}')
 
         local delta
-        delta=$(awk "BEGIN {printf \"%.4f\", $aug_avg - $baseline_avg}")
+        delta=$(awk -v a="$aug_avg" -v b="$baseline_avg" 'BEGIN {printf "%.4f", a - b}')
 
-        # Crowding: term in other ways' vocabularies?
+        # Crowding: check if term appears in other ways' vocabularies
         local crowding="none"
         if [[ -n "${CORPUS_PATH:-}" && -f "${CORPUS_PATH}" ]]; then
             local match
             match=$(grep -v "\"id\":\"${WAY_ID}\"" "$CORPUS_PATH" 2>/dev/null \
-                | grep -i "\"vocabulary\":\"[^\"]*\\b${term}\\b[^\"]*\"" \
+                | grep -i "\"vocabulary\":\"[^\"]*${term}[^\"]*\"" \
                 | head -1 || true)
-            [[ -n "$match" ]] && crowding=$(echo "$match" | grep -oP '"id":"\K[^"]+' || echo "unknown")
+            if [[ -n "$match" ]]; then
+                crowding=$(echo "$match" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p')
+                [[ -z "$crowding" ]] && crowding="unknown"
+            fi
         fi
 
         local verdict="safe"
         [[ "$crowding" != "none" ]] && verdict="CROWD"
-        awk "BEGIN {exit !($delta < -0.05)}" 2>/dev/null && verdict="DRIFT"
-        awk "BEGIN {exit !($delta > 0.1)}" 2>/dev/null && [[ "$crowding" == "none" ]] && verdict="GOOD"
+        awk -v v="$delta" 'BEGIN {exit !(v < -0.05)}' 2>/dev/null && verdict="DRIFT"
+        awk -v d="$delta" 'BEGIN {exit !(d > 0.1)}' 2>/dev/null && [[ "$crowding" == "none" ]] && verdict="GOOD"
 
         echo "$term	$freq	$baseline_avg	$aug_avg	$delta	$crowding	$verdict"
-    done > "$TMPDIR/results.tsv"
-    sort -t$'\t' -k5 -rn "$TMPDIR/results.tsv" | head -"$TOP"
+    done > "$WORK_DIR/results.tsv"
+    sort -t$'\t' -k5 -rn "$WORK_DIR/results.tsv" | head -"$TOP"
 }
 
 case "$SEMANTIC_ENGINE" in
