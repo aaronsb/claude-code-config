@@ -1,5 +1,5 @@
 ---
-description: catch me up morning briefing, what does my day look like, what happened overnight, start of day summary with parallel agent team gathering
+description: catch me up morning briefing, what happened overnight while I was away, start of day summary across all inboxes and calendars
 vocabulary: catch up morning briefing what's my day start of day need to know overnight summary today agenda priorities
 threshold: 2.0
 scope: agent, subagent

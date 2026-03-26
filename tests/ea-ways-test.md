@@ -23,11 +23,11 @@ After reading this file, begin with Step 1.
 
 ### Step 1 — Root EA way fires on broad prompt
 
-> **USER**: Type exactly: `help me manage my inbox and calendar today`
+> **USER**: Type exactly: `I need help managing my workspace today`
 
 > **CLAUDE**: Check if you received EA root content in a system-reminder. Look for safety rules table, account iteration pattern, and core principles (autonomy with guardrails, read-only by default, suggest never auto-execute). Report what fired.
 
-**Expected**: The root EA way fires (threshold 1.8, vocabulary includes: assistant, inbox, calendar, manage). You should see the safety rules table and core principles — NOT email triage structure, drafting style guide, or calendar workflow specifics (those are children).
+**Expected**: The root EA way fires (threshold 1.8, vocabulary includes: assistant, workspace, manage). You should see the safety rules table and core principles — NOT email triage structure, drafting style guide, or calendar workflow specifics (those are children). Note: the prompt intentionally avoids mentioning specific domains (email, calendar) to prevent pre-firing child ways.
 
 ---
 

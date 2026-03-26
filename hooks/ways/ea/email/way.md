@@ -1,5 +1,5 @@
 ---
-description: email triage, inbox scanning, classifying messages, filtering noise, cross-referencing email with tasks and calendar
+description: triage my email, scan inbox for unread messages, classify and filter email threads, what needs a reply
 vocabulary: triage inbox unread email scan messages filter noise priority action required check email review mail urgent reply thread
 threshold: 2.0
 scope: agent, subagent
