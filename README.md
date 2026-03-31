@@ -189,7 +189,6 @@ This repo ships with **20+ ways** across three domains (softwaredev, itops, meta
 
 Also included:
 - **[Agent teams](docs/hooks-and-ways/teams.md)** — three-scope model (agent/teammate/subagent) with scope-gated governance and team telemetry. When one agent becomes a team, every teammate gets the same handbook.
-- **[Cross-instance chat](docs/architecture/system/ADR-102-irc-based-local-agent-communication.md)** — IRC-based communication between Claude instances. Break severance: agents on different projects share context through a common channel, with ambient message delivery on each tick. The human tabbing between windows *is* the clock.
 - **6 specialized subagents** for requirements, architecture, planning, review, workflow, and organization
 - **[Usage stats](docs/hooks-and-ways/stats.md)** — way firing telemetry by scope, team, project, and trigger type
 - **Update checking** — detects clones, forks, renamed copies; nudges you when behind upstream
