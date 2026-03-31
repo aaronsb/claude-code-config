@@ -19,7 +19,7 @@ No configuration files to update. No registration step. The discovery scripts sc
 | A broad concept users describe variously | `description:` + `vocabulary:` (BM25 semantic matching) |
 | A session condition, not content | `trigger:` with `context-threshold`, `file-exists`, or `session-start` |
 
-Matching is additive — pattern and semantic are OR'd. A way can have both a `pattern:` and `description:` + `vocabulary:`; either channel can fire it. Semantic matching uses embeddings (`way-embed`) with BM25 (`bin/way-match`) as fallback.
+Matching is additive — pattern and semantic are OR'd. A way can have both a `pattern:` and `description:` + `vocabulary:`; either channel can fire it. Semantic matching uses embeddings (`ways embed`) with BM25 (`ways match`) as fallback — both are subcommands of the unified `ways` binary.
 
 ### Writing effective guidance
 
@@ -77,7 +77,7 @@ If you just ask "what are ways?" you get the 60-line overview. The authoring spe
 
 **Design principle**: Parent ways provide orientation. Child ways provide depth. Each child has its own trigger — pattern, semantic, file, or command — so it only loads when that specific sub-topic is active.
 
-**Macros for live state**: A sub-way with `macro: prepend` can run a script that injects current state. The optimization way does this — its macro runs `way-match suggest` across all semantic ways and includes the results. The agent gets both the workflow guidance and the data it needs, without constructing any ad-hoc code.
+**Macros for live state**: A sub-way with `macro: prepend` can run a script that injects current state. The optimization way does this — its macro runs `ways suggest` across all semantic ways and includes the results. The agent gets both the workflow guidance and the data it needs, without constructing any ad-hoc code.
 
 This pattern is self-improving: the tools that analyze the system (`way-match suggest`, `/ways-tests`) are themselves documented in ways that fire when you use them. You optimize ways by talking about optimizing ways.
 

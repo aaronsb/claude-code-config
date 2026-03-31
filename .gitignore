@@ -88,11 +88,9 @@ hooks/ways/.obsidian/
 
 # Scripts (shared utilities for hooks, macros, skills)
 !scripts/
-!scripts/ansi-chart.py
 !scripts/doc-graph.sh
 !scripts/install.sh
 !scripts/project-pulse
-!scripts/task-dashboard.py
 
 # Governance traceability (separable)
 # CLI tools (root symlinks to implementation scripts)

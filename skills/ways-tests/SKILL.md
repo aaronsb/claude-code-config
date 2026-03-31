@@ -38,27 +38,25 @@ The matching pipeline has three tiers. Always report which tier is active before
 
 ```
 Tier 1 — Embedding (primary, ~20ms batch)
-  way-embed match: cosine similarity, 0–1 scale
+  ways embed: cosine similarity, 0–1 scale
   Threshold field: embed_threshold (per-way, default: 0.35)
   Fires when: cosine(query, way) >= embed_threshold
 
 Tier 2 — BM25 (fallback when way-embed or model missing)
-  way-match pair: TF-IDF relevance score, unbounded scale
+  ways match: BM25 relevance score, unbounded scale
   Threshold field: threshold (per-way, default: 2.0)
   Fires when: BM25_score >= threshold
 
 ```
 
-To check which tier is active: `bash ~/.claude/hooks/ways/embed-status.sh`
+To check which tier is active: `ways status`
 
 ## Embed-Status Mode
 
 Show the full embedding engine health dashboard:
 
 ```bash
-bash ~/.claude/hooks/ways/embed-status.sh
-# or with JSON output:
-bash ~/.claude/hooks/ways/embed-status.sh --json
+ways status
 ```
 
 Reports:
@@ -72,7 +70,7 @@ Reports:
 **If engine reports `bm25 (auto)` or `none (auto)`**, the embedding tier is degraded. Diagnose:
 - Binary missing → `make setup` in `~/.claude`
 - Model missing → `make setup` downloads it to `~/.cache/claude-ways/user/`
-- Corpus missing or stale → `make corpus` (or `bash ~/.claude/tools/way-match/generate-corpus.sh`)
+- Corpus missing or stale → `ways corpus` (or `make corpus`)
 
 ## Embedding Score Mode
 
@@ -81,7 +79,7 @@ Score a way using the embedding engine directly.
 **Step 1 — Ensure corpus is fresh:**
 
 ```bash
-bash ~/.claude/tools/way-match/generate-corpus.sh
+ways corpus
 ```
 
 This regenerates `~/.cache/claude-ways/user/ways-corpus.jsonl`. The corpus includes pre-computed embeddings for all semantic ways (`description` + `vocabulary` fields present). Run this after adding or editing any way.
@@ -190,28 +188,21 @@ When the user gives a short name like "security" instead of a full path:
 
 Use BM25 scoring when the embedding engine is unavailable (`way-embed` or the model file is missing), or when you want to inspect BM25 signal independently for vocabulary tuning.
 
-**Before any scoring operation**, regenerate the corpus so IDF is current:
+**Before any scoring operation**, regenerate the corpus:
 
 ```bash
-bash ~/.claude/tools/way-match/generate-corpus.sh
+ways corpus
 ```
 
-Use the `way-match` binary at `~/.claude/bin/way-match`:
+Use the `ways match` subcommand:
 
 ```bash
-# Extract frontmatter fields from the way file
-description=$(awk 'NR==1 && /^---$/{p=1;next} p&&/^---$/{exit} p && /^description:/{gsub(/^description: */,"");print;exit}' "$wayfile")
-vocabulary=$(awk 'NR==1 && /^---$/{p=1;next} p&&/^---$/{exit} p && /^vocabulary:/{gsub(/^vocabulary: */,"");print;exit}' "$wayfile")
-threshold=$(awk 'NR==1 && /^---$/{p=1;next} p&&/^---$/{exit} p && /^threshold:/{gsub(/^threshold: */,"");print;exit}' "$wayfile")
-
-# Score with BM25 (--corpus for correct IDF across all ways)
-CORPUS="${XDG_CACHE_HOME:-$HOME/.cache}/claude-ways/user/ways-corpus.jsonl"
-~/.claude/bin/way-match pair \
+# Score with BM25
+ways match \
   --description "$description" \
   --vocabulary "$vocabulary" \
   --query "$prompt" \
-  --threshold "${threshold:-2.0}" \
-  --corpus "$CORPUS"
+  --threshold "${threshold:-2.0}"
 # Exit code: 0 = match, 1 = no match
 # Stderr: "match: score=X.XXXX threshold=Y.YYYY"
 ```
@@ -253,7 +244,7 @@ Flag these patterns:
 
 **With embedding active**: run `way-embed match` once — it scores the query against all pre-computed corpus embeddings in a single batch call (~20ms). No per-way loop needed. Output is already ranked by cosine similarity.
 
-**With BM25 fallback**: for each way file found (project-local + global), extract description+vocabulary and run `way-match pair`. Display results as a ranked table:
+**With BM25 fallback**: for each way file found (project-local + global), extract description+vocabulary and run `ways match`. Display results as a ranked table:
 
 ```
 Score   Threshold  Match  Way
@@ -278,10 +269,10 @@ This gives a landscape view of how the way ecosystem behaves.
 
 ## Suggest Mode
 
-Use the `way-match suggest` command:
+Use the `ways suggest` subcommand:
 
 ```bash
-~/.claude/bin/way-match suggest --file "$wayfile" --min-freq 2
+ways suggest --file "$wayfile" --min-freq 2
 ```
 
 Output is section-delimited (GAPS, COVERAGE, UNUSED, VOCABULARY). Parse and display readably:
@@ -407,7 +398,7 @@ Assessment: Thresholds increase with depth (1.8→2.0→2.5). Good.
 
 - **Threshold inversion**: Child has lower threshold than parent → fires more easily than its parent, breaks progressive disclosure
 - **Flat threshold**: Parent and child share exact threshold → no progressive narrowing
-- **Vocabulary overlap**: Sibling ways with Jaccard similarity > 0.15 → competing triggers. Run `bash ~/.claude/tools/way-tree-analyze.sh jaccard <tree>` to compute pairwise scores and include results in the tree report. See **Jaccard Mode** for details on presentation and thresholds.
+- **Vocabulary overlap**: Sibling ways with Jaccard similarity > 0.15 → competing triggers. Run `ways siblings <tree>` to compute pairwise scores and include results in the tree report. See **Jaccard Mode** for details on presentation and thresholds.
 
 - **Orphan ways**: A `{name}.md` in a subdirectory where no parent directory has a way file → no progressive disclosure root
 - **Deep trees**: Depth > 4 levels → likely over-decomposed
@@ -480,7 +471,7 @@ Measure vocabulary isolation between sibling ways. Siblings are ways that share 
 **Tree-wide**: Compute pairwise Jaccard for all sibling groups in a tree.
 
 ```bash
-bash ~/.claude/tools/way-tree-analyze.sh jaccard <tree>
+ways siblings <tree>
 ```
 
 The tool outputs tab-delimited PAIR lines: `PAIR\tway_a\tway_b\tscore`
@@ -702,9 +693,9 @@ Adding vocabulary to fix a miss works locally but risks overfitting globally. Ev
 ## Notes
 
 - **Always report the active engine tier** before presenting scores — cosine (0–1) and BM25 (unbounded) are not comparable across tiers.
-- The `way-embed` binary lives at `~/.cache/claude-ways/user/way-embed` (downloaded) or `~/.claude/bin/way-embed` (built from source). If missing, report that embedding is unavailable and suggest `make setup` in `~/.claude`.
-- The `way-match` binary must exist at `~/.claude/bin/way-match`. If missing, report that BM25 is unavailable and suggest building it.
+- The `way-embed` binary lives at `~/.cache/claude-ways/user/way-embed` (downloaded via `make setup`). If missing, embedding is unavailable and BM25 fallback is used. Run `ways status` to check.
+- BM25 scoring is built into the `ways` binary. If `ways` is missing, run `make setup` in `~/.claude`.
 - The `embed_threshold` frontmatter field (float, default `0.35`) sets the per-way cosine cutoff. The `threshold` field (float, default `2.0`) sets the per-way BM25 cutoff. Both live in the same frontmatter block; the active engine reads the right one.
-- Corpus regeneration (`generate-corpus.sh`) bakes fresh embeddings into the JSONL. After editing any way's `description` or `vocabulary`, regen is required for embedding scores to reflect the change.
+- Corpus regeneration (`ways corpus`) bakes fresh embeddings into the JSONL. After editing any way's `description` or `vocabulary`, regen is required for embedding scores to reflect the change.
 - When displaying results, use human-readable format, not raw machine output.
 - Check scoring uses `awk` for floating-point math.

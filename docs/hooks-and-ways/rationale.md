@@ -125,7 +125,7 @@ The implementation uses deliberately simple detection mechanisms:
 - **Regex matching** for keywords, commands, and file patterns
 - **BM25 term-frequency scoring** for semantic similarity
 
-The matching pipeline uses a lightweight embedding model (all-MiniLM-L6-v2) for cosine-similarity scoring, with BM25 (`bin/way-match`) as fallback. Both run in milliseconds. The embedding engine scores all ways in a single batch call (~20ms), while BM25 scores term importance across the way corpus — common words contribute less, domain-specific vocabulary contributes more.
+The matching pipeline uses a lightweight embedding model (all-MiniLM-L6-v2) for cosine-similarity scoring, with BM25 (built into the `ways` binary) as fallback. Both run in milliseconds. The embedding engine scores all ways in a single batch call (~20ms), while BM25 scores term importance across the way corpus — common words contribute less, domain-specific vocabulary contributes more.
 
 This simplicity is a feature, not a limitation. It's evidence of a design principle: **well-calibrated timing beats sophisticated detection**.
 

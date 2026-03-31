@@ -63,9 +63,9 @@ Ask what's wrong:
 - "The guidance isn't helpful" → review the content, apply voice/framing principles
 - "I want to change what it covers" → may need vocabulary tuning, scope change, or split into sub-ways
 
-Use the `way-match` binary for live diagnostics:
+Use the `ways` binary for live diagnostics:
 ```bash
-~/.claude/bin/way-match pair --description "$desc" --vocabulary "$vocab" --query "$prompt" --threshold "${thresh:-2.0}"
+ways match --description "$desc" --vocabulary "$vocab" --query "$prompt" --threshold "${thresh:-2.0}"
 ```
 
 ## Scaffold
@@ -154,7 +154,7 @@ After creating or revising a way:
 
 2. **Score** (for semantic ways): Test against sample prompts from the conversation
    ```bash
-   ~/.claude/bin/way-match pair --description "$desc" --vocabulary "$vocab" --query "sample prompt" --threshold 2.0
+   ways match --description "$desc" --vocabulary "$vocab" --query "sample prompt" --threshold 2.0
    ```
 
 3. **Cross-check**: Score all project ways against the same prompt to verify no cross-firing

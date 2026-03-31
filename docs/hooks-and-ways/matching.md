@@ -53,9 +53,9 @@ threshold: 2.0
 
 ### Degradation chain
 
-Semantic matching uses the BM25 binary (`~/.claude/bin/way-match`), which is checked into the repo. It scores description+vocabulary against the prompt with Porter2 stemming and IDF weighting.
+Semantic matching uses BM25 scoring built into the `ways` binary. It scores description+vocabulary against the prompt with Porter2 stemming and IDF weighting.
 
-If neither the embedding engine nor BM25 binary is available, semantic matching is silently skipped and pattern matching still works. Run `make setup` to install both.
+If the `ways` binary is unavailable, semantic matching is silently skipped and pattern matching still works. Run `make setup` to install.
 
 ### Vocabulary design
 

@@ -25,7 +25,9 @@ Open an issue. Include which hook or way is involved, your OS/shell, and any err
 
 ## Code Style
 
-It's all bash. Keep it portable (no bashisms that break on macOS default bash 3.2), use `shellcheck` if available, and keep scripts under 200 lines where possible.
+**Hooks and macros** are bash. Keep them portable (macOS bash 3.2 compatible — no `declare -A`, no `mapfile`, no `grep -P`), use `shellcheck` if available, and keep scripts under 200 lines where possible. Hook scripts should be thin dispatchers to the `ways` binary.
+
+**The `ways` binary** is Rust (`tools/ways-cli/`). Run `cargo test` before submitting changes. See [ADR-111](docs/architecture/system/ADR-111-unified-ways-cli-single-binary-tool-consolidation.md) for the consolidation rationale.
 
 ## Gitignore: Exclusive by Design
 

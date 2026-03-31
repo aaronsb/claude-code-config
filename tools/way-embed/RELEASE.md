@@ -24,7 +24,7 @@ bash ~/.claude/tools/way-embed/download-binary.sh
 bash ~/.claude/tools/way-embed/download-model.sh
 
 # Regenerate corpus
-bash ~/.claude/tools/way-match/generate-corpus.sh
+ways corpus
 
 # Verify
 bash ~/.claude/tools/way-embed/test-embedding.sh

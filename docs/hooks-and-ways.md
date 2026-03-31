@@ -17,13 +17,14 @@ Claude Code hook events drive the system. Each fires shell scripts that scan for
 | **PreToolUse** (Task) | Before subagent spawn | `check-task-pre.sh` |
 | **PreToolUse** (TaskCreate) | Before task creation | `mark-tasks-active.sh` |
 | **SubagentStart** | When subagent starts | `inject-subagent.sh` |
-| **Stop** | After Claude responds | `check-response.sh`, `irc-check.sh` |
+| **SessionStart** (clear) | After `/clear` | `clear-markers.sh`, `check-state.sh`, `ways init` |
+| **Stop** | After Claude responds | `check-response.sh` |
 
 ## What Each Script Does
 
 ### Session Lifecycle
 
-- **`clear-markers.sh`** - Clears session markers from `/tmp/.claude-sessions/{session_id}/`. Resets session state so ways can fire fresh. Scoped to the current session only.
+- **`clear-markers.sh`** - Clears session markers from `{SESSIONS_ROOT}/{session_id}/`. Resets session state so ways can fire fresh. Scoped to the current session only.
 - **`ways init`** - Creates `$PROJECT/.claude/ways/_template.md` if the project has a `.claude/` or `.git/` dir but no ways directory yet.
 - **`ways corpus --if-stale --quiet`** - Regenerates the BM25/embedding corpus if way files have changed since last build.
 - **`check-config-updates.sh`** - Checks if the config is behind upstream. Detects four install scenarios: direct clones, GitHub forks, renamed clones (via `.claude-upstream` marker file), and plugin installs. Network calls (`git fetch`, `gh api`, `git ls-remote`) are rate-limited to once per hour; update notices fire every session when behind. See the [Updating](#updating) section of the README for scenario details and how to control this behavior.
@@ -41,17 +42,12 @@ All trigger evaluation scripts respect the `scope:` frontmatter field - ways wit
 
 ### Subagent Injection
 
-- **`check-task-pre.sh`** - PreToolUse:Task hook (Phase 1). Reads the Task tool's `prompt` parameter, runs inline file-trigger matching for `scope: subagent` ways. Writes matched way paths to `/tmp/.claude-subagent-stash-{session_id}/`. Never blocks Task creation.
+- **`check-task-pre.sh`** - PreToolUse:Task hook (Phase 1). Reads the Task tool's `prompt` parameter, runs inline matching for `scope: subagent` ways. Writes matched way paths to `{SESSIONS_ROOT}/{session_id}/subagent-stash/`. Never blocks Task creation.
 - **`inject-subagent.sh`** - SubagentStart hook (Phase 2). Reads the oldest stash file, claims it atomically, emits way content as JSON `hookSpecificOutput.additionalContext`. Bypasses markers entirely - subagents get fresh context regardless of what the parent triggered.
-
-### IRC Communication
-
-- **`irc-check.sh`** - Ambient IRC monitoring. Fires on UserPromptSubmit and Stop. Uses a high-water mark (`.hwm`) to surface only new messages since last check. Notification tiers: mentions inline, ≤3 messages inline, >3 as badge count. Self-filters own messages. Tracks tick count and nudges a summary recap every ~15 turns when others are present. Sets `.irc-has-history` flag for compaction awareness.
-- **`irc-session.sh`** - Compaction breadcrumb. Fires on SessionStart:compact and SessionStart:resume. Checks `.irc-has-history` flag and emits a reminder to catch up via `irc-read.sh`.
 
 ### State Management
 
-- **`mark-tasks-active.sh`** - Creates `/tmp/.claude-tasks-active-{session_id}`. Silences the context-threshold nag.
+- **`mark-tasks-active.sh`** - Creates `{SESSIONS_ROOT}/{session_id}/tasks-active`. Silences the context-threshold nag.
 - **`check-response.sh`** - Extracts technical keywords from Claude's last response, writes to `/tmp/claude-response-topics-{session_id}`. These topics feed back into `check-prompt.sh` on the next turn, so ways can trigger based on what Claude discussed (not just what the user asked).
 
 ### Way Display
@@ -72,7 +68,7 @@ sequenceDiagram
     rect rgba(66, 165, 245, 0.15)
         Note over CC,Ctx: Session Start (startup)
         CC->>CM: SessionStart:startup
-        CM->>CM: rm /tmp/.claude-sessions/{session_id}/*
+        CM->>CM: rm {SESSIONS_ROOT}/{session_id}/*
         CC->>CS: SessionStart:startup
         CS->>Ctx: core guidance + state-triggered ways
         CC->>WI: SessionStart:startup
@@ -84,7 +80,7 @@ sequenceDiagram
     rect rgba(255, 152, 0, 0.15)
         Note over CC,Ctx: After Compaction
         CC->>CM: SessionStart:compact
-        CM->>CM: rm /tmp/.claude-sessions/{session_id}/*
+        CM->>CM: rm {SESSIONS_ROOT}/{session_id}/*
         CC->>CS: SessionStart:compact
         CS->>Ctx: core guidance (fresh)
     end
@@ -97,7 +93,7 @@ The `scope:` frontmatter field controls where a way fires. There are three scope
 | Scope | Session type | Detection |
 |-------|-------------|-----------|
 | `agent` | Your main session | Default (no marker file) |
-| `teammate` | Named agent in a coordinated team | `/tmp/.claude-teammate-{session_id}` exists |
+| `teammate` | Named agent in a coordinated team | `{SESSIONS_ROOT}/{session_id}/teammate` exists |
 | `subagent` | Quick Task tool delegate | Spawned via Task without `team_name` |
 
 Ways declare which scopes they apply to:
@@ -112,7 +108,7 @@ scope: agent, teammate, subagent # Everyone
 
 ### Scope Detection
 
-Detection runs via `detect-scope.sh`, which every trigger evaluation script sources. It checks for a teammate marker file — if one exists, the scope is `teammate`; otherwise `agent`. Subagent scope is determined at injection time by `check-task-pre.sh`, not by the running session itself.
+Scope detection is handled by the `ways` binary. It checks for a teammate marker file — if one exists, the scope is `teammate`; otherwise `agent`. Subagent scope is determined at injection time by `check-task-pre.sh`, not by the running session itself.
 
 The teammate marker is created by `inject-subagent.sh` during Phase 2 of the two-phase injection. It persists for the teammate's entire session lifetime and contains the team name (used for telemetry).
 
@@ -152,7 +148,7 @@ flowchart TD
 
     subgraph SM ["Semantic Matching (additive)"]
         S[BM25 Scorer]:::semantic
-        S --> BM["way-match pair<br/>Porter2 stemming + IDF"]:::semantic
+        S --> BM["ways match<br/>Porter2 stemming + IDF"]:::semantic
     end
 
     RP -->|match| FIRE[Fire Way]:::result
@@ -223,7 +219,7 @@ threshold: 75
 
 Estimates transcript size since last compaction (~4 chars/token, ~155K token window = ~620K chars). Fires when `transcript_bytes > 620K * threshold%`.
 
-**Special behavior**: Does not use the standard marker system. Repeats on every prompt until a `/tmp/.claude-tasks-active-{session_id}` marker exists (created by `mark-tasks-active.sh` when `TaskCreate` is used).
+**Special behavior**: Does not use the standard marker system. Repeats on every prompt until a `{SESSIONS_ROOT}/{session_id}/tasks-active` marker exists (created by `mark-tasks-active.sh` when `TaskCreate` is used).
 
 ### file-exists
 
@@ -258,7 +254,7 @@ stateDiagram-v2
     state "not_shown (no marker)" as NotShown:::notShown
     state "shown (marker exists)" as Shown:::shown
 
-    note right of NotShown : /tmp/.claude-sessions/{session_id}/{way_id}
+    note right of NotShown : {SESSIONS_ROOT}/{session_id}/ways/{way_path}/.marker
     note right of Shown : Cleared on SessionStart (startup & compact)
 ```
 
@@ -284,7 +280,7 @@ sequenceDiagram
         CC->>CS: UserPromptSubmit
         CS->>CS: transcript_bytes > 465K?
         Note right of CS: YES
-        CS->>CS: /tmp/.claude-tasks-active-* exists?
+        CS->>CS: {SESSIONS_ROOT}/{session}/tasks-active exists?
         Note right of CS: NO
         CS->>Ctx: "Context checkpoint. Create tasks now."
     end
@@ -295,7 +291,7 @@ sequenceDiagram
         CC->>CS: UserPromptSubmit
         CS->>CS: transcript_bytes > 465K?
         Note right of CS: YES
-        CS->>CS: /tmp/.claude-tasks-active-* exists?
+        CS->>CS: {SESSIONS_ROOT}/{session}/tasks-active exists?
         Note right of CS: NO
         CS->>Ctx: "Context checkpoint. Create tasks now."
     end
@@ -304,7 +300,7 @@ sequenceDiagram
         Note over U,Ctx: Claude creates tasks — nag stops
         CC->>CC: TaskCreate (tool call)
         CC->>MT: PreToolUse:TaskCreate
-        MT->>MT: touch /tmp/.claude-tasks-active-{session}
+        MT->>MT: touch {SESSIONS_ROOT}/{session}/tasks-active
     end
 
     rect rgba(76, 175, 80, 0.15)
@@ -313,7 +309,7 @@ sequenceDiagram
         CC->>CS: UserPromptSubmit
         CS->>CS: transcript_bytes > 465K?
         Note right of CS: YES
-        CS->>CS: /tmp/.claude-tasks-active-* exists?
+        CS->>CS: {SESSIONS_ROOT}/{session}/tasks-active exists?
         Note right of CS: YES — skip
     end
 ```
@@ -419,7 +415,7 @@ flowchart TD
     GL -->|yes| USE_G["Use global way"]:::global
     GL -->|no| SKIP["No output"]
 
-    USE_P --> MK["Shared marker:<br/>/tmp/.claude-way-softwaredev-github-{session}"]:::marker
+    USE_P --> MK["Shared marker:<br/>{SESSIONS_ROOT}/{session}/softwaredev-github"]:::marker
     USE_G --> MK
     MK --> OUT["Output way content"]:::result
 ```

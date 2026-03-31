@@ -51,16 +51,11 @@ When the user gives a short name like "security" instead of a full path:
 
 ### Score mode
 
-Use the `way-match` binary at `~/.claude/bin/way-match`:
+Use the `ways match` subcommand:
 
 ```bash
-# Extract frontmatter fields from the way file
-description=$(awk 'NR==1 && /^---$/{p=1;next} p&&/^---$/{exit} p && /^description:/{gsub(/^description: */,"");print;exit}' "$wayfile")
-vocabulary=$(awk 'NR==1 && /^---$/{p=1;next} p&&/^---$/{exit} p && /^vocabulary:/{gsub(/^vocabulary: */,"");print;exit}' "$wayfile")
-threshold=$(awk 'NR==1 && /^---$/{p=1;next} p&&/^---$/{exit} p && /^threshold:/{gsub(/^threshold: */,"");print;exit}' "$wayfile")
-
 # Score with BM25
-~/.claude/bin/way-match pair \
+ways match \
   --description "$description" \
   --vocabulary "$vocabulary" \
   --query "$prompt" \
@@ -88,10 +83,10 @@ Include ways that have pattern matches too (mark those as "REGEX" in the Match c
 
 ### Suggest mode
 
-Use the `way-match suggest` command:
+Use the `ways suggest` subcommand:
 
 ```bash
-~/.claude/bin/way-match suggest --file "$wayfile" --min-freq 2
+ways suggest --file "$wayfile" --min-freq 2
 ```
 
 Output is section-delimited (GAPS, COVERAGE, UNUSED, VOCABULARY). Parse and display in a readable format:
@@ -211,7 +206,7 @@ Use `--all` to lint all ways AND checks.
 
 ## Notes
 
-- The `way-match` binary must exist at `~/.claude/bin/way-match`. If missing, report that BM25 is unavailable and suggest building it: `make -f tools/way-match/Makefile local`
+- BM25 scoring is built into the `ways` binary. If `ways` is missing, run `make setup` in `~/.claude`
 - The UNUSED section in suggest output is informational — unused vocabulary terms are often intentional (they catch user query terms that don't appear in the way body). Don't automatically remove them.
 - When displaying results, use the human-readable format, not the raw machine output from the binary.
 - Check scoring uses `awk` for floating-point math — ensure `awk` is available (standard on all Unix systems).

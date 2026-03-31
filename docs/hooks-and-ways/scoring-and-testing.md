@@ -56,11 +56,11 @@ This is also why scoring is done iteratively during way creation rather than aft
 
 ## The Tool
 
-`~/.claude/bin/way-match` is a BM25 scoring binary (see [ADR-014](../architecture/legacy/ADR-014-tfidf-semantic-matcher.md)). It scores a prompt against a way's description and vocabulary, returning a numeric score. If the score exceeds the way's threshold, the way would fire.
+The `ways` binary includes BM25 scoring as a built-in subcommand (see [ADR-014](../architecture/legacy/ADR-014-tfidf-semantic-matcher.md) for the original design, [ADR-111](../architecture/system/ADR-111-unified-ways-cli-single-binary-tool-consolidation.md) for the consolidation). It scores a prompt against a way's description and vocabulary, returning a numeric score. If the score exceeds the way's threshold, the way would fire.
 
 ```bash
 # Score a single prompt against a way
-~/.claude/bin/way-match pair \
+ways match \
   --description "Managing claude-code-config as a project..." \
   --vocabulary "upstream changelog release version..." \
   --query "what's new in claude code recently" \
@@ -70,7 +70,7 @@ This is also why scoring is done iteratively during way creation rather than aft
 # Exit code: 0 (match) or 1 (no match)
 ```
 
-The `/ways-tests` skill wraps this binary with higher-level operations: scoring all ways against a prompt, analyzing vocabulary gaps, checking for cross-way overlap, and validating frontmatter.
+The `/ways-tests` skill wraps this with higher-level operations: scoring all ways against a prompt, analyzing vocabulary gaps, checking for cross-way overlap, and validating frontmatter.
 
 ## The Process: A Worked Example
 

@@ -1,119 +1,104 @@
 #!/bin/bash
-# Dynamic table generator for core.md
-# Scans all way files and generates a table of triggers
+# Core macro — generates the available ways table for session start.
+# This is the archetype macro: other macros follow this pattern.
+#
+# A macro is a shell script referenced by a way's `macro: prepend` field.
+# Its stdout is prepended to the way content before injection.
+# Keep macros fast (no network, no heavy computation).
 
 WAYS_DIR="${HOME}/.claude/hooks/ways"
 
-# --- Skills context load indicator ---
+# ── Skills context cost ────────────────────────────────────────
 # Skills front-load instructions into early context (ROPE position 0-N).
-# Research on positional encoding shows early-context pollution degrades
-# retrieval and instruction-following. Keep the count low.
+# Too many degrades retrieval and instruction-following.
+
 skill_count=0
 if command -v claude >/dev/null 2>&1; then
   skill_count=$(claude plugin list 2>/dev/null | grep -c '✔ enabled' || echo 0)
 fi
 
-if [[ "$skill_count" -gt 0 ]]; then
-  if [[ "$skill_count" -le 5 ]]; then
-    echo "Skills loaded: ${skill_count} — context cost is low. No action needed."
-  elif [[ "$skill_count" -le 12 ]]; then
-    echo "Skills loaded: ${skill_count} — context cost is moderate. Tell the user: \"You have ${skill_count} skills loaded. Each one adds instructions to early context, which can degrade response quality. Run \`claude plugin list\` to review and \`claude plugin disable <name>\` for any you're not actively using.\""
-  else
-    echo "Skills loaded: ${skill_count} — context cost is HIGH. You MUST inform the user before doing any other work: \"You have ${skill_count} skills loaded. This many front-loaded instructions degrades model performance — early context pollution reduces instruction-following and retrieval accuracy. Please run \`claude plugin list\` and disable skills you aren't actively using. Aim for 5 or fewer.\""
-  fi
+if [[ "$skill_count" -gt 12 ]]; then
+  echo "Skills loaded: ${skill_count} — **HIGH context cost.** Tell the user: \"You have ${skill_count} skills loaded. Each adds instructions to early context, degrading response quality. Run \`claude plugin list\` and disable unused ones. Aim for ≤5.\""
+  echo ""
+elif [[ "$skill_count" -gt 5 ]]; then
+  echo "Skills loaded: ${skill_count} — moderate context cost. Suggest reviewing with \`claude plugin list\`."
   echo ""
 fi
+
+# ── Available ways table ───────────────────────────────────────
 
 echo "## Available Ways"
 echo ""
 
-# Track current domain for section headers
-CURRENT_DOMAIN=""
+current_domain=""
 
-# Find all way files, sorted by path
 while IFS= read -r wayfile; do
-  # Extract relative path (e.g., "softwaredev/delivery/github")
   relpath="${wayfile#$WAYS_DIR/}"
   relpath="${relpath%/*}"
 
-  # Skip if not in a domain subdirectory
+  # Skip files not in a domain/way subdirectory
   [[ "$relpath" != */* ]] && continue
 
-  # Extract domain (first segment) and way name (rest of path)
   domain="${relpath%%/*}"
-  subpath="${relpath#*/}"
-  # Display nested ways with > breadcrumbs (e.g., "knowledge > authoring")
-  wayname="${subpath//\// > }"
+  wayname="${relpath#*/}"
+  wayname="${wayname//\// > }"
 
-  # Print domain header if changed
-  if [[ "$domain" != "$CURRENT_DOMAIN" ]]; then
-    # Format domain name (capitalize first letter)
+  # Domain header
+  if [[ "$domain" != "$current_domain" ]]; then
     domain_display="$(echo "${domain:0:1}" | tr '[:lower:]' '[:upper:]')${domain:1}"
     echo "### ${domain_display}"
     echo ""
     echo "| Way | Tool Trigger | Keyword Trigger |"
     echo "|-----|--------------|-----------------|"
-    CURRENT_DOMAIN="$domain"
+    current_domain="$domain"
   fi
 
-  # Extract frontmatter fields (only from first block, stop at second ---)
+  # Parse frontmatter (first YAML block only)
   frontmatter=$(awk 'NR==1 && /^---$/{p=1; next} p && /^---$/{exit} p{print}' "$wayfile")
-  match_type=$(echo "$frontmatter" | awk '/^match:/{gsub(/^match: */, ""); print}')
-  pattern=$(echo "$frontmatter" | awk '/^pattern:/{gsub(/^pattern: */, ""); print}')
-  commands=$(echo "$frontmatter" | awk '/^commands:/{gsub(/^commands: */, ""); print}')
-  files=$(echo "$frontmatter" | awk '/^files:/{gsub(/^files: */, ""); print}')
 
-  # Build tool trigger description
+  get_field() { echo "$frontmatter" | awk -v f="$1" '$0 ~ "^"f":"{gsub("^"f": *", ""); print}'; }
+
+  match_type=$(get_field match)
+  pattern=$(get_field pattern)
+  commands=$(get_field commands)
+  files=$(get_field files)
+
+  # Tool trigger column
   tool_trigger="—"
   if [[ -n "$commands" ]]; then
-    # Simplify common patterns for display (strip regex escapes for matching)
-    cmd_clean=$(echo "$commands" | sed 's/\\//g')
+    cmd_clean="${commands//\\}"
     case "$cmd_clean" in
-      *"git commit"*) tool_trigger="Run \`git commit\`" ;;
-      *"^gh"*|*"gh "*) tool_trigger="Run \`gh\`" ;;
-      *"ssh"*|*"scp"*|*"rsync"*) tool_trigger="Run \`ssh\`, \`scp\`, \`rsync\`" ;;
-      *"pytest"*|*"jest"*) tool_trigger="Run \`pytest\`, \`jest\`, etc" ;;
-      *"npm install"*|*"pip install"*) tool_trigger="Run \`npm install\`, etc" ;;
-      *"git apply"*) tool_trigger="Run \`git apply\`" ;;
-      *) tool_trigger="Run command" ;;
+      *"git commit"*)                     tool_trigger="Run \`git commit\`" ;;
+      *"^gh"*|*"gh "*)                    tool_trigger="Run \`gh\`" ;;
+      *"ssh"*|*"scp"*|*"rsync"*)          tool_trigger="Run \`ssh/scp/rsync\`" ;;
+      *"pytest"*|*"jest"*)                tool_trigger="Run test runner" ;;
+      *"npm install"*|*"pip install"*)    tool_trigger="Run package install" ;;
+      *"git apply"*)                      tool_trigger="Run \`git apply\`" ;;
+      *)                                  tool_trigger="Run command" ;;
     esac
   elif [[ -n "$files" ]]; then
-    # Simplify file patterns for display
     case "$files" in
-      *"docs/adr"*) tool_trigger="Edit \`docs/adr/*.md\`" ;;
-      *"\.env"*) tool_trigger="Edit \`.env\`" ;;
-      *"\.patch"*|*"\.diff"*) tool_trigger="Edit \`*.patch\`, \`*.diff\`" ;;
-      *"todo-"*) tool_trigger="Edit \`.claude/todo-*.md\`" ;;
-      *"ways/"*) tool_trigger="Edit \`.claude/ways/*.md\`" ;;
-      *"README"*) tool_trigger="Edit \`README.md\`, \`docs/*.md\`" ;;
-      *) tool_trigger="Edit files matching pattern" ;;
+      *"docs/adr"*)       tool_trigger="Edit \`docs/adr/*.md\`" ;;
+      *"\.env"*)          tool_trigger="Edit \`.env\`" ;;
+      *"\.patch"*)        tool_trigger="Edit \`*.patch\`" ;;
+      *"todo-"*)          tool_trigger="Edit \`.claude/todo-*.md\`" ;;
+      *"ways/"*)          tool_trigger="Edit \`.claude/ways/*.md\`" ;;
+      *"README"*)         tool_trigger="Edit \`README.md\`" ;;
+      *)                  tool_trigger="Edit files" ;;
     esac
   fi
 
-  # Format pattern for display (strip regex syntax, keep readable)
+  # Keyword trigger column
   keyword_display="—"
   if [[ "$match_type" == "semantic" || "$match_type" == "model" ]]; then
     keyword_display="_(${match_type})_"
   elif [[ -n "$pattern" ]]; then
-    # Strip regex syntax, word boundaries, escapes — keep human-readable keywords
-    # 1. Replace regex connectors with space (literal dot+quantifier patterns)
-    # 2. Strip remaining regex syntax
-    # 3. Normalize whitespace and comma formatting
-    keyword_display=$(echo "$pattern" | \
-      sed 's/[.][?]/ /g; s/[.][*]/ /g; s/[.][+]/ /g' | \
-      sed 's/\\b//g; s/\\//g; s/[?]//g; s/\^//g; s/\$//g; s/(/ /g; s/)//g; s/|/,/g; s/\[//g; s/\]//g' | \
-      sed 's/  */ /g; s/ *, */,/g; s/,,*/,/g; s/^,//; s/,$//; s/,/, /g' | \
-      awk -F', ' '{
-        for(i=1;i<=NF;i++){
-          if(!seen[$i]++){
-            w=$i
-            # Append * to regex stems (truncated prefixes)
-            if(length(w)>=5 && match(w,/(at|nc|ndl|pos|isz|rat|handl|mi)$/))w=w"*"
-            printf "%s%s",(i>1?", ":""),w
-          }
-        }
-        print""
-      }')
+    # Strip regex syntax to show human-readable keywords
+    keyword_display=$(echo "$pattern" \
+      | sed 's/[.][?+*]/ /g' \
+      | sed 's/\\[bnrst]//g; s/\\//g; s/[?^$]//g; s/[()]/ /g; s/|/, /g; s/[][]//g' \
+      | sed 's/  */ /g; s/ *, */,/g; s/,,*/,/g; s/^,//; s/,$//; s/,/, /g' \
+      | awk -F', ' '{for(i=1;i<=NF;i++) if(!seen[$i]++) printf "%s%s",(i>1?", ":""),$i; print ""}')
   fi
 
   echo "| **${wayname}** | ${tool_trigger} | ${keyword_display} |"
@@ -123,12 +108,12 @@ done < <(find -L "$WAYS_DIR" -path "*/*/*.md" ! -name "*.check.md" ! -name "*.ya
 echo ""
 echo "Project-local ways: \`\$PROJECT/.claude/ways/{domain}/{way}/{way}.md\` override global."
 
-# --- AGENTS.md detection ---
-# Scan from project root for AGENTS.md files that front-load instructions
+# ── AGENTS.md migration notice ─────────────────────────────────
+# AGENTS.md front-loads all instructions at once. Ways decompose guidance
+# into targeted fragments that fire once per session when relevant.
+
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 
-# Only scan if we're in a project (not home dir or system paths)
-# Skip if user has declined migration
 if [[ -n "$PROJECT_DIR" && "$PROJECT_DIR" != "$HOME" && -d "$PROJECT_DIR" \
       && ! -f "$PROJECT_DIR/.claude/no-agents-migration" ]]; then
   agents_files=()
@@ -140,7 +125,7 @@ if [[ -n "$PROJECT_DIR" && "$PROJECT_DIR" != "$HOME" && -d "$PROJECT_DIR" \
     echo ""
     echo "## AGENTS.md Detected"
     echo ""
-    echo "Found ${#agents_files[@]} AGENTS.md file(s) in this project:"
+    echo "Found ${#agents_files[@]} AGENTS.md file(s):"
     echo ""
     for f in "${agents_files[@]}"; do
       relpath="${f#$PROJECT_DIR/}"
@@ -148,14 +133,13 @@ if [[ -n "$PROJECT_DIR" && "$PROJECT_DIR" != "$HOME" && -d "$PROJECT_DIR" \
       echo "- \`${relpath}\` (${linecount} lines)"
     done
     echo ""
-    echo "**The ways framework is already active** — the table above was generated by it."
+    echo "**Ways are already active** — this table was generated by the framework."
     echo "AGENTS.md front-loads all instructions into context at once, which degrades"
-    echo "performance as context grows. Ways decompose guidance into targeted fragments"
-    echo "that fire once per session only when relevant."
+    echo "performance as context grows. Ways fire once per session, only when relevant."
     echo ""
     echo "**Read the AGENTS.md file(s) above**, then ask the user:"
-    echo "1. **Migrate** — decompose AGENTS.md into project-scoped ways (\`.claude/ways/\`), then remove the file"
-    echo "2. **Keep as-is** — leave AGENTS.md untouched (it will coexist but may duplicate/conflict with ways)"
+    echo "1. **Migrate** — decompose into project-scoped ways (\`.claude/ways/\`)"
+    echo "2. **Keep** — leave untouched (may duplicate/conflict with ways)"
     echo "3. **Decline** — create \`.claude/no-agents-migration\` to suppress this notice"
   fi
 fi

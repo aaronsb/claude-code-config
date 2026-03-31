@@ -306,8 +306,8 @@ flowchart TB
 
 | Engine | Accuracy | Timing | Requirements |
 |--------|----------|--------|-------------|
-| **Embedding** | 98.4% (63/64) | ~20ms | `bin/way-embed` + GGUF model (21MB) |
-| **BM25** | 90.6% (58/64) | ~2ms (score mode) | `bin/way-match` (checked in) |
+| **Embedding** | 98.4% (63/64) | ~20ms | `way-embed` binary + GGUF model (21MB) |
+| **BM25** | 90.6% (58/64) | ~2ms (score mode) | Built into `ways` binary |
 | **NCD** | ~70% | ~5ms | `gzip` + `bc` |
 
 Engine is auto-detected or forced via `ways.json` (`"semantic_engine": "embedding"` / `"bm25"` / `"ncd"`).

@@ -11,7 +11,7 @@
 # 1. PreToolUse:Task scans Task prompt against ways with subagent scope
 # 2. SubagentStart (inject-subagent.sh) reads stash and emits content
 #
-# Stash: /tmp/.claude-subagent-stash-{session_id}/{timestamp}.json
+# Stash: {SESSIONS_ROOT}/{session_id}/subagent-stash/{timestamp}.json
 
 INPUT=$(cat)
 TASK_PROMPT=$(echo "$INPUT" | jq -r '.tool_input.prompt // empty' | tr '[:upper:]' '[:lower:]')
