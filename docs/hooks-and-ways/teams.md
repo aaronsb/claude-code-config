@@ -15,7 +15,7 @@ Every Claude Code session runs in one of three scopes:
 | Scope | What it is | How it's detected |
 |-------|-----------|-------------------|
 | **agent** | Your main session — the one you're talking to | Default. No marker file exists. |
-| **teammate** | A named agent in a coordinated team | Marker file at `/tmp/.claude-teammate-{session_id}` |
+| **teammate** | A named agent in a coordinated team | Marker file at `{SESSIONS_ROOT}/{session_id}/teammate` |
 | **subagent** | A quick Task tool delegate (no team, no name) | Spawned via Task without `team_name` parameter |
 
 Scopes matter because they control which ways fire. A teammate should get coordination norms but shouldn't try to write MEMORY.md (concurrent writes from three teammates corrupt the file). A subagent doing a quick search doesn't need team coordination guidance at all.
@@ -28,7 +28,7 @@ The detection chain is a two-phase handoff between the lead agent and the spawne
 `check-task-pre.sh` reads the Task tool's parameters. If `team_name` is present, it writes a stash file with `is_teammate: true` and the team name. It also scans ways with `scope: teammate` or `scope: subagent` for content to inject.
 
 **Phase 2 — Teammate's hooks (SubagentStart):**
-`inject-subagent.sh` reads the stash, sees `is_teammate: true`, and creates a persistent marker at `/tmp/.claude-teammate-{session_id}` containing the team name. From this point forward, all of the teammate's own hooks (check-prompt, check-state, etc.) source `detect-scope.sh`, find the marker, and filter ways accordingly.
+`inject-subagent.sh` reads the stash, sees `is_teammate: true`, and creates a persistent marker at `{SESSIONS_ROOT}/{session_id}/teammate` containing the team name. From this point forward, the `ways` binary detects the marker and filters ways by scope accordingly.
 
 ### Scope Filtering
 
@@ -45,7 +45,7 @@ scope: agent, subagent    # Fires for main session and delegates, not teammates
 
 When no `scope:` is declared, the default is `agent` — backward compatible with all existing ways.
 
-The filtering logic in `detect-scope.sh` is a simple word match: does the way's scope field contain the current session's scope? This runs on every trigger evaluation, so the cost is one `grep -qw` per way per hook.
+Scope filtering is handled by the `ways` binary: it checks the way's `scope:` field against the current session's scope. This runs on every trigger evaluation.
 
 ## The Teams Way
 

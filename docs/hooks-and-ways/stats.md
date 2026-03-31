@@ -125,6 +125,6 @@ Use the stats to spot patterns: ways that fire too often (noisy triggers), ways 
 |------|---------|
 | `~/.claude/stats/events.jsonl` | Append-only event log |
 | `/tmp/.claude-config-update-state-{uid}` | Update check cache (hourly) |
-| `/tmp/.claude-way-{name}-{session}` | Way firing markers (per-session) |
-| `/tmp/.claude-teammate-{session}` | Teammate scope markers (contains team name) |
-| `/tmp/.claude-tasks-active-{session}` | Context-threshold nag suppression |
+| `{SESSIONS_ROOT}/{session}/ways/{way_path}/.marker` | Way firing markers (per-session) |
+| `{SESSIONS_ROOT}/{session}/teammate` | Teammate scope marker (contains team name) |
+| `{SESSIONS_ROOT}/{session}/tasks-active` | Context-threshold nag suppression |

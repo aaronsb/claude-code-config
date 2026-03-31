@@ -42,7 +42,7 @@ Tier 1 — Embedding (primary, ~20ms batch)
   Threshold field: embed_threshold (per-way, default: 0.35)
   Fires when: cosine(query, way) >= embed_threshold
 
-Tier 2 — BM25 (fallback when way-embed or model missing)
+Tier 2 — BM25 (fallback when embedding model missing)
   ways match: BM25 relevance score, unbounded scale
   Threshold field: threshold (per-way, default: 2.0)
   Fires when: BM25_score >= threshold
@@ -61,7 +61,7 @@ ways status
 
 Reports:
 - Active engine (embedding/bm25/none) and whether it was forced or auto-detected
-- Binary path and version (`way-embed v0.1.0`)
+- Embedding binary path and version
 - Model path and size (`minilm-l6-v2.gguf`)
 - Corpus state: total ways, how many have pre-computed embeddings, size
 - Manifest freshness (staleness detection)
@@ -186,7 +186,7 @@ When the user gives a short name like "security" instead of a full path:
 
 ## Score Mode (BM25 Fallback)
 
-Use BM25 scoring when the embedding engine is unavailable (`way-embed` or the model file is missing), or when you want to inspect BM25 signal independently for vocabulary tuning.
+Use BM25 scoring when the embedding engine is unavailable (embedding binary or model file missing), or when you want to inspect BM25 signal independently for vocabulary tuning.
 
 **Before any scoring operation**, regenerate the corpus:
 
@@ -242,7 +242,7 @@ Flag these patterns:
 
 ## Score-All Mode
 
-**With embedding active**: run `way-embed match` once — it scores the query against all pre-computed corpus embeddings in a single batch call (~20ms). No per-way loop needed. Output is already ranked by cosine similarity.
+**With embedding active**: run `ways embed` once — it scores the query against all pre-computed corpus embeddings in a single batch call (~20ms). No per-way loop needed. Output is already ranked by cosine similarity.
 
 **With BM25 fallback**: for each way file found (project-local + global), extract description+vocabulary and run `ways match`. Display results as a ranked table:
 

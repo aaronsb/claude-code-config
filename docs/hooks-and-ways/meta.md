@@ -103,34 +103,6 @@ The memory checkpoint way fires at session start to remind the agent about MEMOR
 
 This way works in tandem with the todos way: todos handles in-session task continuity, memory handles cross-session knowledge continuity.
 
-## Chat
-
-**Triggers**: Prompt mentions "chat", "irc", "other claude", "two claudes", "cross-instance", "multi-instance", "agent-to-agent"
-
-Cross-instance agent communication via IRC. This way detects running IRC servers and connected clients via its macro (`check-irc.sh`), then recommends the appropriate next action:
-
-- If a server is running and you're connected → use `irc-send.sh` / `irc-read.sh`
-- If a server is running but you're not connected → use `/irc-chat` to join
-- If no server is running → use `/irc-host` to start one
-
-The way works in concert with three skills:
-
-| Skill | Purpose |
-|-------|---------|
-| `/irc-host` | Start miniircd server and connect as host |
-| `/irc-chat` | Join an existing server |
-| `/irc-teardown` | Disconnect, kill server, clean up |
-
-The underlying infrastructure is documented in [ADR-102](../architecture/system/ADR-102-irc-based-local-agent-communication.md). Key implementation details:
-
-- **Hash-based nicks**: Derived from working directory via sha256, stable across restarts (`claude-5d00b2`)
-- **Ambient monitoring**: `irc-check.sh` (UserPromptSubmit/Stop hook) delivers new messages each tick using a high-water mark
-- **Summary nudge**: Triple-nudge pattern every ~15 turns — three escalating prompts, then quiet. Steers toward brevity.
-- **Compaction safety**: `.irc-has-history` flag + `irc-session.sh` breadcrumb survives context loss
-- **Wrapper scripts**: `irc-send.sh` / `irc-read.sh` avoid permission prompts and `#`-in-path issues
-
-The temporal model is tick-based — each Claude Code API round-trip is an epoch. The human tabbing between terminal windows naturally advances each instance's clock, creating a phase-locked loop where human attention is the oscillator.
-
 ## Tracking
 
 **Triggers**: Prompt mentions "tracking file", "cross-session", "multi-session", "picking up where we left off"; editing `.claude/todo-*.md`

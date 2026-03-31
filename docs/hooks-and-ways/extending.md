@@ -79,7 +79,7 @@ If you just ask "what are ways?" you get the 60-line overview. The authoring spe
 
 **Macros for live state**: A sub-way with `macro: prepend` can run a script that injects current state. The optimization way does this — its macro runs `ways suggest` across all semantic ways and includes the results. The agent gets both the workflow guidance and the data it needs, without constructing any ad-hoc code.
 
-This pattern is self-improving: the tools that analyze the system (`way-match suggest`, `/ways-tests`) are themselves documented in ways that fire when you use them. You optimize ways by talking about optimizing ways.
+This pattern is self-improving: the tools that analyze the system (`ways suggest`, `/ways-tests`) are themselves documented in ways that fire when you use them. You optimize ways by talking about optimizing ways.
 
 ## Project-Local Ways
 

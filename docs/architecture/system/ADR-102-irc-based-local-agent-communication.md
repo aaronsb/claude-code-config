@@ -1,5 +1,5 @@
 ---
-status: Accepted
+status: Abandoned
 date: 2026-02-26
 deciders:
   - aaronsb
