@@ -35,10 +35,15 @@ pub(crate) fn batch_bm25_score(query: &str) -> Vec<(String, f64)> {
         .collect()
 }
 
-pub(crate) fn batch_embed_score(query: &str) -> Vec<(String, f64)> {
+/// Returns `Some(matches)` when the embedding engine ran successfully
+/// (even if no ways matched), or `None` when the engine is unavailable.
+/// This distinction matters: `Some(vec![])` means "engine is healthy,
+/// nothing matched" — BM25 should NOT fire. `None` means "engine is
+/// down" — BM25 fallback is appropriate.
+pub(crate) fn batch_embed_score(query: &str) -> Option<Vec<(String, f64)>> {
     let ways_bin = home_dir().join(".claude/bin/ways");
     if !ways_bin.is_file() {
-        return Vec::new();
+        return None;
     }
 
     let output = std::process::Command::new(&ways_bin)
@@ -47,17 +52,19 @@ pub(crate) fn batch_embed_score(query: &str) -> Vec<(String, f64)> {
 
     match output {
         Ok(o) if o.status.success() => {
-            String::from_utf8_lossy(&o.stdout)
-                .lines()
-                .filter_map(|line| {
-                    let mut parts = line.split('\t');
-                    let id = parts.next()?.to_string();
-                    let score: f64 = parts.next()?.parse().ok()?;
-                    Some((id, score))
-                })
-                .collect()
+            Some(
+                String::from_utf8_lossy(&o.stdout)
+                    .lines()
+                    .filter_map(|line| {
+                        let mut parts = line.split('\t');
+                        let id = parts.next()?.to_string();
+                        let score: f64 = parts.next()?.parse().ok()?;
+                        Some((id, score))
+                    })
+                    .collect(),
+            )
         }
-        _ => Vec::new(),
+        _ => None,
     }
 }
 

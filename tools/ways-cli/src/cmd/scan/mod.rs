@@ -47,9 +47,13 @@ pub fn prompt(query: &str, session_id: &str, project: Option<&str>) -> Result<()
     let scope = session::detect_scope(session_id);
     let candidates = collect_candidates(&project_dir);
 
-    // Batch semantic scoring
-    let bm25_matches = batch_bm25_score(query);
+    // Batch semantic scoring — embed is authoritative when available
     let embed_matches = batch_embed_score(query);
+    let bm25_matches = if embed_matches.is_some() {
+        Vec::new() // embedding engine is healthy — skip BM25 entirely
+    } else {
+        batch_bm25_score(query)
+    };
 
     for way in &candidates {
         if !session::scope_matches(&way.scope, &scope) {
@@ -69,12 +73,102 @@ pub fn prompt(query: &str, session_id: &str, project: Option<&str>) -> Result<()
             &way.id,
             effective_threshold,
             &bm25_matches,
-            &embed_matches,
+            embed_matches.as_deref(),
         );
 
         if let Some(trigger) = channel {
             let _ = crate::cmd::show::way(&way.id, session_id, &trigger);
         }
+    }
+
+    Ok(())
+}
+
+// ── Task scan (subagent/teammate stash) ────────────────────────
+
+pub fn task(
+    query: &str,
+    session_id: &str,
+    project: Option<&str>,
+    team: Option<&str>,
+) -> Result<()> {
+    let project_dir = project
+        .map(|s| s.to_string())
+        .unwrap_or_else(default_project);
+
+    let is_teammate = team.is_some();
+    let candidates = collect_candidates(&project_dir);
+
+    // Batch semantic scoring — embed exclusive when available
+    let embed_matches = batch_embed_score(query);
+    let bm25_matches = if embed_matches.is_some() {
+        Vec::new()
+    } else {
+        batch_bm25_score(query)
+    };
+
+    let mut matched: Vec<(String, String)> = Vec::new(); // (way_id, channel)
+
+    for way in &candidates {
+        // Must have subagent or teammate scope
+        let scope = &way.scope;
+        if is_teammate {
+            if !scope.contains("subagent") && !scope.contains("teammate") {
+                continue;
+            }
+        } else {
+            if !scope.contains("subagent") {
+                continue;
+            }
+        }
+
+        // Skip state-triggered ways
+        if way.trigger.is_some() {
+            continue;
+        }
+
+        if !check_when(&way.when_project, &way.when_file_exists, &project_dir) {
+            continue;
+        }
+
+        let channel = match_prompt(
+            query,
+            &way.pattern,
+            &way.id,
+            way.threshold,
+            &bm25_matches,
+            embed_matches.as_deref(),
+        );
+
+        if let Some(trigger) = channel {
+            matched.push((way.id.clone(), trigger));
+        }
+    }
+
+    // Write stash file if any ways matched
+    if !matched.is_empty() {
+        let stash_dir = format!(
+            "{}/{session_id}/subagent-stash",
+            session::sessions_root()
+        );
+        std::fs::create_dir_all(&stash_dir)?;
+
+        let ways: Vec<&str> = matched.iter().map(|(id, _)| id.as_str()).collect();
+        let channels: Vec<&str> = matched.iter().map(|(_, ch)| ch.as_str()).collect();
+
+        let stash = serde_json::json!({
+            "ways": ways,
+            "channels": channels,
+            "is_teammate": is_teammate,
+            "team_name": team.unwrap_or(""),
+        });
+
+        let timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        let stash_file = format!("{stash_dir}/{timestamp}.json");
+        std::fs::write(&stash_file, stash.to_string())?;
     }
 
     Ok(())
@@ -141,8 +235,14 @@ pub fn command(
         description.unwrap_or("")
     );
 
-    // Batch BM25 for check scoring
-    let bm25_matches = batch_bm25_score(&query_for_checks);
+    // Semantic scoring for checks — embed exclusive when available
+    let embed_check_matches = batch_embed_score(&query_for_checks);
+    let bm25_check_matches = if embed_check_matches.is_some() {
+        Vec::new()
+    } else {
+        batch_bm25_score(&query_for_checks)
+    };
+    let semantic_matches = embed_check_matches.as_deref().unwrap_or(&bm25_check_matches);
 
     for check in &checks {
         if !session::scope_matches(&check.scope, &scope) {
@@ -161,7 +261,7 @@ pub fn command(
         }
 
         if match_score == 0.0 && !check.description.is_empty() && !check.vocabulary.is_empty() {
-            if let Some(score) = bm25_matches.iter().find(|(id, _)| *id == check.id).map(|(_, s)| *s) {
+            if let Some(score) = semantic_matches.iter().find(|(id, _)| *id == check.id).map(|(_, s)| *s) {
                 if score > 0.0 {
                     match_score = score;
                 }
@@ -221,9 +321,15 @@ pub fn file(filepath: &str, session_id: &str, project: Option<&str>) -> Result<(
         }
     }
 
-    // Check matching for files
+    // Check matching for files — embed exclusive when available
     let checks = collect_checks(&project_dir);
-    let bm25_matches = batch_bm25_score(filepath);
+    let embed_matches = batch_embed_score(filepath);
+    let bm25_matches = if embed_matches.is_some() {
+        Vec::new()
+    } else {
+        batch_bm25_score(filepath)
+    };
+    let semantic_matches = embed_matches.as_deref().unwrap_or(&bm25_matches);
 
     for check in &checks {
         if !session::scope_matches(&check.scope, &scope) {
@@ -242,7 +348,7 @@ pub fn file(filepath: &str, session_id: &str, project: Option<&str>) -> Result<(
         }
 
         if match_score == 0.0 && !check.description.is_empty() && !check.vocabulary.is_empty() {
-            if let Some(score) = bm25_matches.iter().find(|(id, _)| *id == check.id).map(|(_, s)| *s) {
+            if let Some(score) = semantic_matches.iter().find(|(id, _)| *id == check.id).map(|(_, s)| *s) {
                 if score > 0.0 {
                     match_score = score;
                 }
@@ -278,7 +384,7 @@ fn match_prompt(
     way_id: &str,
     threshold: f64,
     bm25: &[(String, f64)],
-    embed: &[(String, f64)],
+    embed: Option<&[(String, f64)]>,
 ) -> Option<String> {
     // Channel 1: Regex pattern — always checked first
     if let Some(ref pat) = pattern {
@@ -287,18 +393,17 @@ fn match_prompt(
         }
     }
 
-    // Channel 2: Embedding — primary semantic engine when available.
-    // If embed returned ANY results (engine is working), it's authoritative.
-    // Only fall through to BM25 when embed returned nothing (engine unavailable).
-    if !embed.is_empty() {
-        if embed.iter().any(|(id, _)| id == way_id) {
+    // Channel 2: Embedding — exclusive when engine is available.
+    // Some(matches) means engine ran (even if empty) — BM25 is suppressed.
+    // None means engine is unavailable — fall through to BM25.
+    if let Some(embed_results) = embed {
+        if embed_results.iter().any(|(id, _)| id == way_id) {
             return Some("semantic:embedding".to_string());
         }
-        // Embed is working but didn't match this way — don't fall through to BM25
         return None;
     }
 
-    // Channel 3: BM25 — fallback when embedding engine is unavailable
+    // Channel 3: BM25 — only when embedding engine is unavailable
     if let Some((_, score)) = bm25.iter().find(|(id, _)| id == way_id) {
         if *score >= threshold {
             return Some("semantic:bm25".to_string());

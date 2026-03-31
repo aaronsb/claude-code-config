@@ -240,6 +240,21 @@ enum ScanCommand {
         #[arg(long)]
         project: Option<String>,
     },
+    /// Scan ways for subagent/teammate injection (writes stash for SubagentStart)
+    Task {
+        /// Task prompt text (lowercase)
+        #[arg(long)]
+        query: String,
+        /// Session ID
+        #[arg(long)]
+        session: String,
+        /// Project directory
+        #[arg(long)]
+        project: Option<String>,
+        /// Team name (if teammate spawn)
+        #[arg(long)]
+        team: Option<String>,
+    },
     /// Evaluate state-based triggers (context-threshold, file-exists, session-start)
     State {
         /// Session ID
@@ -354,6 +369,9 @@ fn main() -> Result<()> {
             }
             ScanCommand::File { path, session, project } => {
                 cmd::scan::file(&path, &session, project.as_deref())
+            }
+            ScanCommand::Task { query, session, project, team } => {
+                cmd::scan::task(&query, &session, project.as_deref(), team.as_deref())
             }
             ScanCommand::State { session, project, transcript } => {
                 cmd::scan::state(&session, project.as_deref(), transcript.as_deref())
