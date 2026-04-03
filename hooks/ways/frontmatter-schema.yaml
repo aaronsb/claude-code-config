@@ -28,8 +28,11 @@ way:
       required: optional
       default: 0.35
       role: Cosine similarity threshold for embedding engine (0.0-1.0, higher = stricter)
-    # embed_model: removed — derived automatically by corpus builder
-    # (.md ways → en model, .locales.jsonl entries → multilingual model)
+    redisclose:
+      type: number
+      required: optional
+      default: 25
+      role: Context window % before re-disclosure (lower = more frequent, default 25)
     pattern:
       type: regex
       required: optional

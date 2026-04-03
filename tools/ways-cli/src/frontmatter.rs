@@ -16,6 +16,9 @@ pub struct Frontmatter {
     pub scope: Option<String>,
     #[serde(default)]
     pub embed_threshold: Option<f64>,
+    #[serde(default)]
+    #[allow(dead_code)] // parsed for serde compat, read via extract_field in show/mod.rs
+    pub redisclose: Option<u64>,
 }
 
 /// Extract YAML frontmatter from a way file.

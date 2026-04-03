@@ -40,9 +40,11 @@ pub fn way(id: &str, session_id: &str, trigger: &str) -> Result<String> {
     }
 
     // Session marker check + token-gated re-disclosure (ADR-104)
+    let redisclose_pct: Option<u64> = extract_field(&content, "redisclose")
+        .and_then(|s| s.parse().ok());
     let is_redisclosure;
     if session::way_is_shown(id, session_id) {
-        match session::token_distance_exceeded(id, session_id) {
+        match session::token_distance_exceeded(id, session_id, redisclose_pct) {
             Some(_distance) => {
                 is_redisclosure = true;
             }

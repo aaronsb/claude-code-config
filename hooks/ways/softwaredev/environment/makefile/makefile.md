@@ -4,6 +4,7 @@ vocabulary: makefile make target build lint linter test format clean install pub
 files: Makefile$|makefile$|GNUmakefile$|\.mk$
 commands: make
 threshold: 1.5
+redisclose: 10
 scope: agent, subagent
 macro: append
 ---

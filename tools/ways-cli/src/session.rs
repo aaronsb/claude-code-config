@@ -218,14 +218,16 @@ pub fn stamp_way_tokens(way_id: &str, session_id: &str, position: u64) {
 
 /// Check if token distance exceeds re-disclosure threshold.
 /// Returns Some(distance) if exceeded, None if not.
-pub fn token_distance_exceeded(way_id: &str, session_id: &str) -> Option<u64> {
+/// `redisclose_pct` overrides the global default when set (per-way frontmatter).
+pub fn token_distance_exceeded(way_id: &str, session_id: &str, redisclose_pct: Option<u64>) -> Option<u64> {
     let tokens_path = session_dir(session_id).join("way-tokens").join(way_id).join(".value");
     let last_tokens = read_u64_path(&tokens_path);
     let current = get_token_position(session_id);
     let distance = current.saturating_sub(last_tokens);
 
+    let pct = redisclose_pct.unwrap_or(REDISCLOSE_PCT);
     let context_window = detect_context_window(session_id);
-    let threshold = context_window * REDISCLOSE_PCT / 100;
+    let threshold = context_window * pct / 100;
 
     if distance >= threshold {
         Some(distance)
