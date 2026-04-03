@@ -1,6 +1,6 @@
 # Multi-Language Support
 
-Ways supports multilingual matching and output across 52 languages. The system uses two embedding models: a precise English model and a broad multilingual model, routed per-way via frontmatter.
+Ways supports multilingual matching and output across 52 languages. The system uses two embedding models: a precise English model and a broad multilingual model, routed automatically by the corpus builder.
 
 ## Setting output language
 
@@ -36,18 +36,12 @@ Two embedding models handle different matching scenarios:
 
 Both are downloaded by `make setup` and stored in `~/.cache/claude-ways/user/`.
 
-Each way declares which model it uses via the `embed_model` frontmatter field:
+Model routing is automatic — no frontmatter field needed:
 
-```yaml
----
-description: security vulnerability scanning
-vocabulary: security vulnerability CVE audit
-embed_model: en          # default — uses English model
-embed_threshold: 0.35
----
-```
+- **`.md` ways** → English model (all-MiniLM-L6-v2)
+- **`.locales.jsonl` entries** → multilingual model (paraphrase-multilingual-MiniLM-L12-v2)
 
-Ways with `embed_model: multilingual` are scored by the multilingual model against a separate corpus.
+The corpus builder splits entries into `ways-corpus-en.jsonl` and `ways-corpus-multi.jsonl`, each embedded with the appropriate model.
 
 ## Locale stubs — packed format
 
@@ -75,7 +69,7 @@ When a Japanese user types a prompt, the scanner:
 ### Format rules
 
 - **`embed_threshold`** is optional — omit it and the corpus generator defaults to 0.25. Use `ways tune --apply` to compute optimal values automatically.
-- **`embed_model`** is implicit — always `multilingual` for locale stubs (not stored in the file).
+- **Model routing** is automatic — locale stubs always use the multilingual model (not stored in the file).
 - **No body content** — just the JSONL line. If someone writes a full native-language way, they create `security.ja.md` as a regular file, which overrides the packed entry.
 
 ### Override mechanism

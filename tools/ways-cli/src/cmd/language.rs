@@ -1,6 +1,6 @@
 //! Language coverage report — shows multilingual state of ways.
 //!
-//! Reports: resolved output language, per-way embed_model,
+//! Reports: resolved output language, derived embedding model per way,
 //! locale stubs (.locales.jsonl + override .lang.md files), and model availability.
 
 use anyhow::Result;

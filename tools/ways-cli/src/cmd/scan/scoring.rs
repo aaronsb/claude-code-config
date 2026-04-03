@@ -42,8 +42,8 @@ pub(crate) fn batch_bm25_score(query: &str) -> Vec<(String, f64)> {
 /// down" — BM25 fallback is appropriate.
 ///
 /// Queries both EN and multilingual corpora (when available) and merges
-/// results. Each way is scored by the model specified in its `embed_model`
-/// frontmatter field.
+/// results. Each way is scored by its derived model (EN for .md ways,
+/// multilingual for .locales.jsonl entries).
 pub(crate) fn batch_embed_score(query: &str) -> Option<Vec<(String, f64)>> {
     let embed_bin = find_way_embed()?;
     let xdg = xdg_cache_dir().join("claude-ways/user");
