@@ -5,7 +5,7 @@
 {"lang": "fr", "description": "Messages de commit Git, commits conventionnels", "vocabulary": "commit message branche conventionnel feat fix portée atomique"}
 {"lang": "pl", "description": "Wiadomości commitów Git, konwencjonalne commity", "vocabulary": "commit wiadomość gałąź konwencjonalny feat fix zakres atomowy"}
 {"lang": "pt-br", "description": "Mensagens de commit Git, commits convencionais", "vocabulary": "commit mensagem branch convencional feat fix escopo atômico"}
-{"lang": "ru", "description": "Сообщения коммитов Git, конвенциональные коммиты", "vocabulary": "коммит сообщение ветка конвенциональный feat fix область атомарный"}
+{"lang": "ru", "description": "сделать коммит, написать сообщение коммита, запушить код в remote — git commit, git push, conventional commits, атомарные изменения, правильное описание коммита", "vocabulary": "коммит закоммитить коммитить сообщение запушить пушить пуш мёрж замёржить ребейз сквош черри-пик cherry-pick conventional feat fix refactor rebase squash amend stash атомарный удалённый origin upstream"}
 {"lang": "th", "description": "ข้อความ Git commit, conventional commits, การเปลี่ยนแปลงแบบอะตอม", "vocabulary": "commit ข้อความ branch conventional feat fix scope atomic"}
 {"lang": "tr", "description": "Git commit mesajları, konvansiyonel commitler, atomik değişiklikler", "vocabulary": "commit mesaj dal konvansiyonel feat fix kapsam atomik"}
 {"lang": "uk", "description": "Повідомлення комітів Git, конвенційні коміти, атомарні зміни", "vocabulary": "коміт повідомлення гілка конвенційний feat fix область атомарний"}
