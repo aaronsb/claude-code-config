@@ -1,4 +1,17 @@
-{"lang":"ar","description":"ملفات التصحيح وفروقات Git","vocabulary":"تصحيح رقعة فرق Git ملف تعديل","embed_threshold":0.82}
-{"lang":"de","description":"Patch-Dateien erstellen und anwenden — git diff, Hunks und Patchserien","vocabulary":"Patch Diff anwenden Hunk unified Patchserie format-patch Änderungsdatei Flicken","embed_threshold":0.55}
-{"lang":"es","description":"Archivos de parche — git diff, aplicar parches, formato unificado","vocabulary":"parche diff patch aplicar formato unificado git hunks cambio archivo","embed_threshold":0.68}
-{"lang":"ja","description":"パッチファイルの作成と適用、git diff","vocabulary":"パッチ diff 適用 ハンク 統一形式 format-patch","embed_threshold":0.53}
+{"lang": "ar", "description": "ملفات التصحيح وفروقات Git", "vocabulary": "تصحيح رقعة فرق Git ملف تعديل", "embed_threshold": 0.82}
+{"lang": "de", "description": "Patch-Dateien erstellen und anwenden — git diff, Hunks und Patchserien", "vocabulary": "Patch Diff anwenden Hunk unified Patchserie format-patch Änderungsdatei Flicken", "embed_threshold": 0.55}
+{"lang": "es", "description": "Archivos de parche — git diff, aplicar parches, formato unificado", "vocabulary": "parche diff patch aplicar formato unificado git hunks cambio archivo", "embed_threshold": 0.68}
+{"lang": "ja", "description": "パッチファイルの作成と適用、git diff", "vocabulary": "パッチ diff 適用 ハンク 統一形式 format-patch", "embed_threshold": 0.53}
+{"lang": "fr", "description": "Création et application de fichiers de correctif, git diff", "vocabulary": "correctif diff appliquer hunk unifié format-patch modification"}
+{"lang": "pl", "description": "Tworzenie i stosowanie plików łat, git diff", "vocabulary": "łata diff zastosować hunk unified format-patch zmiana"}
+{"lang": "pt-br", "description": "Criar e aplicar arquivos de patch, git diff", "vocabulary": "patch diff aplicar hunk unificado format-patch alteração"}
+{"lang": "ru", "description": "Создание и применение файлов патчей, git diff", "vocabulary": "патч diff применить hunk unified format-patch изменение"}
+{"lang": "th", "description": "สร้างและใช้ไฟล์ patch, สร้าง git diff", "vocabulary": "patch diff ใช้ hunk unified format-patch ชุด"}
+{"lang": "tr", "description": "Yama dosyaları oluşturma ve uygulama, git diff üretimi", "vocabulary": "yama diff uygulama hunk unified format-patch seri"}
+{"lang": "uk", "description": "Створення та застосування файлів патчів, генерація git diff", "vocabulary": "патч diff застосування hunk unified format-patch серія"}
+{"lang": "vi", "description": "Tạo và áp dụng tệp patch, tạo git diff", "vocabulary": "patch diff áp dụng hunk unified format-patch chuỗi"}
+{"lang": "zh", "description": "创建和应用补丁文件、git diff 生成", "vocabulary": "补丁 diff 应用 hunk unified format-patch 系列"}
+{"lang": "hi", "description": "पैच फाइल बनाना और लागू करना, git diff जनरेशन", "vocabulary": "पैच diff लागू git फाइल जनरेट फॉर्मेट"}
+{"lang": "id", "description": "Membuat dan menerapkan file patch, pembuatan git diff", "vocabulary": "patch diff terapkan git file generate format"}
+{"lang": "it", "description": "Creazione e applicazione file patch, generazione git diff", "vocabulary": "patch diff applicare git file generare formato"}
+{"lang": "ko", "description": "패치 파일 생성 및 적용, git diff 생성", "vocabulary": "패치 diff 적용 git 파일 생성 포맷"}

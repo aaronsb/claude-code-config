@@ -1,4 +1,17 @@
-{"lang":"ar","description":"فحص الثغرات في التبعيات","vocabulary":"تبعيات ثغرات فحص مسح أمان مكتبات","embed_threshold":0.71}
-{"lang":"de","description":"Abhängigkeits-Schwachstellenscanning, Lockfile-Auditing, Paketsicherheit","vocabulary":"osv-scanner pip-audit npm-audit cargo-audit govulncheck Abhängigkeitsscan Schwachstelle CVE Lockfile Requirements Paketsicherheit SBOM","embed_threshold":0.67}
-{"lang":"es","description":"Escaneo de vulnerabilidades en dependencias — auditar, actualizar, parchar","vocabulary":"dependencias vulnerabilidad escaneo auditar CVE parche actualizar SCA composicion","embed_threshold":0.72}
-{"lang":"ja","description":"依存関係の脆弱性スキャン、ロックファイル監査","vocabulary":"脆弱性スキャン 依存関係 監査 CVE osv-scanner pip-audit npm-audit","embed_threshold":0.71}
+{"lang": "ar", "description": "فحص الثغرات في التبعيات", "vocabulary": "تبعيات ثغرات فحص مسح أمان مكتبات", "embed_threshold": 0.71}
+{"lang": "de", "description": "Abhängigkeits-Schwachstellenscanning, Lockfile-Auditing, Paketsicherheit", "vocabulary": "osv-scanner pip-audit npm-audit cargo-audit govulncheck Abhängigkeitsscan Schwachstelle CVE Lockfile Requirements Paketsicherheit SBOM", "embed_threshold": 0.67}
+{"lang": "es", "description": "Escaneo de vulnerabilidades en dependencias — auditar, actualizar, parchar", "vocabulary": "dependencias vulnerabilidad escaneo auditar CVE parche actualizar SCA composicion", "embed_threshold": 0.72}
+{"lang": "ja", "description": "依存関係の脆弱性スキャン、ロックファイル監査", "vocabulary": "脆弱性スキャン 依存関係 監査 CVE osv-scanner pip-audit npm-audit", "embed_threshold": 0.71}
+{"lang": "fr", "description": "Analyse des vulnérabilités des dépendances, audit de lockfile", "vocabulary": "vulnérabilité scan dépendance audit CVE osv-scanner paquet"}
+{"lang": "pl", "description": "Skanowanie podatności w zależnościach, audyt lockfile", "vocabulary": "podatność skanowanie zależność audyt CVE osv-scanner pakiet"}
+{"lang": "pt-br", "description": "Escaneamento de vulnerabilidades em dependências, auditoria de lockfile", "vocabulary": "vulnerabilidade escaneamento dependência auditoria CVE osv-scanner pacote"}
+{"lang": "ru", "description": "Сканирование уязвимостей зависимостей, аудит lockfile", "vocabulary": "уязвимость сканирование зависимость аудит CVE osv-scanner пакет"}
+{"lang": "th", "description": "สแกนช่องโหว่ dependency ตรวจสอบ lockfile", "vocabulary": "ช่องโหว่ สแกน dependency ตรวจสอบ CVE osv-scanner แพ็กเกจ"}
+{"lang": "tr", "description": "Bağımlılık güvenlik açığı taraması, lockfile denetimi", "vocabulary": "güvenlik açığı tarama bağımlılık denetim CVE osv-scanner paket"}
+{"lang": "uk", "description": "Сканування вразливостей залежностей, аудит lockfile", "vocabulary": "вразливість сканування залежність аудит CVE osv-scanner пакет"}
+{"lang": "vi", "description": "Quét lỗ hổng phụ thuộc, kiểm toán lockfile", "vocabulary": "lỗ hổng quét phụ thuộc kiểm toán CVE osv-scanner gói"}
+{"lang": "zh", "description": "依赖漏洞扫描、lockfile 审计", "vocabulary": "漏洞 扫描 依赖 审计 CVE osv-scanner 包"}
+{"lang": "hi", "description": "डिपेंडेंसी वल्नरेबिलिटी स्कैनिंग, लॉकफाइल ऑडिटिंग", "vocabulary": "डिपेंडेंसी वल्नरेबिलिटी स्कैन लॉकफाइल ऑडिट CVE पैकेज"}
+{"lang": "id", "description": "Pemindaian kerentanan dependensi, audit lockfile", "vocabulary": "dependensi kerentanan pemindaian lockfile audit CVE paket"}
+{"lang": "it", "description": "Scansione vulnerabilità dipendenze, audit lockfile", "vocabulary": "dipendenza vulnerabilità scansione lockfile audit CVE pacchetto"}
+{"lang": "ko", "description": "의존성 취약점 스캐닝, 락파일 감사", "vocabulary": "의존성 취약점 스캔 락파일 감사 CVE 패키지"}

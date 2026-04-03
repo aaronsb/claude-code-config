@@ -55,6 +55,11 @@ else
   echo "SKIP: way-embed not found (run 'make setup')"
 fi
 
+# Multilingual way matching tests
+if [[ -x "$WAYS_BIN" ]]; then
+  run_suite "Multilingual Way Matching" bash "$SCRIPT_DIR/test-multilingual.sh"
+fi
+
 # ADR lint tests (frontmatter detection, field validation)
 if command -v python3 &>/dev/null; then
   run_suite "ADR Lint Tests" bash "$REPO_ROOT/tests/adr-lint-test.sh"

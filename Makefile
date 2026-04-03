@@ -6,7 +6,7 @@
 # Update:        make update
 
 .DEFAULT_GOAL := help
-.PHONY: setup install uninstall update clean help ways ways-rebuild test test-sim release
+.PHONY: setup install uninstall update clean help ways ways-rebuild test test-unit test-sim test-lang test-locales test-multilingual release
 
 WAYS_BIN = bin/ways
 XDG_BIN = $(or $(XDG_BIN_HOME),$(HOME)/.local/bin)
@@ -21,8 +21,12 @@ help:
 	@echo "  make update       Pull latest changes and re-run install"
 	@echo "  make ways         Get ways binary (download or build from source)"
 	@echo "  make ways-rebuild Force rebuild ways from source"
-	@echo "  make test         Smoke test the ways binary"
+	@echo "  make test         Run all tests (smoke + unit + sim + lang)"
+	@echo "  make test-unit    Run Rust unit tests"
 	@echo "  make test-sim     Run session simulator (8 scenarios)"
+	@echo "  make test-lang    Validate active language coverage"
+	@echo "  make test-locales Check locale files for gaps and duplicates"
+	@echo "  make test-multilingual  Verify multilingual way matching (18 languages)"
 	@echo "  make release      Build release binary for current platform"
 	@echo "  make uninstall    Remove ways from PATH"
 	@echo "  make clean        Remove build artifacts"
@@ -91,18 +95,42 @@ ways-rebuild:
 
 # --- Test ---
 
-test: ways
+test: test-smoke test-unit test-sim test-lang test-locales test-multilingual
+	@echo "All tests passed."
+
+test-smoke: ways
 	@echo "Smoke testing ways binary..."
 	@$(WAYS_BIN) --version
 	@$(WAYS_BIN) lint --check --global && echo "  lint: PASS"
 	@$(WAYS_BIN) match "write a unit test" >/dev/null && echo "  match: PASS"
 	@$(WAYS_BIN) graph --output /dev/null && echo "  graph: PASS"
-	@echo "All smoke tests passed."
+	@echo "Smoke tests passed."
+
+test-unit:
+	@echo "Running Rust unit tests..."
+	@cargo test --manifest-path tools/ways-cli/Cargo.toml --bin ways --quiet
+	@echo "Unit tests passed."
 
 test-sim: ways
 	@echo "Running session simulator (8 scenarios)..."
 	@cargo test --manifest-path tools/ways-cli/Cargo.toml --test session_sim -- --test-threads=1
-	@echo "All simulation scenarios passed."
+	@echo "Simulation tests passed."
+
+test-lang: ways
+	@echo "Validating active language coverage..."
+	@$(WAYS_BIN) language --json | python3 -c "\
+	import json,sys; d=json.load(sys.stdin); \
+	active=d['locales_found']; \
+	print(f'  Active locales in corpus: {len(active)}'); \
+	assert len(active) > 0, 'No active locales found in corpus'" \
+	&& echo "  Language coverage: PASS"
+
+test-locales:
+	@echo "Checking locale files for gaps and duplicates..."
+	@python3 scripts/test-locales.py
+
+test-multilingual: ways
+	@bash tests/test-multilingual.sh
 
 # --- Release ---
 

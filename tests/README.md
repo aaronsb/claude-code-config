@@ -63,6 +63,31 @@ Claude reads the test file (avoiding prompt-hook contamination), then walks you 
 
 Takes about 5 minutes. **Current baseline**: 8/8 PASS (steps 1-8).
 
+### 4. Multilingual Matching Test (live agent)
+
+Interactive test protocol that verifies locale stubs fire correctly for non-English prompts across 12 languages and 5 script families.
+
+**To run**: Start a fresh session from `~/.claude/` and type:
+
+```
+read and run the multilingual test at tests/multilingual-test.md
+```
+
+Claude reads the test file, then walks you through 16 steps:
+
+| Steps | Script | Languages | Tests |
+|-------|--------|-----------|-------|
+| 1-4 | Latin | de, es, fr, pt-br | Locale vocabulary matching for familiar scripts |
+| 5-7 | CJK | ja, ko, zh | Cross-script embedding matching |
+| 8-9 | Cyrillic | ru, uk | Cyrillic vocabulary matching |
+| 10 | Arabic | ar | Right-to-left script matching |
+| 11-12 | Thai, Devanagari | th, hi | Southeast Asian and Indic scripts |
+| 13-14 | Latin | en, it | Cross-language consistency (same concept, two languages) |
+| 15 | Latin | nl (inactive) | Negative: inactive language falls back to English |
+| 16 | — | — | Summary table |
+
+Takes about 10 minutes. Tests all 18 active languages are reachable.
+
 ### Ad-Hoc Testing with /ways-tests
 
 The `/ways-tests` skill and `ways` CLI provide targeted testing without writing scripts:
@@ -117,6 +142,7 @@ ways governance report            # full coverage report
 |----------|------|
 | Changed `ways` CLI source code | `make test-sim` |
 | Changed a way's vocabulary or threshold | `/ways-tests score` + `/ways-tests score-all` |
+| Changed locale stubs or active languages | `make test-locales` + multilingual test |
 | Changed hook scripts (check-*.sh, inject-*.sh) | Activation test |
 | Added a new way | `/ways-tests score` + `/ways-tests lint` + activation test |
 | Restructured way directories | All three test layers |

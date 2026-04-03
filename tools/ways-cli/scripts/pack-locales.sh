@@ -25,9 +25,18 @@ find -L "$WAYS_DIR" -name '*.*.md' -not -name '*.check.md' -type f | sort | whil
   lang="${stem##*.}"
   wayname="${stem%.*}"
 
-  # Validate: 2-5 lowercase ascii chars
-  if ! echo "$lang" | grep -qE '^[a-z]{2,5}$'; then
+  # Validate: 2-5 lowercase ascii chars (with optional hyphen for codes like pt-br)
+  if ! echo "$lang" | grep -qE '^[a-z]{2,5}(-[a-z]{2,5})?$'; then
     continue
+  fi
+
+  # Skip inactive languages
+  LANGUAGES_JSON="${WAYS_DIR}/../../tools/ways-cli/languages.json"
+  if [ -f "$LANGUAGES_JSON" ]; then
+    if ! jq -e ".languages.\"${lang}\".active == true" "$LANGUAGES_JSON" >/dev/null 2>&1; then
+      echo "SKIP (inactive language): $stubfile" >&2
+      continue
+    fi
   fi
 
   dir=$(dirname "$stubfile")

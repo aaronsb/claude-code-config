@@ -1,4 +1,17 @@
-{"lang":"ar","description":"أمان تبعيات Rust","vocabulary":"Rust تبعيات أمان cargo صناديق فحص ثغرات","embed_threshold":0.57}
-{"lang":"de","description":"Rust-Abhängigkeitssicherheit, cargo-audit, Unsafe-Blöcke, Build-Skript-Risiken","vocabulary":"cargo-audit Cargo.lock Cargo.toml unsafe build.rs Crate crates.io RustSec Sicherheitshinweis","embed_threshold":0.62}
-{"lang":"es","description":"Seguridad de dependencias en Rust — cargo audit, crates, cadena de confianza","vocabulary":"Rust cargo audit crates dependencias seguridad Cargo.lock vulnerabilidad advisory confianza","embed_threshold":0.68}
-{"lang":"ja","description":"Rustの依存関係セキュリティ、cargo audit","vocabulary":"cargo audit Cargo.lock unsafe build.rs クレート rustsec","embed_threshold":0.59}
+{"lang": "ar", "description": "أمان تبعيات Rust", "vocabulary": "Rust تبعيات أمان cargo صناديق فحص ثغرات", "embed_threshold": 0.57}
+{"lang": "de", "description": "Rust-Abhängigkeitssicherheit, cargo-audit, Unsafe-Blöcke, Build-Skript-Risiken", "vocabulary": "cargo-audit Cargo.lock Cargo.toml unsafe build.rs Crate crates.io RustSec Sicherheitshinweis", "embed_threshold": 0.62}
+{"lang": "es", "description": "Seguridad de dependencias en Rust — cargo audit, crates, cadena de confianza", "vocabulary": "Rust cargo audit crates dependencias seguridad Cargo.lock vulnerabilidad advisory confianza", "embed_threshold": 0.68}
+{"lang": "ja", "description": "Rustの依存関係セキュリティ、cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs クレート rustsec", "embed_threshold": 0.59}
+{"lang": "fr", "description": "Sécurité des dépendances Rust, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "pl", "description": "Bezpieczeństwo zależności Rust, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "pt-br", "description": "Segurança de dependências Rust, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "ru", "description": "Безопасность зависимостей Rust, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "th", "description": "ความปลอดภัย dependency ของ Rust, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "tr", "description": "Rust bağımlılık güvenliği, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "uk", "description": "Безпека залежностей Rust, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "vi", "description": "Bảo mật phụ thuộc Rust, cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "zh", "description": "Rust 依赖安全、cargo audit", "vocabulary": "cargo audit Cargo.lock unsafe build.rs crate rustsec Rust"}
+{"lang": "hi", "description": "Rust डिपेंडेंसी सुरक्षा, cargo audit, unsafe ब्लॉक", "vocabulary": "Rust cargo audit unsafe build.rs crate सुरक्षा डिपेंडेंसी"}
+{"lang": "id", "description": "Keamanan dependensi Rust, cargo audit, blok unsafe", "vocabulary": "Rust cargo audit unsafe build.rs crate keamanan dependensi"}
+{"lang": "it", "description": "Sicurezza dipendenze Rust, cargo audit, blocchi unsafe", "vocabulary": "Rust cargo audit unsafe build.rs crate sicurezza dipendenza"}
+{"lang": "ko", "description": "Rust 의존성 보안, cargo audit, unsafe 블록", "vocabulary": "Rust cargo audit unsafe build.rs crate 보안 의존성"}

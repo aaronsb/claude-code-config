@@ -8,11 +8,31 @@ You are running an integration test for the EA progressive disclosure tree. This
 
 **Your role**: Follow each step in order. Announce what step you are on, perform the action, then report the result against the expected outcome. Wait for the user to complete each USER step before moving on.
 
-**Format your reports as**:
+### How to verify what fired
+
+After each user prompt, check **two** signals:
+
+1. **System-reminders injected into your context** — look for any new `<system-reminder>` blocks that appeared after the user's message. These contain the actual way content. Report headings and content you see.
+
+2. **BM25 scoring via CLI** — run this from `~/.claude/`:
+   ```bash
+   bin/ways match "the exact prompt the user typed"
+   ```
+   This prints a ranked table: Way, Score, Description. Report the top 3 results.
+
+Use **both** signals: system-reminders confirm delivery; `bin/ways match` confirms scoring.
+
+### Report format
+
 ```
 Step N: [description]
 Result: PASS / FAIL / UNEXPECTED
-Detail: [what happened vs what was expected]
+Injected: [what system-reminder content appeared, or "none"]
+BM25 top 3:
+  #1 way/id  score  description snippet
+  #2 way/id  score  description snippet
+  #3 way/id  score  description snippet
+Detail: [assessment vs expected]
 ```
 
 After reading this file, begin with Step 1.
@@ -25,7 +45,11 @@ After reading this file, begin with Step 1.
 
 > **USER**: Type exactly: `I need help managing my workspace today`
 
-> **CLAUDE**: Check if you received EA root content in a system-reminder. Look for safety rules table, account iteration pattern, and core principles (autonomy with guardrails, read-only by default, suggest never auto-execute). Report what fired.
+> **CLAUDE**: Check system-reminders for EA root content (safety rules table, core principles), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "I need help managing my workspace today"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The root EA way fires (threshold 1.8, vocabulary includes: assistant, workspace, manage). You should see the safety rules table and core principles — NOT email triage structure, drafting style guide, or calendar workflow specifics (those are children). Note: the prompt intentionally avoids mentioning specific domains (email, calendar) to prevent pre-firing child ways.
 
@@ -35,7 +59,11 @@ After reading this file, begin with Step 1.
 
 > **USER**: Type exactly: `triage my email from the last 24 hours`
 
-> **CLAUDE**: Check if you received email triage content. Look for the presentation structure table (Action Required, Already Addressed, Calendar Cross-Reference, etc.) and filtering rules. Report what fired.
+> **CLAUDE**: Check system-reminders for email triage content (presentation structure table, filtering rules), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "triage my email from the last 24 hours"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The email triage way fires (threshold 2.0, vocabulary: triage, email, inbox, scan). You should see:
 - "## Presentation Structure" table with section descriptions
@@ -49,7 +77,11 @@ The root EA way should NOT re-fire (marker exists from Step 1).
 
 > **USER**: Type exactly: `schedule a meeting with the team for tomorrow afternoon`
 
-> **CLAUDE**: Check what fired. Did you get calendar content (scheduling workflow, availability checking, timezone defaults) or briefing content (morning summary, agent team coordination)? Report which way(s) fired.
+> **CLAUDE**: Check system-reminders for calendar content (scheduling workflow, availability checking), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "schedule a meeting with the team for tomorrow afternoon"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The calendar way fires (threshold 2.0, vocabulary: schedule, meeting, calendar). You should see availability-check-first workflow and timezone guidance. The briefing way should NOT fire for a scheduling request — if it does, that's a vocabulary overlap issue.
 
@@ -59,7 +91,11 @@ The root EA way should NOT re-fire (marker exists from Step 1).
 
 > **USER**: Type exactly: `check my teams chat for any unread messages`
 
-> **CLAUDE**: Check if you received communications content. Look for the "Reading is Safe, Sending Requires Approval" section and chat triage guidance. Report what fired.
+> **CLAUDE**: Check system-reminders for comms content (read-safe/send-approval distinction), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "check my teams chat for any unread messages"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The comms way fires (threshold 2.0, vocabulary: teams, chat, unread, message). You should see the read-safe/send-approval distinction and the "As a Context Layer" section.
 
@@ -69,7 +105,11 @@ The root EA way should NOT re-fire (marker exists from Step 1).
 
 > **USER**: Type exactly: `what tasks are overdue and what should I prioritize`
 
-> **CLAUDE**: Check if you received task lifecycle content. Look for the suggest-first patterns (creation, update, completion, cleanup) and cross-reference guidance. Report what fired.
+> **CLAUDE**: Check system-reminders for task lifecycle content (suggest-first patterns), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "what tasks are overdue and what should I prioritize"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The tasks way fires (threshold 2.0, vocabulary: task, overdue, priority, pending). You should see the four lifecycle patterns with example suggestion formats.
 
@@ -81,7 +121,11 @@ The root EA way should NOT re-fire (marker exists from Step 1).
 
 > **USER**: Type exactly: `draft a reply to that email from the client`
 
-> **CLAUDE**: Check if you received drafting-specific content. Look for style calibration guidance, anti-patterns list, and threading instructions. Report what fired.
+> **CLAUDE**: Check system-reminders for drafting content (style calibration, anti-patterns), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "draft a reply to that email from the client"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The email/drafting way fires (threshold 2.5, vocabulary: draft, reply, compose, style, tone). You should see:
 - "## Style Calibration" with observation checklist
@@ -96,7 +140,11 @@ The email triage parent may or may not re-fire (depends on marker state). The dr
 
 > **USER**: Type exactly: `pull the transcript from yesterday's standup meeting`
 
-> **CLAUDE**: Check if you received recap content. Look for the available content table (AI Summary, Transcripts, Notes, etc.) and cross-referencing guidance. Report what fired.
+> **CLAUDE**: Check system-reminders for recap content (available content table), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "pull the transcript from yesterday's standup meeting"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The comms/recap way fires (threshold 2.5, vocabulary: recap, transcript, summary, meeting). You should see:
 - "## What's Available" table
@@ -109,7 +157,11 @@ The email triage parent may or may not re-fire (depends on marker state). The dr
 
 > **USER**: Type exactly: `log my time for today, I'm wrapping up`
 
-> **CLAUDE**: Check if you received time tracking content. Look for the logging workflow steps and weekly time review section. Report what fired.
+> **CLAUDE**: Check system-reminders for time tracking content (logging workflow), then run:
+> ```bash
+> cd ~/.claude && bin/ways match "log my time for today, I'm wrapping up"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The tasks/time way fires (threshold 2.5, vocabulary: time, log, hours, billable, EOD, wrap up). You should see the 4-step logging workflow (review work → match clients → propose entries → log on approval).
 
@@ -123,7 +175,11 @@ These test that semantically close ways fire the RIGHT one, not the wrong siblin
 
 > **USER**: Type exactly: `prepare me for my 2pm meeting with the client`
 
-> **CLAUDE**: Check which way(s) fired. Did you get intelligence content (meeting prep workflow, cross-service data gathering) or briefing content (morning summary, agent team coordination)? Report which fired.
+> **CLAUDE**: Check system-reminders — did you get intelligence or briefing content? Then run:
+> ```bash
+> cd ~/.claude && bin/ways match "prepare me for my 2pm meeting with the client"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The intelligence way fires (description includes "prepare me for a meeting"). You should see the meeting prep checklist (calendar details, recent email threads, chat history, previous occurrence, shared documents, open tasks). The briefing way may also fire — if so, check whether intelligence scored higher (it should).
 
@@ -133,7 +189,11 @@ These test that semantically close ways fire the RIGHT one, not the wrong siblin
 
 > **USER**: Type exactly: `what does my day look like, catch me up`
 
-> **CLAUDE**: Check which way(s) fired. Did you get briefing content (agent team coordination, scout roles, briefing structure) or email triage content? Report which fired.
+> **CLAUDE**: Check system-reminders — did you get briefing or email triage content? Then run:
+> ```bash
+> cd ~/.claude && bin/ways match "what does my day look like, catch me up"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The briefing way fires (description includes "catch me up", "what does my day look like"). You should see:
 - "## Standard Roles" table (inbox-scout, ops-scout, lead)
@@ -150,7 +210,11 @@ Email triage should NOT be the primary way for this prompt.
 
 > **USER**: Type exactly: `explain how the Rust borrow checker works`
 
-> **CLAUDE**: Check if any EA ways fired. Report what you see.
+> **CLAUDE**: Check system-reminders for any EA content, then run:
+> ```bash
+> cd ~/.claude && bin/ways match "explain how the Rust borrow checker works"
+> ```
+> Report whether any EA ways appear in the top results.
 
 **Expected**: No EA ways fire. This prompt has zero overlap with EA vocabulary. If an EA way fires, that's a false positive — report which one and its score.
 
@@ -160,7 +224,11 @@ Email triage should NOT be the primary way for this prompt.
 
 > **USER**: Type exactly: `review the code quality and refactor the authentication module`
 
-> **CLAUDE**: Check if any EA ways fired alongside the expected softwaredev ways. Report all ways that fired.
+> **CLAUDE**: Check system-reminders for what fired, then run:
+> ```bash
+> cd ~/.claude && bin/ways match "review the code quality and refactor the authentication module"
+> ```
+> Report top 5 matches — are any EA ways present?
 
 **Expected**: Softwaredev ways should fire (code quality, possibly security). NO EA ways should fire — "review", "authentication", and "module" should not pull EA ways into a code review context.
 

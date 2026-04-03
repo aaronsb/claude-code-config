@@ -1,4 +1,17 @@
-{"lang":"ar","description":"تتبع العمل عبر الجلسات المتعددة","vocabulary":"تتبع جلسات عمل متابعة حالة تقدم","embed_threshold":0.69}
-{"lang":"de","description":"Sitzungsübergreifende Arbeitsverfolgung — persistente Todo-Dateien in .claude/ für Kontinuität über mehrere Sessions","vocabulary":"Verfolgung sitzungsübergreifend mehrsitzung persistent Todo fortsetzen Kontinuität Fortschritt","embed_threshold":0.62}
-{"lang":"es","description":"Seguimiento de trabajo entre sesiones — archivos todo persistentes","vocabulary":"seguimiento entre sesiones persistente todo retomar continuidad progreso","embed_threshold":0.63}
-{"lang":"ja","description":"セッション間の作業追跡 — 永続的なtodoファイル管理","vocabulary":"追跡 セッション間 永続 todo 再開 継続 進捗","embed_threshold":0.64}
+{"lang": "ar", "description": "تتبع العمل عبر الجلسات المتعددة", "vocabulary": "تتبع جلسات عمل متابعة حالة تقدم", "embed_threshold": 0.69}
+{"lang": "de", "description": "Sitzungsübergreifende Arbeitsverfolgung — persistente Todo-Dateien in .claude/ für Kontinuität über mehrere Sessions", "vocabulary": "Verfolgung sitzungsübergreifend mehrsitzung persistent Todo fortsetzen Kontinuität Fortschritt", "embed_threshold": 0.62}
+{"lang": "es", "description": "Seguimiento de trabajo entre sesiones — archivos todo persistentes", "vocabulary": "seguimiento entre sesiones persistente todo retomar continuidad progreso", "embed_threshold": 0.63}
+{"lang": "ja", "description": "セッション間の作業追跡 — 永続的なtodoファイル管理", "vocabulary": "追跡 セッション間 永続 todo 再開 継続 進捗", "embed_threshold": 0.64}
+{"lang": "fr", "description": "Suivi du travail entre sessions — fichiers todo persistants", "vocabulary": "suivi inter-sessions persistant todo reprendre continuité progression"}
+{"lang": "pl", "description": "Śledzenie pracy między sesjami — trwałe pliki todo", "vocabulary": "śledzenie między sesjami trwałe todo wznawianie ciągłość postęp"}
+{"lang": "pt-br", "description": "Acompanhamento de trabalho entre sessões — arquivos todo persistentes", "vocabulary": "acompanhamento entre sessões persistente todo retomar continuidade progresso"}
+{"lang": "ru", "description": "Отслеживание работы между сессиями — постоянные файлы todo", "vocabulary": "отслеживание между сессиями постоянный todo возобновление непрерывность прогресс"}
+{"lang": "th", "description": "ติดตามงานข้ามเซสชัน — ไฟล์ todo ถาวร", "vocabulary": "ติดตาม ข้ามเซสชัน ถาวร todo ดำเนินต่อ ต่อเนื่อง ความคืบหน้า"}
+{"lang": "tr", "description": "Oturumlar arası iş takibi — kalıcı todo dosyaları", "vocabulary": "takip oturumlar arası kalıcı todo devam etme süreklilik ilerleme"}
+{"lang": "uk", "description": "Відстеження роботи між сесіями — постійні todo-файли", "vocabulary": "відстеження міжсесійний постійний todo відновлення безперервність прогрес"}
+{"lang": "vi", "description": "Theo dõi công việc xuyên phiên — tệp todo bền vững", "vocabulary": "theo dõi xuyên phiên bền vững todo tiếp tục liên tục tiến độ"}
+{"lang": "zh", "description": "跨会话工作追踪 — 持久 todo 文件", "vocabulary": "追踪 跨会话 持久 todo 恢复 连续性 进度"}
+{"lang": "hi", "description": "क्रॉस-सत्र कार्य ट्रैकिंग — .claude/ में स्थायी टुडू फाइलें", "vocabulary": "ट्रैकिंग क्रॉस-सत्र स्थायी टुडू फिर से शुरू निरंतरता प्रगति"}
+{"lang": "id", "description": "Pelacakan kerja lintas sesi — file todo persisten di .claude/", "vocabulary": "pelacakan lintas-sesi persisten todo lanjutkan kontinuitas kemajuan"}
+{"lang": "it", "description": "Tracciamento lavoro cross-sessione — file todo persistenti in .claude/", "vocabulary": "tracciamento cross-sessione persistente todo riprendere continuità progresso"}
+{"lang": "ko", "description": "교차 세션 작업 추적 — .claude/의 영구 할 일 파일", "vocabulary": "추적 교차세션 영구 할일 재개 연속성 진행"}

@@ -97,8 +97,11 @@ This way activates when the user or agent is working with:
     std::fs::write(&way_file, md_content)?;
     eprintln!("Created: {}", way_file.display());
 
-    // Generate locale stubs for all covered languages
-    let covered = get_covered_languages(&ways_root);
+    // Generate locale stubs for active covered languages only
+    let covered: Vec<String> = get_covered_languages(&ways_root)
+        .into_iter()
+        .filter(|lang| crate::agents::is_language_active(lang))
+        .collect();
 
     if !covered.is_empty() {
         let mut lines: Vec<String> = Vec::new();

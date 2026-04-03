@@ -94,6 +94,40 @@ fn normalize_language(input: &str) -> String {
     input.to_string()
 }
 
+/// Check whether a language code is marked `active: true` in languages.json.
+pub fn is_language_active(lang_code: &str) -> bool {
+    let parsed: serde_json::Value = match serde_json::from_str(LANGUAGES_JSON) {
+        Ok(v) => v,
+        Err(_) => return false,
+    };
+    parsed
+        .get("languages")
+        .and_then(|v| v.get(lang_code))
+        .and_then(|v| v.get("active"))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false)
+}
+
+/// Return all language codes marked `active: true`, sorted.
+pub fn get_active_languages() -> Vec<String> {
+    let parsed: serde_json::Value = match serde_json::from_str(LANGUAGES_JSON) {
+        Ok(v) => v,
+        Err(_) => return Vec::new(),
+    };
+    let mut codes: Vec<String> = parsed
+        .get("languages")
+        .and_then(|v| v.as_object())
+        .map(|m| {
+            m.iter()
+                .filter(|(_, v)| v.get("active").and_then(|a| a.as_bool()).unwrap_or(false))
+                .map(|(k, _)| k.clone())
+                .collect()
+        })
+        .unwrap_or_default();
+    codes.sort();
+    codes
+}
+
 /// Look up the BM25 stemmer algorithm name for a language code.
 /// Returns None if the language is unsupported (no word boundaries, non-concatenative morphology).
 /// Returns Some(algorithm_name) if a Snowball stemmer exists.

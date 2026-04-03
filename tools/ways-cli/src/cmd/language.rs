@@ -71,8 +71,8 @@ pub fn run(filter_lang: Option<&str>, audit: bool, json_output: bool) -> Result<
         println!("Multi corpus:     {multi_corpus_count} ways");
         println!();
 
-        // Language coverage summary
-        let all_supported = get_all_language_codes();
+        // Language coverage summary (active languages only)
+        let all_supported = agents::get_active_languages();
         let non_en: Vec<&str> = all_supported.iter()
             .filter(|c| *c != "en")
             .map(|s| s.as_str())
@@ -263,20 +263,6 @@ fn line_count(path: &Path) -> usize {
         .unwrap_or(0)
 }
 
-/// Get all language codes from languages.json, sorted.
-fn get_all_language_codes() -> Vec<String> {
-    let parsed: serde_json::Value = match serde_json::from_str(agents::LANGUAGES_JSON) {
-        Ok(v) => v,
-        Err(_) => return Vec::new(),
-    };
-    let mut codes: Vec<String> = parsed
-        .get("languages")
-        .and_then(|v| v.as_object())
-        .map(|m| m.keys().cloned().collect())
-        .unwrap_or_default();
-    codes.sort();
-    codes
-}
 
 fn xdg_cache_dir() -> PathBuf {
     std::env::var("XDG_CACHE_HOME")

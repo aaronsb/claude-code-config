@@ -63,10 +63,8 @@ pub fn extract_locale_from_filename(filename: &str) -> Option<String> {
             && candidate.len() <= 5
             && candidate.chars().all(|c| c.is_ascii_lowercase() || c == '-')
         {
-            // Validate against languages.json
-            let parsed: serde_json::Value =
-                serde_json::from_str(crate::agents::LANGUAGES_JSON).ok()?;
-            if parsed.get("languages")?.as_object()?.contains_key(candidate) {
+            // Validate against languages.json (active languages only)
+            if crate::agents::is_language_active(candidate) {
                 return Some(candidate.to_string());
             }
         }
@@ -85,7 +83,14 @@ mod tests {
         assert_eq!(extract_locale_from_filename("security.ar.md"), Some("ar".to_string()));
         assert_eq!(extract_locale_from_filename("security.es.md"), Some("es".to_string()));
         assert_eq!(extract_locale_from_filename("security.pt-br.md"), Some("pt-br".to_string()));
-        assert_eq!(extract_locale_from_filename("security.zh-tw.md"), Some("zh-tw".to_string()));
+    }
+
+    #[test]
+    fn rejects_inactive_locale_codes() {
+        // zh-tw is in languages.json but inactive
+        assert_eq!(extract_locale_from_filename("security.zh-tw.md"), None);
+        // bg is in languages.json but inactive
+        assert_eq!(extract_locale_from_filename("security.bg.md"), None);
     }
 
     #[test]

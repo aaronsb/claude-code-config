@@ -1,4 +1,17 @@
-{"lang":"ar","description":"الثقة العلائقية والتخميد المتبادل","vocabulary":"ثقة علاقة تخميد متبادل تعاون حدود","embed_threshold":0.6}
-{"lang":"de","description":"Vertrauensbeziehung zwischen Claude und Mensch als gegenseitige Dämpfung — geliehene Ressourcen, asymmetrische Konsequenzen, gesteuerter Regelkreis","vocabulary":"Vertrauen Beziehung Delegation geliehen Konsequenzen Reputation Verantwortung Glaubwürdigkeit Autonomie Umfang Vorfall Missbrauch Spektrum Dämpfung Regelkreis","embed_threshold":0.69}
-{"lang":"es","description":"Confianza relacional — amortiguación mutua, recursos prestados","vocabulary":"confianza relación delegación prestado consecuencias reputación autonomía","embed_threshold":0.78}
-{"lang":"ja","description":"関係性に基づく信頼 — 相互調整、借りたリソースの管理","vocabulary":"信頼 関係性 委任 責任 評判 自律性 借用","embed_threshold":0.77}
+{"lang": "ar", "description": "الثقة العلائقية والتخميد المتبادل", "vocabulary": "ثقة علاقة تخميد متبادل تعاون حدود", "embed_threshold": 0.6}
+{"lang": "de", "description": "Vertrauensbeziehung zwischen Claude und Mensch als gegenseitige Dämpfung — geliehene Ressourcen, asymmetrische Konsequenzen, gesteuerter Regelkreis", "vocabulary": "Vertrauen Beziehung Delegation geliehen Konsequenzen Reputation Verantwortung Glaubwürdigkeit Autonomie Umfang Vorfall Missbrauch Spektrum Dämpfung Regelkreis", "embed_threshold": 0.69}
+{"lang": "es", "description": "Confianza relacional — amortiguación mutua, recursos prestados", "vocabulary": "confianza relación delegación prestado consecuencias reputación autonomía", "embed_threshold": 0.78}
+{"lang": "ja", "description": "関係性に基づく信頼 — 相互調整、借りたリソースの管理", "vocabulary": "信頼 関係性 委任 責任 評判 自律性 借用", "embed_threshold": 0.77}
+{"lang": "fr", "description": "Confiance relationnelle — amortissement mutuel, ressources empruntées", "vocabulary": "confiance relation délégation conséquences réputation autonomie emprunt"}
+{"lang": "pl", "description": "Zaufanie relacyjne — wzajemne tłumienie, pożyczone zasoby", "vocabulary": "zaufanie relacja delegacja pożyczone konsekwencje reputacja autonomia tłumienie"}
+{"lang": "pt-br", "description": "Confiança relacional — amortecimento mútuo, recursos emprestados, confiança como espectro", "vocabulary": "confiança relação delegação emprestado consequências reputação autonomia amortecimento"}
+{"lang": "ru", "description": "Реляционное доверие — взаимное демпфирование, заимствованные ресурсы", "vocabulary": "доверие отношение делегирование заимствование последствия репутация автономия демпфирование"}
+{"lang": "th", "description": "ความไว้วางใจเชิงสัมพันธ์ — การหน่วงซึ่งกันและกัน ทรัพยากรที่ยืม", "vocabulary": "ไว้วางใจ ความสัมพันธ์ มอบหมาย ยืม ผลกระทบ ชื่อเสียง อิสระ หน่วง"}
+{"lang": "tr", "description": "İlişkisel güven — karşılıklı sönümleme, ödünç alınan kaynaklar", "vocabulary": "güven ilişki yetkilendirme ödünç sonuçlar itibar özerklik sönümleme"}
+{"lang": "uk", "description": "Реляційна довіра — взаємне гасіння, позичені ресурси", "vocabulary": "довіра стосунки делегування позика наслідки репутація автономія гасіння"}
+{"lang": "vi", "description": "Niềm tin quan hệ — sự giảm chấn lẫn nhau, tài nguyên mượn", "vocabulary": "niềm tin quan hệ ủy quyền mượn hậu quả danh tiếng tự chủ giảm chấn"}
+{"lang": "zh", "description": "关系性信任 — 相互抑制、借用资源", "vocabulary": "信任 关系 委派 借用 后果 声誉 自主 抑制"}
+{"lang": "hi", "description": "Claude और मानव के बीच संबंधपरक विश्वास — पारस्परिक डैम्पिंग", "vocabulary": "विश्वास संबंध डैम्पिंग पारस्परिक सहयोग सीमाएं"}
+{"lang": "id", "description": "Kepercayaan relasional antara Claude dan manusia — peredaman timbal balik", "vocabulary": "kepercayaan relasi peredaman timbal balik kolaborasi batasan"}
+{"lang": "it", "description": "Fiducia relazionale tra Claude e l'umano — smorzamento reciproco", "vocabulary": "fiducia relazione smorzamento reciproco collaborazione confini"}
+{"lang": "ko", "description": "Claude와 인간 사이의 관계적 신뢰 — 상호 감쇠", "vocabulary": "신뢰 관계 감쇠 상호 협력 경계"}

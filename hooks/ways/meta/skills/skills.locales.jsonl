@@ -1,4 +1,17 @@
-{"lang":"ar","description":"مهارات Claude Code وتنسيق SKILL.md","vocabulary":"مهارات أوامر تنسيق إضافات قدرات","embed_threshold":0.59}
-{"lang":"de","description":"Claude Code Skills — SKILL.md-Format, Erstellung, Entdeckung, Slash-Befehle, Frontmatter","vocabulary":"Skill Slash-Befehl SKILL.md erstellen verfassen aufrufen benutzerdefiniert Plugin","embed_threshold":0.57}
-{"lang":"es","description":"Skills de Claude Code — formato SKILL.md, comandos slash","vocabulary":"skill comando slash SKILL.md crear invocar plugin extensión","embed_threshold":0.5}
-{"lang":"ja","description":"Claude Codeスキル — SKILL.mdの形式、スラッシュコマンド","vocabulary":"スキル スラッシュコマンド SKILL.md 作成 プラグイン 呼び出し","embed_threshold":0.58}
+{"lang": "ar", "description": "مهارات Claude Code وتنسيق SKILL.md", "vocabulary": "مهارات أوامر تنسيق إضافات قدرات", "embed_threshold": 0.59}
+{"lang": "de", "description": "Claude Code Skills — SKILL.md-Format, Erstellung, Entdeckung, Slash-Befehle, Frontmatter", "vocabulary": "Skill Slash-Befehl SKILL.md erstellen verfassen aufrufen benutzerdefiniert Plugin", "embed_threshold": 0.57}
+{"lang": "es", "description": "Skills de Claude Code — formato SKILL.md, comandos slash", "vocabulary": "skill comando slash SKILL.md crear invocar plugin extensión", "embed_threshold": 0.5}
+{"lang": "ja", "description": "Claude Codeスキル — SKILL.mdの形式、スラッシュコマンド", "vocabulary": "スキル スラッシュコマンド SKILL.md 作成 プラグイン 呼び出し", "embed_threshold": 0.58}
+{"lang": "fr", "description": "Compétences Claude Code — format SKILL.md, commandes slash", "vocabulary": "compétence commande slash SKILL.md créer plugin invocation"}
+{"lang": "pl", "description": "Umiejętności Claude Code — format SKILL.md, polecenia slash", "vocabulary": "umiejętność polecenie slash SKILL.md tworzenie plugin wywołanie"}
+{"lang": "pt-br", "description": "Habilidades do Claude Code — formato SKILL.md, comandos slash", "vocabulary": "habilidade comando slash SKILL.md criar plugin invocação"}
+{"lang": "ru", "description": "Навыки Claude Code — формат SKILL.md, слеш-команды", "vocabulary": "навык слеш команда SKILL.md создание плагин вызов"}
+{"lang": "th", "description": "ทักษะ Claude Code — รูปแบบ SKILL.md คำสั่ง slash", "vocabulary": "ทักษะ slash คำสั่ง SKILL.md สร้าง ปลั๊กอิน เรียก"}
+{"lang": "tr", "description": "Claude Code becerileri — SKILL.md formatı, slash komutları", "vocabulary": "beceri slash komut SKILL.md oluşturma eklenti çağrı"}
+{"lang": "uk", "description": "Навички Claude Code — формат SKILL.md, slash-команди", "vocabulary": "навичка slash команда SKILL.md створення плагін виклик"}
+{"lang": "vi", "description": "Kỹ năng Claude Code — định dạng SKILL.md, lệnh slash", "vocabulary": "kỹ năng slash lệnh SKILL.md tạo plugin gọi"}
+{"lang": "zh", "description": "Claude Code 技能 — SKILL.md 格式、斜杠命令", "vocabulary": "技能 斜杠 命令 SKILL.md 创建 插件 调用"}
+{"lang": "hi", "description": "Claude Code कौशल — SKILL.md फॉर्मेट, निर्माण, खोज, स्लैश कमांड", "vocabulary": "कौशल स्लैश कमांड SKILL.md बनाएं खोजें प्लगइन"}
+{"lang": "id", "description": "Keterampilan Claude Code — format SKILL.md, pembuatan, penemuan, perintah slash", "vocabulary": "keterampilan slash perintah SKILL.md pembuatan penemuan plugin"}
+{"lang": "it", "description": "Competenze Claude Code — formato SKILL.md, creazione, scoperta, comandi slash", "vocabulary": "competenza slash comando SKILL.md creazione scoperta plugin"}
+{"lang": "ko", "description": "Claude Code 스킬 — SKILL.md 형식, 생성, 검색, 슬래시 명령", "vocabulary": "스킬 슬래시 명령 SKILL.md 생성 검색 플러그인"}

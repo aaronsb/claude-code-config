@@ -410,7 +410,12 @@ fn tune_way(
     multi_model: &Path,
     margin: f64,
 ) -> Result<WayTuneResult> {
-    let entries = frontmatter::parse_locales_jsonl(locale_path)?;
+    let all_entries = frontmatter::parse_locales_jsonl(locale_path)?;
+    // Only tune active languages
+    let entries: Vec<frontmatter::LocaleEntry> = all_entries
+        .into_iter()
+        .filter(|e| crate::agents::is_language_active(&e.lang))
+        .collect();
     let mut results: Vec<TuneResult> = Vec::new();
     let mut tuned_entries: Vec<frontmatter::LocaleEntry> = Vec::new();
 

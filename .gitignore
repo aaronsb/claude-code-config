@@ -91,6 +91,7 @@ hooks/ways/.obsidian/
 !scripts/doc-graph.sh
 !scripts/install.sh
 !scripts/project-pulse
+!scripts/test-locales.py
 
 # Governance traceability (separable)
 # CLI tools (root symlinks to implementation scripts)

@@ -248,6 +248,10 @@ fn scan_ways_dir(dir: &Path, id_prefix: &str, excluded: &[String], w: &mut impl 
         };
 
         for le in entries {
+            // Skip inactive languages
+            if !crate::agents::is_language_active(&le.lang) {
+                continue;
+            }
             // Skip if an external .lang.md override exists
             if locale_overrides.contains(&(parent.to_path_buf(), le.lang.clone())) {
                 continue;

@@ -1,4 +1,17 @@
-{"lang":"ar","description":"تأليف ملفات README","vocabulary":"README ملف تعريف مشروع وصف بداية","embed_threshold":0.58}
-{"lang":"de","description":"README schreiben — Projektübersicht, Schnellstart und Einstiegshilfe","vocabulary":"README Projektübersicht Schnellstart Einstieg Einführung Onboarding Erste-Schritte Überblick","embed_threshold":0.55}
-{"lang":"es","description":"Redaccion de README — estructura, insignias, inicio rapido, contribuir","vocabulary":"README redactar estructura insignia badge inicio-rapido instalacion uso contribuir ejemplo","embed_threshold":0.57}
-{"lang":"ja","description":"READMEの作成、プロジェクト概要、はじめかた","vocabulary":"README プロジェクト概要 はじめかた クイックスタート オンボーディング","embed_threshold":0.56}
+{"lang": "ar", "description": "تأليف ملفات README", "vocabulary": "README ملف تعريف مشروع وصف بداية", "embed_threshold": 0.58}
+{"lang": "de", "description": "README schreiben — Projektübersicht, Schnellstart und Einstiegshilfe", "vocabulary": "README Projektübersicht Schnellstart Einstieg Einführung Onboarding Erste-Schritte Überblick", "embed_threshold": 0.55}
+{"lang": "es", "description": "Redaccion de README — estructura, insignias, inicio rapido, contribuir", "vocabulary": "README redactar estructura insignia badge inicio-rapido instalacion uso contribuir ejemplo", "embed_threshold": 0.57}
+{"lang": "ja", "description": "READMEの作成、プロジェクト概要、はじめかた", "vocabulary": "README プロジェクト概要 はじめかた クイックスタート オンボーディング", "embed_threshold": 0.56}
+{"lang": "fr", "description": "Rédaction de README, aperçu du projet, démarrage rapide", "vocabulary": "README aperçu projet démarrage rapide introduction onboarding"}
+{"lang": "pl", "description": "Pisanie README — przegląd projektu, szybki start, rozpoczęcie", "vocabulary": "README przegląd projektu szybki start rozpoczęcie wprowadzenie onboarding"}
+{"lang": "pt-br", "description": "Escrever README — visão geral do projeto, início rápido, primeiros passos", "vocabulary": "README visão geral projeto início rápido primeiros passos introdução"}
+{"lang": "ru", "description": "Написание README — обзор проекта, быстрый старт, начало работы", "vocabulary": "README обзор проект быстрый старт начало работы введение"}
+{"lang": "th", "description": "การเขียน README — ภาพรวมโปรเจกต์ เริ่มต้นอย่างรวดเร็ว บทนำ", "vocabulary": "README ภาพรวม โปรเจกต์ เริ่มต้น บทนำ คู่มือ"}
+{"lang": "tr", "description": "README yazma — proje genel bakış, hızlı başlangıç, giriş", "vocabulary": "README genel bakış proje hızlı başlangıç giriş kılavuz"}
+{"lang": "uk", "description": "Написання README — огляд проєкту, швидкий старт, вступ", "vocabulary": "README огляд проєкт швидкий старт вступ посібник"}
+{"lang": "vi", "description": "Viết README — tổng quan dự án, bắt đầu nhanh, giới thiệu", "vocabulary": "README tổng quan dự án bắt đầu nhanh giới thiệu hướng dẫn"}
+{"lang": "zh", "description": "README 编写 — 项目概览、快速入门、介绍", "vocabulary": "README 概览 项目 快速入门 介绍 指南"}
+{"lang": "hi", "description": "README लेखन, प्रोजेक्ट अवलोकन, शुरुआत गाइड", "vocabulary": "README लेखन प्रोजेक्ट अवलोकन शुरुआत गाइड"}
+{"lang": "id", "description": "Penulisan README, ikhtisar proyek, panduan memulai", "vocabulary": "README penulisan proyek ikhtisar memulai panduan"}
+{"lang": "it", "description": "Scrittura README, panoramica progetto, guida introduttiva", "vocabulary": "README scrittura progetto panoramica introduzione guida"}
+{"lang": "ko", "description": "README 작성, 프로젝트 개요, 시작 가이드", "vocabulary": "README 작성 프로젝트 개요 시작 가이드"}

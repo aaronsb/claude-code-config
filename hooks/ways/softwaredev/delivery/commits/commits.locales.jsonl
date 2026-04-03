@@ -1,4 +1,17 @@
-{"lang":"ar","description":"رسائل الإيداع والإيداعات التقليدية","vocabulary":"إيداع رسالة تقليدي Git تاريخ وصف تغيير","embed_threshold":0.69}
-{"lang":"de","description":"Git-Commit-Nachrichten und Conventional Commits — atomare, aussagekräftige Änderungshistorie","vocabulary":"Commit Nachricht Branch konventionell feat fix Geltungsbereich atomar zusammenfassen squash Änderungshistorie Commitnachricht","embed_threshold":0.62}
-{"lang":"es","description":"Mensajes de commit — commits convencionales, historial limpio, atomicidad","vocabulary":"commit mensaje convencional historial atomico descriptivo prefijo feat fix chore cambio","embed_threshold":0.56}
-{"lang":"ja","description":"gitコミットメッセージ、コンベンショナルコミット","vocabulary":"コミット メッセージ ブランチ コンベンショナル feat fix スコープ","embed_threshold":0.72}
+{"lang": "ar", "description": "رسائل الإيداع والإيداعات التقليدية", "vocabulary": "إيداع رسالة تقليدي Git تاريخ وصف تغيير", "embed_threshold": 0.69}
+{"lang": "de", "description": "Git-Commit-Nachrichten und Conventional Commits — atomare, aussagekräftige Änderungshistorie", "vocabulary": "Commit Nachricht Branch konventionell feat fix Geltungsbereich atomar zusammenfassen squash Änderungshistorie Commitnachricht", "embed_threshold": 0.62}
+{"lang": "es", "description": "Mensajes de commit — commits convencionales, historial limpio, atomicidad", "vocabulary": "commit mensaje convencional historial atomico descriptivo prefijo feat fix chore cambio", "embed_threshold": 0.56}
+{"lang": "ja", "description": "gitコミットメッセージ、コンベンショナルコミット", "vocabulary": "コミット メッセージ ブランチ コンベンショナル feat fix スコープ", "embed_threshold": 0.72}
+{"lang": "fr", "description": "Messages de commit Git, commits conventionnels", "vocabulary": "commit message branche conventionnel feat fix portée atomique"}
+{"lang": "pl", "description": "Wiadomości commitów Git, konwencjonalne commity", "vocabulary": "commit wiadomość gałąź konwencjonalny feat fix zakres atomowy"}
+{"lang": "pt-br", "description": "Mensagens de commit Git, commits convencionais", "vocabulary": "commit mensagem branch convencional feat fix escopo atômico"}
+{"lang": "ru", "description": "Сообщения коммитов Git, конвенциональные коммиты", "vocabulary": "коммит сообщение ветка конвенциональный feat fix область атомарный"}
+{"lang": "th", "description": "ข้อความ Git commit, conventional commits, การเปลี่ยนแปลงแบบอะตอม", "vocabulary": "commit ข้อความ branch conventional feat fix scope atomic"}
+{"lang": "tr", "description": "Git commit mesajları, konvansiyonel commitler, atomik değişiklikler", "vocabulary": "commit mesaj dal konvansiyonel feat fix kapsam atomik"}
+{"lang": "uk", "description": "Повідомлення комітів Git, конвенційні коміти, атомарні зміни", "vocabulary": "коміт повідомлення гілка конвенційний feat fix область атомарний"}
+{"lang": "vi", "description": "Thông điệp Git commit, conventional commits, thay đổi nguyên tử", "vocabulary": "commit thông điệp nhánh conventional feat fix phạm vi nguyên tử"}
+{"lang": "zh", "description": "Git 提交消息、约定式提交、原子变更", "vocabulary": "提交 消息 分支 约定式 feat fix 范围 原子"}
+{"lang": "hi", "description": "Git कमिट संदेश, शाखा नामकरण, कन्वेंशनल कमिट्स", "vocabulary": "कमिट संदेश शाखा नामकरण conventional git लॉग amend"}
+{"lang": "id", "description": "Pesan commit Git, penamaan branch, conventional commits", "vocabulary": "commit pesan branch penamaan konvensional git log amend"}
+{"lang": "it", "description": "Messaggi di commit Git, naming dei branch, conventional commits", "vocabulary": "commit messaggio branch naming convenzionale git log amend"}
+{"lang": "ko", "description": "Git 커밋 메시지, 브랜치 명명, 컨벤셔널 커밋", "vocabulary": "커밋 메시지 브랜치 명명 컨벤셔널 git 로그 amend"}

@@ -8,11 +8,31 @@ You are running an integration test. This test verifies that contextual hooks fi
 
 **Your role**: Follow each step in order. Announce what step you are on, perform the action, then report the result against the expected outcome. Wait for the user to complete each USER step before moving on.
 
-**Format your reports as**:
+### How to verify what fired
+
+After each user prompt, check **two** signals:
+
+1. **System-reminders injected into your context** — look for any new `<system-reminder>` blocks that appeared after the user's message. These contain the actual way content. Report headings and content you see.
+
+2. **BM25 scoring via CLI** — run this from `~/.claude/`:
+   ```bash
+   bin/ways match "the exact prompt the user typed"
+   ```
+   This prints a ranked table: Way, Score, Description. Report the top 3 results.
+
+Use **both** signals: system-reminders confirm delivery; `bin/ways match` confirms scoring.
+
+### Report format
+
 ```
 Step N: [description]
 Result: PASS / FAIL / UNEXPECTED
-Detail: [what happened vs what was expected]
+Injected: [what system-reminder content appeared, or "none"]
+BM25 top 3:
+  #1 way/id  score  description snippet
+  #2 way/id  score  description snippet
+  #3 way/id  score  description snippet
+Detail: [assessment vs expected]
 ```
 
 After reading this file, begin with Step 1.
@@ -33,7 +53,11 @@ After reading this file, begin with Step 1.
 
 > **USER**: Type exactly: `I need to commit these changes and push to origin`
 
-> **CLAUDE**: After the user sends that message, check if you received new domain-specific content in a system-reminder. Look for guidance about message conventions, branch naming, or attribution rules. Report what fired.
+> **CLAUDE**: Check system-reminders for commit guidance, then run:
+> ```bash
+> cd ~/.claude && bin/ways match "I need to commit these changes and push to origin"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The commits way (`delivery/commits`) should fire (regex pattern: `commit|push.*(remote|origin|upstream)`). You should see guidance about conventional commit format and branch naming.
 
@@ -43,7 +67,11 @@ After reading this file, begin with Step 1.
 
 > **USER**: Type exactly: `how should I hash passwords with bcrypt for our login system?`
 
-> **CLAUDE**: Check if you received new domain-specific content. Look for guidance about vulnerability categories, credential handling, input validation, or defensive defaults. Report what fired.
+> **CLAUDE**: Check system-reminders for security guidance, then run:
+> ```bash
+> cd ~/.claude && bin/ways match "how should I hash passwords with bcrypt for our login system?"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The security way (`code/security`) should fire via BM25 semantic matching (vocabulary includes bcrypt, hash, password, authentication, login). You should see detection rules and security defaults.
 
@@ -53,7 +81,11 @@ After reading this file, begin with Step 1.
 
 > **USER**: Type exactly: `profile the rendering loop to find the bottleneck and reduce latency`
 
-> **CLAUDE**: Check if you received new domain-specific content. Look for guidance about profiling tools, algorithmic analysis, benchmarking, or measurement approaches. Report what fired.
+> **CLAUDE**: Check system-reminders for performance guidance, then run:
+> ```bash
+> cd ~/.claude && bin/ways match "profile the rendering loop to find the bottleneck and reduce latency"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The performance way (`code/performance`) should fire via BM25 semantic matching. This way previously only had regex triggers — the vocabulary (optimize, profile, benchmark, latency, bottleneck, etc.) was added during the taxonomy restructure. You should see guidance about static analysis for algorithmic issues and generating before/after measurements.
 
@@ -63,7 +95,11 @@ After reading this file, begin with Step 1.
 
 > **USER**: Type exactly: `create a migration to alter the users table and add an index on the email column`
 
-> **CLAUDE**: Check how many domain-specific ways were injected. List each one by name/heading. Report which ways fired and whether they provide complementary guidance.
+> **CLAUDE**: Check system-reminders for migration guidance, then run:
+> ```bash
+> cd ~/.claude && bin/ways match "create a migration to alter the users table and add an index on the email column"
+> ```
+> Report injected content and top 3 matches.
 
 **Expected**: The migrations way (`delivery/migrations`) should fire — the prompt contains vocabulary terms (migration, alter, table, column, index). Other ways MAY also co-activate if they share relevant terms (e.g., design via "schema" concepts). Co-activation of related ways is expected and correct — each adds a different lens. Report all ways that fired.
 
@@ -73,7 +109,11 @@ After reading this file, begin with Step 1.
 
 > **USER**: Type exactly: `what's the weather like today?`
 
-> **CLAUDE**: Check if any NEW domain-specific content was injected. Report what you see.
+> **CLAUDE**: Check system-reminders for any new content, then run:
+> ```bash
+> cd ~/.claude && bin/ways match "what's the weather like today?"
+> ```
+> Report whether anything scored above threshold.
 
 **Expected**: No new hooks should fire. This prompt has zero overlap with any way vocabulary. If domain-specific content appears, that is a false positive — report which one.
 

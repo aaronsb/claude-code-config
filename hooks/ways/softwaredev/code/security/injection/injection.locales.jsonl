@@ -1,4 +1,17 @@
-{"lang":"ar","description":"الوقاية من هجمات الحقن","vocabulary":"حقن وقاية تعقيم مدخلات هجمات SQL XSS","embed_threshold":0.61}
-{"lang":"de","description":"Injection-Prävention, SQL-Injection, XSS, Befehlsinjektion, Eingabebereinigung","vocabulary":"Injection SQL XSS innerHTML parametrisiert bereinigen escapen Shell Befehlsinjektion Template Interpolation","embed_threshold":0.57}
-{"lang":"es","description":"Prevencion de inyeccion — SQL, XSS, comandos, sanitizacion de entrada","vocabulary":"inyeccion SQL XSS sanitizar entrada validar escapar parametrizado comando prevencion","embed_threshold":0.58}
-{"lang":"ja","description":"インジェクション防止、SQLインジェクション、XSS対策","vocabulary":"インジェクション SQL XSS パラメータ化 サニタイズ エスケープ コマンド注入","embed_threshold":0.59}
+{"lang": "ar", "description": "الوقاية من هجمات الحقن", "vocabulary": "حقن وقاية تعقيم مدخلات هجمات SQL XSS", "embed_threshold": 0.61}
+{"lang": "de", "description": "Injection-Prävention, SQL-Injection, XSS, Befehlsinjektion, Eingabebereinigung", "vocabulary": "Injection SQL XSS innerHTML parametrisiert bereinigen escapen Shell Befehlsinjektion Template Interpolation", "embed_threshold": 0.57}
+{"lang": "es", "description": "Prevencion de inyeccion — SQL, XSS, comandos, sanitizacion de entrada", "vocabulary": "inyeccion SQL XSS sanitizar entrada validar escapar parametrizado comando prevencion", "embed_threshold": 0.58}
+{"lang": "ja", "description": "インジェクション防止、SQLインジェクション、XSS対策", "vocabulary": "インジェクション SQL XSS パラメータ化 サニタイズ エスケープ コマンド注入", "embed_threshold": 0.59}
+{"lang": "fr", "description": "Prévention des injections, injection SQL, XSS, assainissement des entrées", "vocabulary": "injection SQL XSS paramétré assainir échapper commande"}
+{"lang": "pl", "description": "Zapobieganie wstrzyknięciu, SQL injection, XSS, oczyszczanie wejścia", "vocabulary": "wstrzyknięcie SQL XSS sparametryzowane oczyszczanie ucieczka polecenie"}
+{"lang": "pt-br", "description": "Prevenção de injeção, SQL injection, XSS, sanitização de entradas", "vocabulary": "injeção SQL XSS parametrizado sanitizar escapar comando"}
+{"lang": "ru", "description": "Предотвращение инъекций, SQL-инъекция, XSS, санитизация ввода", "vocabulary": "инъекция SQL XSS параметризованный санитизация экранирование команда"}
+{"lang": "th", "description": "การป้องกัน Injection, SQL Injection, XSS, การกรองข้อมูล", "vocabulary": "injection SQL XSS parameterized กรอง escape shell คำสั่ง template"}
+{"lang": "tr", "description": "Enjeksiyon önleme, SQL enjeksiyonu, XSS, girdi temizleme", "vocabulary": "enjeksiyon SQL XSS parametreli temizleme kaçış kabuk komut şablon"}
+{"lang": "uk", "description": "Запобігання ін'єкціям, SQL-ін'єкція, XSS, санітизація вводу", "vocabulary": "ін'єкція SQL XSS параметризований санітизація екранування оболонка команда шаблон"}
+{"lang": "vi", "description": "Phòng chống injection, SQL injection, XSS, làm sạch đầu vào", "vocabulary": "injection SQL XSS tham số hóa làm sạch thoát shell lệnh mẫu"}
+{"lang": "zh", "description": "注入预防、SQL 注入、XSS、输入净化", "vocabulary": "注入 SQL XSS 参数化 净化 转义 shell 命令 模板"}
+{"lang": "hi", "description": "इंजेक्शन रोकथाम, SQL इंजेक्शन, XSS, कमांड इंजेक्शन", "vocabulary": "इंजेक्शन SQL XSS innerHTML पैरामीटराइज्ड सैनिटाइज एस्केप शेल"}
+{"lang": "id", "description": "Pencegahan injeksi, SQL injection, XSS, command injection", "vocabulary": "injeksi SQL XSS innerHTML parameterized sanitasi escape shell"}
+{"lang": "it", "description": "Prevenzione injection, SQL injection, XSS, command injection", "vocabulary": "injection SQL XSS innerHTML parametrizzato sanitizzazione escape shell"}
+{"lang": "ko", "description": "인젝션 방지, SQL 인젝션, XSS, 커맨드 인젝션", "vocabulary": "인젝션 SQL XSS innerHTML 파라미터화 살균 이스케이프 셸"}
