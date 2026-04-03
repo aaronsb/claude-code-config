@@ -107,18 +107,52 @@ Way body content (the guidance injected into agent context) is NOT translated. R
 - The guidance is for the agent's reasoning, not displayed to the user
 - Cross-language injection is well-understood: English instructions → non-English output
 
-The ADR-107 Draft's Tier 1/Tier 2 file model (`{name}-{lang}.md` with frontmatter-only stubs) is **deferred**. It solved a real problem (matching vocabulary in the user's language) but the embedding engine solves it better — cross-language semantic matching without per-language vocabulary files. If BM25 is the only engine and a non-Romance language is needed, the tiered file model can be revisited.
+### Native language stubs (shipped)
 
-### Embedding model upgrade path
+The original ADR-107 Draft proposed a tiered file model (`{name}-{lang}.md`). This was initially deferred in favor of cross-language embedding. However, evaluation data showed that native-language stubs dramatically outperform cross-language matching:
 
-The current `all-MiniLM-L6-v2` (21MB, English, 98% accuracy) serves the English-only use case well. For multilingual matching:
+| Language | EN model × EN desc | Multi model × cross-lang | Multi model × native stub |
+|----------|-------------------:|------------------------:|-------------------------:|
+| ja       | -0.03              | 0.69                    | **0.93**                 |
+| ar       | 0.04               | 0.40                    | **0.96**                 |
+| de       | 0.08               | 0.62                    | **0.82**                 |
+| es       | 0.44               | 0.79                    | **0.84**                 |
 
-| Model | Size | Languages | Notes |
-|-------|------|-----------|-------|
-| all-MiniLM-L6-v2 | 21MB | English | Current, shipping |
-| paraphrase-multilingual-MiniLM-L12-v2 | ~120MB | 52 | Same architecture, multilingual training data |
+Native stubs are now the primary multilingual matching strategy. Each stub provides a `description` and `vocabulary` in the target language, scored by the multilingual embedding model.
 
-The upgrade is a model swap — same GGUF format, same `way-embed` binary, same embedding dimensions. `make setup` downloads the appropriate model based on configured language. If `output_language` is `en` or unset, the smaller English model is used. If non-English, the multilingual model is downloaded.
+### Packed locale storage (.locales.jsonl)
+
+Stubs are stored as **packed JSONL**, one file per way, co-located with the way it belongs to:
+
+```
+ea/briefing/
+  briefing.md              # the way (English)
+  briefing.locales.jsonl   # all language stubs
+```
+
+```jsonl
+{"lang":"ja","description":"朝のブリーフィング、昨夜の要約","vocabulary":"朝礼 ブリーフィング 要約 優先事項"}
+{"lang":"de","description":"Morgendliches Briefing, Tagesübersicht","vocabulary":"Morgenbriefing Tagesübersicht Zusammenfassung"}
+```
+
+Design constraints:
+- **No `embed_threshold`** in packed format — hardcoded to `0.25` in the corpus generator. Per-way override requires externalizing to a full `.lang.md` file.
+- **No `embed_model`** in packed format — always `"multilingual"` for locale stubs.
+- **Override mechanism**: if `briefing.ja.md` exists as a real file on disk, it supersedes the `ja` entry in `briefing.locales.jsonl`. This allows graduating any stub to a full native-language way with body content.
+- **Co-location over aggregation**: one `.locales.jsonl` per way (not per language, not one global file). Way deletion = directory deletion, translations go with it.
+
+This replaces the individual `{name}.{lang}.md` stub files (which would grow to 4,000+ files at full language coverage). The packed format keeps the training corpus version-controlled, diffable, and lintable while eliminating file sprawl.
+
+### Dual embedding model (shipped)
+
+Both models ship simultaneously. `make setup` downloads both:
+
+| Model | Size | Languages | Use case |
+|-------|------|-----------|----------|
+| all-MiniLM-L6-v2 | 21MB | English | Precise EN matching (default) |
+| paraphrase-multilingual-MiniLM-L12-v2 | 127MB | 52 | Native-language stub matching |
+
+`ways corpus` splits entries by `embed_model` field into two corpora (`ways-corpus-en.jsonl`, `ways-corpus-multi.jsonl`). The scanner queries both and merges results. Each way's English entry is scored by the EN model; each locale stub is scored by the multilingual model.
 
 `languages.json` defines the supported language set for the multilingual model. Adding a language means verifying it's in the model's training data and adding the entry — no code changes.
 
@@ -161,7 +195,8 @@ This makes model selection empirical: run the tests against candidate models, pi
 ### Neutral
 
 - Way content stays English — no translation infrastructure needed
-- The tiered file model from the original Draft is deferred, not rejected — it becomes relevant if someone needs BM25-only matching in non-Romance languages
+- Packed `.locales.jsonl` replaces per-language stub files — same data, fewer files
+- Override mechanism (`{name}.{lang}.md` supersedes JSONL entry) allows gradual migration from stubs to full native-language ways
 - `ways.json` `output_language: "en"` is the default — zero behavior change for existing users
 
 ## References

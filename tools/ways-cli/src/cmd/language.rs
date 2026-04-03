@@ -1,7 +1,7 @@
 //! Language coverage report — shows multilingual state of ways.
 //!
 //! Reports: resolved output language, per-way embed_model,
-//! language stub files (.ja.md, .ko.md, etc.), and model availability.
+//! locale stubs (.locales.jsonl + override .lang.md files), and model availability.
 
 use anyhow::Result;
 use serde_json::json;
@@ -14,7 +14,7 @@ use crate::frontmatter;
 use crate::table::Table;
 use crate::util::home_dir;
 
-pub fn run(filter_lang: Option<&str>, json_output: bool) -> Result<()> {
+pub fn run(filter_lang: Option<&str>, audit: bool, json_output: bool) -> Result<()> {
     let ways_dir = home_dir().join(".claude/hooks/ways");
     let xdg_way = xdg_cache_dir().join("claude-ways/user");
     let excluded = crate::util::load_excluded_segments();
@@ -71,10 +71,32 @@ pub fn run(filter_lang: Option<&str>, json_output: bool) -> Result<()> {
         println!("Multi corpus:     {multi_corpus_count} ways");
         println!();
 
+        // Language coverage summary
+        let all_supported = get_all_language_codes();
+        let non_en: Vec<&str> = all_supported.iter()
+            .filter(|c| *c != "en")
+            .map(|s| s.as_str())
+            .collect();
+
         if !all_locales.is_empty() {
-            println!("Language stubs found: {}", all_locales.iter().cloned().collect::<Vec<_>>().join(", "));
-            println!();
+            println!("Covered ({}/{}):     {} + en",
+                all_locales.len(), non_en.len(),
+                all_locales.iter().cloned().collect::<Vec<_>>().join(", "),
+            );
         }
+
+        let uncovered: Vec<String> = non_en.iter()
+            .filter(|code| !all_locales.contains(**code))
+            .map(|s| s.to_string())
+            .collect();
+
+        if !uncovered.is_empty() {
+            println!("Uncovered ({}/{}):   {}",
+                uncovered.len(), non_en.len(),
+                uncovered.join(", "),
+            );
+        }
+        println!();
 
         // Summary counts
         let en_count = ways.iter().filter(|w| w.embed_model == "en").count();
@@ -82,8 +104,8 @@ pub fn run(filter_lang: Option<&str>, json_output: bool) -> Result<()> {
         println!("Ways: {} total ({} en, {} multilingual)", ways.len(), en_count, multi_count);
         println!();
 
-        // Per-way detail
-        if !ways.is_empty() {
+        // Per-way detail (only in audit mode)
+        if audit && !ways.is_empty() {
             let mut t = Table::new(&["Way", "Model", "Locales"]);
             t.max_width(0, 45);
             for w in &ways {
@@ -97,6 +119,8 @@ pub fn run(filter_lang: Option<&str>, json_output: bool) -> Result<()> {
                 t.add(vec![&w.id, &w.embed_model, &locales]);
             }
             t.print();
+        } else if !audit {
+            println!("Run `ways language --audit` for per-way detail.");
         }
 
         // Warnings
@@ -161,19 +185,31 @@ fn scan_way_dirs(
         let mut embed_model = "en".to_string();
         let mut locales = BTreeSet::new();
 
-        // Read all .md files in this directory
+        // Read all files in this directory
         if let Ok(entries) = std::fs::read_dir(dir_path) {
             for entry in entries.filter_map(|e| e.ok()) {
                 let path = entry.path();
-                if path.extension().and_then(|e| e.to_str()) != Some("md") {
-                    continue;
-                }
                 let fname = match path.file_name().and_then(|n| n.to_str()) {
                     Some(n) => n.to_string(),
                     None => continue,
                 };
 
-                // Check for locale stubs: {name}.{lang}.md
+                // Check .locales.jsonl for packed locale stubs
+                if fname.ends_with(".locales.jsonl") {
+                    if let Ok(entries) = frontmatter::parse_locales_jsonl(&path) {
+                        for le in entries {
+                            locales.insert(le.lang.clone());
+                            all_locales.insert(le.lang);
+                        }
+                    }
+                    continue;
+                }
+
+                if path.extension().and_then(|e| e.to_str()) != Some("md") {
+                    continue;
+                }
+
+                // Check for locale override files: {name}.{lang}.md
                 if let Some(locale) = extract_locale(&fname) {
                     locales.insert(locale.clone());
                     all_locales.insert(locale);
@@ -252,6 +288,21 @@ fn line_count(path: &Path) -> usize {
     std::fs::read_to_string(path)
         .map(|c| c.lines().filter(|l| !l.is_empty()).count())
         .unwrap_or(0)
+}
+
+/// Get all language codes from languages.json, sorted.
+fn get_all_language_codes() -> Vec<String> {
+    let parsed: serde_json::Value = match serde_json::from_str(agents::LANGUAGES_JSON) {
+        Ok(v) => v,
+        Err(_) => return Vec::new(),
+    };
+    let mut codes: Vec<String> = parsed
+        .get("languages")
+        .and_then(|v| v.as_object())
+        .map(|m| m.keys().cloned().collect())
+        .unwrap_or_default();
+    codes.sort();
+    codes
 }
 
 fn xdg_cache_dir() -> PathBuf {

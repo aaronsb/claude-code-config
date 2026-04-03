@@ -152,31 +152,55 @@ pub fn run(ways_dir: Option<String>, quiet: bool, if_stale: bool) -> Result<()> 
 fn scan_ways_dir(dir: &Path, id_prefix: &str, excluded: &[String], w: &mut impl Write) -> Result<usize> {
     let mut count = 0;
 
-    let mut files: Vec<PathBuf> = Vec::new();
+    let mut md_files: Vec<PathBuf> = Vec::new();
+    let mut locale_files: Vec<PathBuf> = Vec::new();
+    // Track which (directory, lang) pairs have external .lang.md overrides
+    let mut locale_overrides: std::collections::HashSet<(PathBuf, String)> = std::collections::HashSet::new();
+
     for entry in WalkDir::new(dir)
         .follow_links(true)
         .into_iter()
         .filter_map(|e| e.ok())
     {
         let path = entry.path();
-        if !path.is_file() || path.extension().and_then(|e| e.to_str()) != Some("md") {
+        if !path.is_file() {
             continue;
         }
-        if path
-            .file_name()
-            .and_then(|n| n.to_str())
-            .map_or(false, |n| n.contains(".check."))
-        {
+
+        let fname = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+
+        // Collect .locales.jsonl files
+        if fname.ends_with(".locales.jsonl") {
+            if !crate::util::is_excluded_path(path, excluded) {
+                locale_files.push(path.to_path_buf());
+            }
+            continue;
+        }
+
+        if path.extension().and_then(|e| e.to_str()) != Some("md") {
+            continue;
+        }
+        if fname.contains(".check.") {
             continue;
         }
         if crate::util::is_excluded_path(path, excluded) {
             continue;
         }
-        files.push(path.to_path_buf());
-    }
-    files.sort();
 
-    for path in &files {
+        // Detect locale override files ({name}.{lang}.md)
+        if let Some(lang) = detect_locale_in_filename(fname) {
+            if let Some(parent) = path.parent() {
+                locale_overrides.insert((parent.to_path_buf(), lang));
+            }
+        }
+
+        md_files.push(path.to_path_buf());
+    }
+    md_files.sort();
+    locale_files.sort();
+
+    // Pass 1: process .md files (including any external locale override .lang.md files)
+    for path in &md_files {
         let fm = match frontmatter::parse(path) {
             Ok(fm) => fm,
             Err(_) => continue,
@@ -209,7 +233,87 @@ fn scan_ways_dir(dir: &Path, id_prefix: &str, excluded: &[String], w: &mut impl 
         count += 1;
     }
 
+    // Pass 2: process .locales.jsonl files
+    for path in &locale_files {
+        let parent = path.parent().unwrap_or(Path::new(""));
+        let relparent = parent.strip_prefix(dir).unwrap_or(parent);
+        let id = format!("{}{}", id_prefix, relparent.display());
+
+        // Read the parent way's threshold for inheritance
+        let parent_threshold = find_parent_threshold(parent);
+
+        let entries = match frontmatter::parse_locales_jsonl(path) {
+            Ok(e) => e,
+            Err(_) => continue,
+        };
+
+        for le in entries {
+            // Skip if an external .lang.md override exists
+            if locale_overrides.contains(&(parent.to_path_buf(), le.lang.clone())) {
+                continue;
+            }
+
+            let entry = json!({
+                "id": id,
+                "description": le.description,
+                "vocabulary": le.vocabulary.unwrap_or_default(),
+                "threshold": parent_threshold,
+                "embed_threshold": le.embed_threshold.unwrap_or(0.25),
+                "embed_model": "multilingual",
+            });
+
+            serde_json::to_writer(&mut *w, &entry)?;
+            w.write_all(b"\n")?;
+            count += 1;
+        }
+    }
+
     Ok(count)
+}
+
+/// Detect a locale code in a filename like "security.ja.md" → Some("ja")
+fn detect_locale_in_filename(filename: &str) -> Option<String> {
+    if filename.contains(".check.") {
+        return None;
+    }
+    let stem = filename.strip_suffix(".md")?;
+    let parts: Vec<&str> = stem.split('.').collect();
+    if parts.len() >= 2 {
+        let candidate = parts[parts.len() - 1];
+        if candidate.len() >= 2
+            && candidate.len() <= 5
+            && candidate.chars().all(|c| c.is_ascii_lowercase() || c == '-')
+        {
+            return Some(candidate.to_string());
+        }
+    }
+    None
+}
+
+/// Find the BM25 threshold from the parent way's frontmatter.
+fn find_parent_threshold(dir: &Path) -> f64 {
+    if let Ok(entries) = std::fs::read_dir(dir) {
+        for entry in entries.filter_map(|e| e.ok()) {
+            let path = entry.path();
+            let fname = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+            if path.extension().and_then(|e| e.to_str()) != Some("md") {
+                continue;
+            }
+            // Skip locale stubs and check files
+            if fname.contains('.') && fname.ends_with(".md") {
+                let stem = fname.strip_suffix(".md").unwrap_or("");
+                if stem.contains('.') {
+                    continue;
+                }
+            }
+            if let Ok(fm) = frontmatter::parse(&path) {
+                if !fm.description.is_empty() {
+                    return fm.threshold.unwrap_or(2.0);
+                }
+            }
+        }
+    }
+    2.0
 }
 
 /// Shell out to way-embed generate for embedding vectors.
@@ -452,8 +556,9 @@ fn is_stale(manifest: &Path, global_dir: &Path, project_dir: &str) -> bool {
         .filter_map(|e| e.ok())
     {
         let path = entry.path();
-        if path.is_file() && path.extension().and_then(|e| e.to_str()) == Some("md") {
-            if is_newer_than(path, manifest) {
+        if path.is_file() {
+            let ext = path.extension().and_then(|e| e.to_str());
+            if (ext == Some("md") || ext == Some("jsonl")) && is_newer_than(path, manifest) {
                 return true;
             }
         }
@@ -469,8 +574,9 @@ fn is_stale(manifest: &Path, global_dir: &Path, project_dir: &str) -> bool {
                 .filter_map(|e| e.ok())
             {
                 let path = entry.path();
-                if path.is_file() && path.extension().and_then(|e| e.to_str()) == Some("md") {
-                    if is_newer_than(path, manifest) {
+                if path.is_file() {
+                    let ext = path.extension().and_then(|e| e.to_str());
+                    if (ext == Some("md") || ext == Some("jsonl")) && is_newer_than(path, manifest) {
                         return true;
                     }
                 }

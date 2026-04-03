@@ -49,37 +49,42 @@ embed_threshold: 0.35
 
 Ways with `embed_model: multilingual` are scored by the multilingual model against a separate corpus.
 
-## Creating language stubs
+## Locale stubs — packed format
 
-A language stub is a frontmatter-only `.{lang}.md` file that provides native-language matching vocabulary for an existing way. The way body stays English — only the matching changes.
+Locale stubs provide native-language matching vocabulary for existing ways. They're stored as **packed JSONL**, one file per way, co-located with the way they belong to:
 
 ```
 hooks/ways/softwaredev/code/security/
-  security.md           # English way — full body + frontmatter
-  security.ja.md        # Japanese stub — frontmatter only, no body
-  security.ko.md        # Korean stub — frontmatter only, no body
+  security.md                # English way — full body + frontmatter
+  security.locales.jsonl     # all language stubs (one line per language)
 ```
 
-Example stub (`security.ja.md`):
+Each line in the `.locales.jsonl` is a self-contained locale entry:
 
-```yaml
----
-description: セキュリティ脆弱性スキャンと監査
-vocabulary: セキュリティ 脆弱性 CVE 監査 認証 暗号化
-embed_model: multilingual
-embed_threshold: 0.25
----
+```jsonl
+{"lang":"ja","description":"セキュリティ脆弱性スキャンと監査","vocabulary":"セキュリティ 脆弱性 CVE 監査","embed_threshold":0.74}
+{"lang":"de","description":"Sicherheitsüberblick, sichere Programmierstandards","vocabulary":"Sicherheit Schwachstelle schützen OWASP","embed_threshold":0.79}
+{"lang":"es","description":"Seguridad general, codificación segura","vocabulary":"seguridad vulnerable defensa OWASP","embed_threshold":0.78}
+{"lang":"ar","description":"نظرة عامة على الأمان والبرمجة الآمنة","vocabulary":"أمان برمجة آمنة حماية ثغرات","embed_threshold":0.84}
 ```
 
 When a Japanese user types a prompt, the scanner:
-1. Matches `security.ja.md`'s frontmatter using the multilingual model
+1. Scores the Japanese stub's description using the multilingual model
 2. Injects `security.md`'s English body (the guidance text)
 
-The agent reads the English guidance and responds in the configured output language.
+### Format rules
+
+- **`embed_threshold`** is optional — omit it and the corpus generator defaults to 0.25. Use `ways tune --apply` to compute optimal values automatically.
+- **`embed_model`** is implicit — always `multilingual` for locale stubs (not stored in the file).
+- **No body content** — just the JSONL line. If someone writes a full native-language way, they create `security.ja.md` as a regular file, which overrides the packed entry.
+
+### Override mechanism
+
+If `security.ja.md` exists as a real file alongside `security.locales.jsonl`, the `.md` file wins for Japanese. This lets authors graduate a stub into a full native-language way with body content, without touching the packed file.
 
 ### Why same-language stubs matter
 
-Cross-language matching (Japanese prompt → English description) scores ~0.69. Same-language matching (Japanese prompt → Japanese description) scores ~0.93. The stub's native-language description dramatically improves matching precision.
+Cross-language matching (Japanese prompt → English description) scores ~0.69. Same-language matching (Japanese prompt → Japanese description) scores ~0.93. The native stub dramatically improves matching precision.
 
 | Scenario | Cosine similarity |
 |----------|----------------:|
@@ -88,6 +93,65 @@ Cross-language matching (Japanese prompt → English description) scores ~0.69. 
 | JA prompt → JA description (same-language stub) | 0.93 |
 
 See `docs/architecture/system/multilingual-model-evaluation.md` for full test results.
+
+## Tuning and auditing
+
+### Auto-tuning thresholds
+
+`ways tune` computes the optimal `embed_threshold` for each locale entry by scoring it against the full corpus and finding the discrimination boundary:
+
+```bash
+# Preview what would change (dry run)
+ways tune
+
+# Tune a specific way
+ways tune --way security
+
+# Apply tuned thresholds to .locales.jsonl files
+ways tune --apply
+
+# Regenerate corpus with tuned values
+ways corpus
+```
+
+The tuner runs in parallel (all cores minus 4). ~13 seconds for 328 entries on a 32-core machine.
+
+### Discrimination audit
+
+`ways tune --audit` flags entries where the description doesn't clearly separate this way from others — no threshold can fix an ambiguous description:
+
+```bash
+# Flag entries with discrimination gap < 0.15
+ways tune --audit
+
+# Adjust the gap threshold
+ways tune --audit --audit-threshold 0.20
+```
+
+The audit shows **confusers** — which ways the ambiguous entry is being confused with:
+
+```
+softwaredev/docs/mermaid
+  ar — gap 0.07  (self 1.00, noise 0.93)  confused with: softwaredev/visualization/diagrams (0.93)
+```
+
+This tells the author: "your Arabic mermaid description looks too similar to the diagrams way — revise the vocabulary to distinguish them."
+
+### Full authoring cycle
+
+```
+write stubs → compile → tune → audit → revise → repeat
+```
+
+1. Write/generate locale entries in `.locales.jsonl`
+2. `ways corpus` — compile into embeddings
+3. `ways tune --apply` — auto-set thresholds
+4. `ways tune --audit` — flag ambiguous descriptions
+5. Revise flagged descriptions, go to step 2
+
+Two dimensions to optimize:
+- **Discrimination** (gap): how clearly the description identifies this way vs others. Property of description quality.
+- **Sensitivity** (threshold): how much signal required before firing. Auto-tuned from discrimination data.
 
 ## Supported languages
 

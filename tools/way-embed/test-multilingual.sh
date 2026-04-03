@@ -193,7 +193,7 @@ if $MARKDOWN; then
   echo ""
   echo "1. **English ways + English model** — current production. High precision for English prompts."
   echo "2. **English ways + multilingual model (cross-language)** — user types in any language, matches against English descriptions. Works but scores 30-50% lower."
-  echo "3. **Native-language stubs + multilingual model (same-language)** — frontmatter-only \`.ja.md\` stubs with native descriptions. Consistently scores 0.80+ across tested languages."
+  echo "3. **Native-language stubs + multilingual model (same-language)** — locale entries in \`.locales.jsonl\` with native descriptions. Consistently scores 0.80+ across tested languages."
   echo ""
   echo "**Recommendation:** Ship both models. English ways use the English model (precise, 21MB). Multilingual stubs use the multilingual model (broad, 127MB). Per-way \`embed_model\` frontmatter field controls routing. This gives per-language threshold tuning without compromising English accuracy."
 else

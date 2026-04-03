@@ -158,7 +158,18 @@ For vocabulary tuning workflows, see the optimization sub-way (triggers on vocab
 
 Full authoring guide: `docs/hooks-and-ways/extending.md`
 
+## Locale Stubs
+
+Ways can have native-language matching stubs stored in `{wayname}.locales.jsonl` alongside the way file. These are packed JSONL — one line per language with `description` and `vocabulary` in the target language. The way body stays English.
+
+```jsonl
+{"lang":"ja","description":"セキュリティ脆弱性スキャン","vocabulary":"セキュリティ 脆弱性 CVE","embed_threshold":0.74}
+```
+
+Use `ways tune --apply` to auto-set thresholds, `ways tune --audit` to find ambiguous descriptions. Full guide: `docs/hooks-and-ways/languages.md`.
+
 ## See Also
 
 - knowledge/authoring/tool-agnostic(meta) — ways describe intent, not tool calls
 - knowledge/authoring/pii-free(meta) — privacy constraint on way content
+- knowledge/optimization(meta) — vocabulary tuning, threshold auto-tuning, discrimination audit

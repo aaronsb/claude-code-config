@@ -12,7 +12,9 @@ elif [[ -x "${HOME}/.claude/bin/way-embed" ]]; then
 else
   WAY_EMBED=""
 fi
-CORPUS="${XDG_WAY}/ways-corpus.jsonl"
+# Use EN-only corpus — this test validates the English model against English ways.
+# Multilingual matching is tested separately by test-multilingual.sh.
+CORPUS="${XDG_WAY}/ways-corpus-en.jsonl"
 MODEL="${XDG_WAY}/minilm-l6-v2.gguf"
 
 pass=0; fail=0; skip=0

@@ -8,8 +8,10 @@
   "permissions": {
     "allow": [
       "Edit(~/.claude/**)",
+      "Edit(/home/aaron/.claude/**)",
       "Read",
       "Write(~/.claude/**)",
+      "Write(/home/aaron/.claude/**)",
       "Bash(~/.claude/hooks/ways/list-triggered.sh:*)",
       "Bash(cat:*)",
       "Bash(head:*)",

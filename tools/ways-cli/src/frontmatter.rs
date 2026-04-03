@@ -50,6 +50,33 @@ fn extract_frontmatter_str(content: &str) -> Option<String> {
     None
 }
 
+/// A single locale entry from a .locales.jsonl file.
+#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+pub struct LocaleEntry {
+    pub lang: String,
+    pub description: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub vocabulary: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub embed_threshold: Option<f64>,
+}
+
+/// Parse a .locales.jsonl file into locale entries.
+pub fn parse_locales_jsonl(path: &Path) -> Result<Vec<LocaleEntry>> {
+    let content = std::fs::read_to_string(path)
+        .with_context(|| format!("reading {}", path.display()))?;
+    let mut entries = Vec::new();
+    for line in content.lines() {
+        if line.trim().is_empty() {
+            continue;
+        }
+        let entry: LocaleEntry = serde_json::from_str(line)
+            .with_context(|| format!("parsing locale entry in {}", path.display()))?;
+        entries.push(entry);
+    }
+    Ok(entries)
+}
+
 /// Extract the `<!-- epistemic: VALUE -->` comment from the body of a way file.
 pub fn extract_epistemic(content: &str) -> Option<String> {
     for line in content.lines() {

@@ -77,6 +77,7 @@
 !hooks/ways/**/
 !hooks/ways/**/*.md
 !hooks/ways/**/*.sh
+!hooks/ways/**/*.locales.jsonl
 !hooks/ways/**/*.yaml.template
 !hooks/ways/**/provenance.yaml
 !hooks/ways/**/adr-tool

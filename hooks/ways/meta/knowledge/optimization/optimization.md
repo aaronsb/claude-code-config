@@ -59,6 +59,32 @@ Only ways with both `description:` and `vocabulary:` frontmatter fields use sema
 
 Lowering BM25 threshold increases recall (more matches) but risks false positives. The test harness tracks FP rate — **0 FP is the hard constraint**.
 
+### Auto-tuning with `ways tune`
+
+Don't hand-tune embed thresholds. The tuner computes optimal values from corpus similarity data:
+
+```bash
+ways tune              # preview (dry run)
+ways tune --apply      # write tuned thresholds
+ways tune --way "ea/"  # tune a subset
+ways corpus            # recompile after tuning
+```
+
+For locale stubs in `.locales.jsonl`, the tuner writes `embed_threshold` per entry. For English ways, thresholds stay in frontmatter.
+
+### Discrimination audit
+
+Two dimensions to optimize:
+- **Discrimination** (gap): how clearly the description identifies *this* way vs others. Wide gap = precise. Narrow gap = ambiguous.
+- **Sensitivity** (threshold): how much signal required before firing. Auto-computed from discrimination.
+
+```bash
+ways tune --audit                    # flag entries with gap < 0.15
+ways tune --audit --audit-threshold 0.20  # stricter
+```
+
+The audit names the **confusers** — which ways the description is being confused with. Low discrimination means revising the description, not adjusting the threshold.
+
 ## Health Indicators
 
 - **Gap ratio**: gaps / (gaps + coverage). High ratio = vocabulary may be too narrow.
