@@ -153,9 +153,7 @@ fn find_way_embed() -> Option<std::path::PathBuf> {
 }
 
 fn xdg_cache_dir() -> std::path::PathBuf {
-    std::env::var("XDG_CACHE_HOME")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|_| home_dir().join(".cache"))
+    crate::util::xdg_cache_dir()
 }
 
 // ── In-process show capture ───────────────────────────────────

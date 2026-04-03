@@ -2,6 +2,13 @@
 
 use std::path::{Path, PathBuf};
 
+/// XDG cache directory ($XDG_CACHE_HOME or ~/.cache).
+pub fn xdg_cache_dir() -> PathBuf {
+    std::env::var("XDG_CACHE_HOME")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| home_dir().join(".cache"))
+}
+
 /// Home directory from $HOME, falling back to /tmp.
 pub fn home_dir() -> PathBuf {
     std::env::var("HOME")

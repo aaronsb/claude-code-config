@@ -16,8 +16,6 @@ pub struct Frontmatter {
     pub scope: Option<String>,
     #[serde(default)]
     pub embed_threshold: Option<f64>,
-    // embed_model removed — derived automatically by corpus builder
-    // (.locales.jsonl → multilingual, .md ways → en)
 }
 
 /// Extract YAML frontmatter from a way file.

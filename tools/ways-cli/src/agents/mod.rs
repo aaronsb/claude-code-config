@@ -141,3 +141,33 @@ pub fn bm25_stemmer_for(lang_code: &str) -> Option<String> {
     }
     Some(stemmer.to_string())
 }
+
+/// Best-effort language name → code lookup (e.g., "Japanese" → "ja").
+/// Returns the input unchanged if it's already a short code.
+pub fn resolve_to_lang_code(lang: &str) -> String {
+    let lower = lang.to_lowercase();
+    if lower.len() <= 5 && lower.chars().all(|c| c.is_ascii_lowercase() || c == '-') {
+        return lower;
+    }
+    if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(LANGUAGES_JSON) {
+        if let Some(languages) = parsed.get("languages").and_then(|v| v.as_object()) {
+            for (code, entry) in languages {
+                let name = entry.get("name").and_then(|v| v.as_str()).unwrap_or("");
+                if name.to_lowercase() == lower {
+                    return code.clone();
+                }
+            }
+        }
+    }
+    "en".to_string()
+}
+
+/// Whether BM25 can work for the current resolved language.
+pub fn is_bm25_available() -> bool {
+    let resolved = resolve_language();
+    let lang_code = resolve_to_lang_code(&resolved);
+    if lang_code == "en" {
+        return true;
+    }
+    bm25_stemmer_for(&lang_code).is_some()
+}

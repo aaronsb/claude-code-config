@@ -259,10 +259,4 @@ fn count_lines(path: &Path) -> usize {
         .unwrap_or(0)
 }
 
-use crate::util::home_dir;
-
-fn xdg_cache_dir() -> PathBuf {
-    std::env::var("XDG_CACHE_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| home_dir().join(".cache"))
-}
+use crate::util::{home_dir, xdg_cache_dir};

@@ -12,7 +12,7 @@ use walkdir::WalkDir;
 use crate::agents;
 use crate::frontmatter;
 use crate::table::Table;
-use crate::util::home_dir;
+use crate::util::{home_dir, xdg_cache_dir};
 
 pub fn run(filter_lang: Option<&str>, audit: bool, json_output: bool) -> Result<()> {
     let ways_dir = home_dir().join(".claude/hooks/ways");
@@ -232,37 +232,12 @@ fn scan_way_dirs(
     Ok(())
 }
 
-/// Best-effort reverse lookup: language name → code
 fn resolve_to_code(lang: &str) -> String {
-    let lower = lang.to_lowercase();
-    if lower.len() <= 5 && lower.chars().all(|c| c.is_ascii_lowercase() || c == '-') {
-        return lower;
-    }
-    // Search languages.json
-    let parsed: serde_json::Value = match serde_json::from_str(agents::LANGUAGES_JSON) {
-        Ok(v) => v,
-        Err(_) => return "en".to_string(),
-    };
-    if let Some(languages) = parsed.get("languages").and_then(|v| v.as_object()) {
-        for (code, entry) in languages {
-            let name = entry.get("name").and_then(|v| v.as_str()).unwrap_or("");
-            if name.to_lowercase() == lower {
-                return code.clone();
-            }
-        }
-    }
-    "en".to_string()
+    agents::resolve_to_lang_code(lang)
 }
 
 fn line_count(path: &Path) -> usize {
     std::fs::read_to_string(path)
         .map(|c| c.lines().filter(|l| !l.is_empty()).count())
         .unwrap_or(0)
-}
-
-
-fn xdg_cache_dir() -> PathBuf {
-    std::env::var("XDG_CACHE_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| home_dir().join(".cache"))
 }

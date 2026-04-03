@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 use crate::bm25;
 use crate::table::{Table, Align};
+use crate::util::xdg_cache_dir;
 
 /// Unified match: embedding first, BM25 fallback.
 pub fn run(query: String, corpus: Option<String>) -> Result<()> {
@@ -10,10 +11,9 @@ pub fn run(query: String, corpus: Option<String>) -> Result<()> {
         .unwrap_or_else(|| default_corpus_path().to_string_lossy().to_string());
 
     // Try embedding engine first
-    let embed_results = super::scan::scoring::batch_embed_score(&query);
+    let embed_results = super::scan::batch_embed_score(&query);
 
     if let Some(ref results) = embed_results {
-        // Embedding engine ran — show those results
         if results.is_empty() {
             eprintln!("no matches above threshold (embedding)");
             std::process::exit(1);
@@ -30,8 +30,7 @@ pub fn run(query: String, corpus: Option<String>) -> Result<()> {
         let mut scored: Vec<(&&str, &f64)> = best.iter().collect();
         scored.sort_by(|a, b| b.1.partial_cmp(a.1).unwrap_or(std::cmp::Ordering::Equal));
 
-        // Load descriptions from EN corpus (canonical descriptions)
-        let en_corpus = default_en_corpus_path();
+        let en_corpus = xdg_cache_dir().join("claude-ways/user/ways-corpus-en.jsonl");
         let descriptions = load_descriptions(en_corpus.to_str().unwrap_or(&corpus_path));
 
         let mut t = Table::new(&["Way", "Score", "Engine", "Description"]);
@@ -55,10 +54,10 @@ pub fn run(query: String, corpus: Option<String>) -> Result<()> {
         return Ok(());
     }
 
-    // Fallback: BM25 — but check if the user's language even supports it
-    let resolved = crate::agents::resolve_language();
-    let lang_code = resolve_to_lang_code(&resolved);
-    if crate::agents::bm25_stemmer_for(&lang_code).is_none() && lang_code != "en" {
+    // Fallback: BM25 — check if the user's language supports it
+    if !crate::agents::is_bm25_available() {
+        let resolved = crate::agents::resolve_language();
+        let lang_code = crate::agents::resolve_to_lang_code(&resolved);
         eprintln!("ERROR: embedding engine unavailable and {} ({}) cannot use BM25 fallback.", resolved, lang_code);
         eprintln!("       BM25 requires word-boundary stemming which is impossible for this language.");
         eprintln!("       Install the embedding engine: cd ~/.claude && make setup");
@@ -135,45 +134,6 @@ fn load_descriptions(corpus_path: &str) -> std::collections::HashMap<String, Str
     map
 }
 
-fn default_en_corpus_path() -> PathBuf {
-    let xdg = std::env::var("XDG_CACHE_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| {
-            std::env::var("HOME")
-                .map(|h| PathBuf::from(h).join(".cache"))
-                .unwrap_or_else(|_| PathBuf::from("/tmp"))
-        });
-    xdg.join("claude-ways/user/ways-corpus-en.jsonl")
-}
-
-/// Best-effort language name → code lookup.
-fn resolve_to_lang_code(lang: &str) -> String {
-    let lower = lang.to_lowercase();
-    if lower.len() <= 5 && lower.chars().all(|c| c.is_ascii_lowercase() || c == '-') {
-        return lower;
-    }
-    let parsed: serde_json::Value = match serde_json::from_str(crate::agents::LANGUAGES_JSON) {
-        Ok(v) => v,
-        Err(_) => return "en".to_string(),
-    };
-    if let Some(languages) = parsed.get("languages").and_then(|v| v.as_object()) {
-        for (code, entry) in languages {
-            let name = entry.get("name").and_then(|v| v.as_str()).unwrap_or("");
-            if name.to_lowercase() == lower {
-                return code.clone();
-            }
-        }
-    }
-    "en".to_string()
-}
-
 fn default_corpus_path() -> PathBuf {
-    let xdg = std::env::var("XDG_CACHE_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| {
-            std::env::var("HOME")
-                .map(|h| PathBuf::from(h).join(".cache"))
-                .unwrap_or_else(|_| PathBuf::from("/tmp"))
-        });
-    xdg.join("claude-ways/user/ways-corpus.jsonl")
+    xdg_cache_dir().join("claude-ways/user/ways-corpus.jsonl")
 }

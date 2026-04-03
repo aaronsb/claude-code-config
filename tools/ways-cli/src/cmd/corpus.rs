@@ -524,13 +524,7 @@ fn content_hash(dir: &Path) -> String {
     format!("{:016x}", hasher.finish())
 }
 
-use crate::util::home_dir;
-
-fn xdg_cache_dir() -> PathBuf {
-    std::env::var("XDG_CACHE_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| home_dir().join(".cache"))
-}
+use crate::util::{home_dir, xdg_cache_dir};
 
 /// Check if any way file is newer than the manifest.
 fn is_stale(manifest: &Path, global_dir: &Path, project_dir: &str) -> bool {

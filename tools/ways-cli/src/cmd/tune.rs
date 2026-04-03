@@ -15,7 +15,7 @@ use std::sync::{Arc, Mutex};
 use walkdir::WalkDir;
 
 use crate::frontmatter;
-use crate::util::home_dir;
+use crate::util::{home_dir, xdg_cache_dir};
 
 /// A confuser: a non-self way that scores close to self.
 #[derive(Clone)]
@@ -550,10 +550,4 @@ fn find_way_embed() -> Option<PathBuf> {
         return Some(bin);
     }
     None
-}
-
-fn xdg_cache_dir() -> PathBuf {
-    std::env::var("XDG_CACHE_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|_| home_dir().join(".cache"))
 }
