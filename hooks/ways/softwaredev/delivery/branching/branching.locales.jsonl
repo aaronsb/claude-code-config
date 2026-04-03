@@ -1,0 +1,4 @@
+{"lang":"ar","description":"إرشادات التفريع في Git","vocabulary":"تفريع Git فرع دمج استراتيجية إصدار","embed_threshold":0.82}
+{"lang":"de","description":"Git-Branch-Strategien — Worktrees, Feature-Branches und Trunk-basierte Entwicklung","vocabulary":"Branch Zweig auschecken Worktree Hauptzweig Trunk Feature-Branch Bugfix-Branch Refaktorisierungsbranch Verzweigung Zusammenführung","embed_threshold":0.59}
+{"lang":"es","description":"Estrategias de ramificacion en Git — ramas de funcionalidad, flujo de trabajo","vocabulary":"rama branch git estrategia funcionalidad feature trunk flujo-de-trabajo fusionar merge","embed_threshold":0.69}
+{"lang":"ja","description":"Gitブランチの管理とブランチ戦略のガイダンス","vocabulary":"ブランチ チェックアウト ワークツリー メイン トランク フィーチャー 修正","embed_threshold":0.7}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تتبع الوقت والساعات القابلة للفوترة وإعداد الفواتير","vocabulary":"تتبع وقت ساعات فوترة فاتورة حساب زمن","embed_threshold":0.63}
+{"lang":"de","description":"Zeiterfassung, abrechenbare Stunden buchen, Zeiteinträge, Rechnungsstellung, Tagesabschluss","vocabulary":"Zeiterfassung Stunden buchen abrechenbar Stundenzettel Feierabend Tagesabschluss Rechnung Abrechnung Projekt Wochenbericht","embed_threshold":0.76}
+{"lang":"es","description":"Control de tiempo, horas facturables, facturación","vocabulary":"control tiempo horas facturable hoja de horas factura facturación reporte","embed_threshold":0.7}
+{"lang":"ja","description":"時間追跡、請求可能時間、タイムシート、請求書作成","vocabulary":"時間管理 タイムトラッキング 工数 請求 タイムシート 稼働時間 レポート","embed_threshold":0.71}

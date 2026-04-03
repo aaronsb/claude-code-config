@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تفويض المهام إلى وكلاء فرعيين","vocabulary":"وكيل فرعي تفويض مهام توزيع عمل موازي","embed_threshold":0.74}
+{"lang":"de","description":"Sub-Agent-Delegation — wann und wie spezialisierte Sub-Agenten für tokenintensive Arbeit gestartet werden","vocabulary":"Subagent delegieren starten Hintergrundaufgabe parallel Worker Teamkollege","embed_threshold":0.55}
+{"lang":"es","description":"Delegación a sub-agentes — lanzar agentes especializados","vocabulary":"subagente delegar lanzar segundo plano paralelo trabajador equipo","embed_threshold":0.47}
+{"lang":"ja","description":"サブエージェントへの委任 — 専門サブエージェントの起動","vocabulary":"サブエージェント 委任 並列 バックグラウンド ワーカー 分担","embed_threshold":0.58}

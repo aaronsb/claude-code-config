@@ -1,0 +1,4 @@
+{"lang":"ar","description":"رسائل الإيداع والإيداعات التقليدية","vocabulary":"إيداع رسالة تقليدي Git تاريخ وصف تغيير","embed_threshold":0.69}
+{"lang":"de","description":"Git-Commit-Nachrichten und Conventional Commits — atomare, aussagekräftige Änderungshistorie","vocabulary":"Commit Nachricht Branch konventionell feat fix Geltungsbereich atomar zusammenfassen squash Änderungshistorie Commitnachricht","embed_threshold":0.62}
+{"lang":"es","description":"Mensajes de commit — commits convencionales, historial limpio, atomicidad","vocabulary":"commit mensaje convencional historial atomico descriptivo prefijo feat fix chore cambio","embed_threshold":0.56}
+{"lang":"ja","description":"gitコミットメッセージ、コンベンショナルコミット","vocabulary":"コミット メッセージ ブランチ コンベンショナル feat fix スコープ","embed_threshold":0.72}

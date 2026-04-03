@@ -1,0 +1,4 @@
+{"lang":"ar","description":"إدارة محادثات الفريق ومنصات التراسل","vocabulary":"محادثة فريق رسائل تواصل منصة تراسل","embed_threshold":0.64}
+{"lang":"de","description":"Team-Chat und Messaging-Plattformen, Nachrichten lesen und mit Freigabe senden, Kommunikationskanäle","vocabulary":"Teams Chat Nachricht Slack Kanal ungelesen Konversation Direktnachricht Gruppenchat senden antworten Benachrichtigung Erwähnung","embed_threshold":0.66}
+{"lang":"es","description":"Chat de equipo y plataformas de mensajería, envío de mensajes","vocabulary":"teams chat mensaje slack canal no leído conversación respuesta notificación","embed_threshold":0.62}
+{"lang":"ja","description":"チームチャットやメッセージングの管理、メッセージ送信","vocabulary":"チャット メッセージ 通知 チャンネル 返信 未読 会話 連絡","embed_threshold":0.61}

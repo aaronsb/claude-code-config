@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الوصول عن بعد عبر SSH","vocabulary":"SSH وصول بعيد اتصال آمن مفاتيح نفق","embed_threshold":0.51}
+{"lang":"de","description":"SSH-Fernzugriff — Schlüsselverwaltung, sichere Übertragung und Tunneling","vocabulary":"SSH Fernzugriff Schlüssel SCP Rsync Bastion Jumphost Tunnel Portweiterleitung Schlüsselverwaltung","embed_threshold":0.51}
+{"lang":"es","description":"Acceso remoto SSH — claves, tuneles, configuracion, agente","vocabulary":"SSH remoto clave publica privada tunel configuracion agente acceso servidor conexion","embed_threshold":0.58}
+{"lang":"ja","description":"SSHリモートアクセス、鍵管理、セキュア転送","vocabulary":"SSH リモート 鍵 SCP rsync 踏み台 トンネル ポートフォワーディング","embed_threshold":0.55}

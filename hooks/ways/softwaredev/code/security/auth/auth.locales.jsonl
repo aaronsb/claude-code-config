@@ -1,0 +1,4 @@
+{"lang":"ar","description":"المصادقة والتفويض والتحكم بالوصول","vocabulary":"مصادقة تفويض صلاحيات تحكم وصول أدوار","embed_threshold":0.66}
+{"lang":"de","description":"Authentifizierung, Autorisierung, Zugriffskontrolle, Middleware-Guards, RBAC, Berechtigungen","vocabulary":"Authentifizierung Autorisierung Middleware Guard Berechtigung Rolle RBAC Zugriffskontrolle Login Sitzung JWT CSRF CORS","embed_threshold":0.65}
+{"lang":"es","description":"Autenticacion y autorizacion — RBAC, tokens, permisos, sesiones","vocabulary":"autenticacion autorizacion RBAC token JWT sesion permiso rol acceso identidad","embed_threshold":0.62}
+{"lang":"ja","description":"認証・認可、アクセス制御、RBAC","vocabulary":"認証 認可 ミドルウェア ガード 権限 ロール RBAC ログイン","embed_threshold":0.62}

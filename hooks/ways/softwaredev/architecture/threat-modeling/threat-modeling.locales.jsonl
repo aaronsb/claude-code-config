@@ -1,0 +1,4 @@
+{"lang":"ar","description":"نمذجة التهديدات ومنهجية STRIDE","vocabulary":"نمذجة تهديدات أمن تحليل مخاطر هجمات ثغرات","embed_threshold":0.77}
+{"lang":"de","description":"Bedrohungsmodellierung, STRIDE-Analyse, Vertrauensgrenzen, Angriffsflächen-Bewertung, Sicherheitsdesign-Review","vocabulary":"Bedrohungsmodell STRIDE Angriffsfläche Vertrauensgrenze Gegenmaßnahme Angreifer Spoofing Manipulation Abstreitbarkeit Rechteausweitung","embed_threshold":0.74}
+{"lang":"es","description":"Modelado de amenazas — analisis STRIDE, superficie de ataque, mitigaciones","vocabulary":"amenazas STRIDE modelado ataque superficie riesgo mitigacion vulnerabilidad seguridad activos","embed_threshold":0.67}
+{"lang":"ja","description":"脅威モデリング、STRIDE分析、信頼境界、攻撃面の評価","vocabulary":"脅威モデル STRIDE 攻撃面 信頼境界 緩和策 セキュリティ分析","embed_threshold":0.73}

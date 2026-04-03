@@ -1,0 +1,4 @@
+{"lang":"ar","description":"أمان تبعيات لغة Go","vocabulary":"Go تبعيات أمان وحدات فحص ثغرات","embed_threshold":0.69}
+{"lang":"de","description":"Go-Abhängigkeitssicherheit, govulncheck, Modulverifizierung, Replace-Direktiven","vocabulary":"govulncheck go.sum go.mod Replace-Direktive go-install go-get Modul Proxy Prüfsumme","embed_threshold":0.46}
+{"lang":"es","description":"Seguridad de dependencias en Go — modulos, govulncheck, actualizaciones","vocabulary":"Go modulos govulncheck dependencias seguridad go.mod go.sum vulnerabilidad actualizar","embed_threshold":0.67}
+{"lang":"ja","description":"Goの依存関係セキュリティ、govulncheck","vocabulary":"govulncheck go.sum go.mod モジュール プロキシ チェックサム","embed_threshold":0.5}

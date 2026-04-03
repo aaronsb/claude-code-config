@@ -1,0 +1,4 @@
+{"lang":"ar","description":"جودة الكود والاختبار والأمان والأداء","vocabulary":"كود جودة اختبار أمان أداء برمجة","embed_threshold":0.81}
+{"lang":"de","description":"Codequalität, Testen, Sicherheit und Performance — das Handwerk, Produktionscode zu schreiben und zu pflegen","vocabulary":"Code Qualität sauber refaktorisieren verbessern testen sicher performant optimieren Review Best Practice Muster Antipattern Codegeruch technische Schulden Wartbarkeit Lesbarkeit","embed_threshold":0.86}
+{"lang":"es","description":"Calidad de codigo — pruebas, seguridad, rendimiento, buenas practicas","vocabulary":"codigo calidad pruebas seguridad rendimiento revision refactorizar limpio mantenible legible","embed_threshold":0.84}
+{"lang":"ja","description":"コード品質、テスト、セキュリティ、パフォーマンスの総合管理","vocabulary":"コード 品質 リファクタリング テスト セキュリティ 最適化 レビュー","embed_threshold":0.79}

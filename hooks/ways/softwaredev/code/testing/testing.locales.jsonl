@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تغطية الاختبارات والتأكيدات والتجهيزات","vocabulary":"اختبار تغطية تأكيدات تجهيزات فحص وحدة تكامل","embed_threshold":0.76}
+{"lang":"de","description":"Testabdeckung, Teststruktur, Assertions, Fixtures, was und wie getestet werden soll","vocabulary":"Test Abdeckung Assertion Framework Spec Fixture describe expect verifizieren Unit Integration Teststruktur","embed_threshold":0.61}
+{"lang":"es","description":"Pruebas de software — cobertura, aserciones, fixtures, estrategias de prueba","vocabulary":"pruebas cobertura asercion fixture unitaria integracion e2e estrategia suite ejecutar","embed_threshold":0.62}
+{"lang":"ja","description":"テストカバレッジ、構造、アサーション、フィクスチャ","vocabulary":"テスト カバレッジ アサーション フレームワーク フィクスチャ 検証 単体テスト 結合テスト","embed_threshold":0.76}

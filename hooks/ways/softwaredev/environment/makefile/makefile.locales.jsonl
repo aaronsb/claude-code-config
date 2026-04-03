@@ -1,0 +1,4 @@
+{"lang":"ar","description":"Makefile كمشغل للمهام","vocabulary":"Makefile مهام بناء تشغيل أوامر أتمتة make","embed_threshold":0.61}
+{"lang":"de","description":"Makefile als Projekt-Taskrunner — Build, Lint, Test und Format als Make-Targets","vocabulary":"Makefile Make Target Build Lint Test Format Clean Install Taskrunner Bauziel","embed_threshold":0.55}
+{"lang":"es","description":"Makefile como ejecutor de tareas — targets, recetas, automatizacion de build","vocabulary":"Makefile make target receta tarea build automatizar compilar ejecutar dependencia","embed_threshold":0.62}
+{"lang":"ja","description":"Makefileをプロジェクトのタスクランナーとして活用","vocabulary":"Makefile make ターゲット ビルド リント テスト フォーマット クリーン インストール","embed_threshold":0.62}

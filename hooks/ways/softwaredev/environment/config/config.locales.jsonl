@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الإعدادات ومتغيرات البيئة","vocabulary":"إعدادات تكوين متغيرات بيئة ضبط تهيئة","embed_threshold":0.77}
+{"lang":"de","description":"Konfiguration und Umgebungsvariablen — dotenv-Dateien und Verbindungseinstellungen","vocabulary":"dotenv Umgebungsvariable Konfiguration envvar Config Verbindung Port Einstellung Konfigurationsdatei","embed_threshold":0.53}
+{"lang":"es","description":"Configuracion — variables de entorno, archivos de configuracion, dotenv","vocabulary":"configuracion variable-entorno dotenv env archivo config ajustes parametro perfil","embed_threshold":0.62}
+{"lang":"ja","description":"設定管理、環境変数、dotenvファイル","vocabulary":"dotenv 環境変数 設定 コンフィグ 接続 ポート 構成","embed_threshold":0.54}

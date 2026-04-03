@@ -1,0 +1,4 @@
+{"lang":"ar","description":"أتمتة فحص الأمان في سلسلة التوريد","vocabulary":"أتمتة فحص أمان مسح آلي تكامل مستمر","embed_threshold":0.77}
+{"lang":"de","description":"Sicherheitsscanning-Automatisierung, GitHub Actions, Dependabot, CodeQL, Makefile-Audit-Targets","vocabulary":"GitHub Action Dependabot CodeQL Sicherheitsscanning Automatisierung CI Pipeline SBOM Scorecard Audit Workflow Sicherheitsrichtlinie","embed_threshold":0.73}
+{"lang":"es","description":"Automatizacion de escaneo de seguridad — CI/CD, analisis estatico, pipelines","vocabulary":"automatizacion escaneo seguridad CI CD pipeline analisis-estatico SAST DAST integrar","embed_threshold":0.67}
+{"lang":"ja","description":"セキュリティスキャンの自動化、GitHub Actions、Dependabot","vocabulary":"GitHub Actions Dependabot CodeQL スキャン 自動化 CI パイプライン","embed_threshold":0.66}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تتبع العمل عبر الجلسات المتعددة","vocabulary":"تتبع جلسات عمل متابعة حالة تقدم","embed_threshold":0.69}
+{"lang":"de","description":"Sitzungsübergreifende Arbeitsverfolgung — persistente Todo-Dateien in .claude/ für Kontinuität über mehrere Sessions","vocabulary":"Verfolgung sitzungsübergreifend mehrsitzung persistent Todo fortsetzen Kontinuität Fortschritt","embed_threshold":0.62}
+{"lang":"es","description":"Seguimiento de trabajo entre sesiones — archivos todo persistentes","vocabulary":"seguimiento entre sesiones persistente todo retomar continuidad progreso","embed_threshold":0.63}
+{"lang":"ja","description":"セッション間の作業追跡 — 永続的なtodoファイル管理","vocabulary":"追跡 セッション間 永続 todo 再開 継続 進捗","embed_threshold":0.64}

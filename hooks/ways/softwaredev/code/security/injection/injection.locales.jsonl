@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الوقاية من هجمات الحقن","vocabulary":"حقن وقاية تعقيم مدخلات هجمات SQL XSS","embed_threshold":0.61}
+{"lang":"de","description":"Injection-Prävention, SQL-Injection, XSS, Befehlsinjektion, Eingabebereinigung","vocabulary":"Injection SQL XSS innerHTML parametrisiert bereinigen escapen Shell Befehlsinjektion Template Interpolation","embed_threshold":0.57}
+{"lang":"es","description":"Prevencion de inyeccion — SQL, XSS, comandos, sanitizacion de entrada","vocabulary":"inyeccion SQL XSS sanitizar entrada validar escapar parametrizado comando prevencion","embed_threshold":0.58}
+{"lang":"ja","description":"インジェクション防止、SQLインジェクション、XSS対策","vocabulary":"インジェクション SQL XSS パラメータ化 サニタイズ エスケープ コマンド注入","embed_threshold":0.59}

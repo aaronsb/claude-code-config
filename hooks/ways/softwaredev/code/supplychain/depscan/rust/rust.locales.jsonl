@@ -1,0 +1,4 @@
+{"lang":"ar","description":"أمان تبعيات Rust","vocabulary":"Rust تبعيات أمان cargo صناديق فحص ثغرات","embed_threshold":0.57}
+{"lang":"de","description":"Rust-Abhängigkeitssicherheit, cargo-audit, Unsafe-Blöcke, Build-Skript-Risiken","vocabulary":"cargo-audit Cargo.lock Cargo.toml unsafe build.rs Crate crates.io RustSec Sicherheitshinweis","embed_threshold":0.62}
+{"lang":"es","description":"Seguridad de dependencias en Rust — cargo audit, crates, cadena de confianza","vocabulary":"Rust cargo audit crates dependencias seguridad Cargo.lock vulnerabilidad advisory confianza","embed_threshold":0.68}
+{"lang":"ja","description":"Rustの依存関係セキュリティ、cargo audit","vocabulary":"cargo audit Cargo.lock unsafe build.rs クレート rustsec","embed_threshold":0.59}

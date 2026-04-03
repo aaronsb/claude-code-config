@@ -1,0 +1,4 @@
+{"lang":"ar","description":"ضبط المفردات وتحسين عتبات المطابقة","vocabulary":"تحسين مفردات عتبة مطابقة ضبط دقة","embed_threshold":0.64}
+{"lang":"de","description":"Way-Vokabular optimieren, Schwellenwerte tunen, Matching-Qualität prüfen, Lücken und Abdeckung analysieren","vocabulary":"optimieren Vokabular Vorschläge Lücken Abdeckung ungenutzt Schwellenwert tunen Bewertung Gesundheitsprüfung Audit Trennschärfe Überlappung","embed_threshold":0.71}
+{"lang":"es","description":"Optimizar vocabulario de ways, ajustar umbrales","vocabulary":"optimizar vocabulario huecos cobertura umbral ajustar puntuación","embed_threshold":0.6}
+{"lang":"ja","description":"wayのvocabulary最適化、閾値チューニング","vocabulary":"最適化 語彙 カバレッジ 閾値 チューニング スコアリング","embed_threshold":0.65}

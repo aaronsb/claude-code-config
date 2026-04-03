@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تصحيح الأخطاء واستكشاف المشكلات","vocabulary":"تصحيح أخطاء استكشاف مشكلات تتبع حل","embed_threshold":0.67}
+{"lang":"de","description":"Debugging und Fehlersuche — Breakpoints, Stacktraces und Regressionsanalyse","vocabulary":"Debug Breakpoint Stacktrace untersuchen Fehlersuche Regression Absturz Bug Fehler Haltepunkt Ablaufverfolgung","embed_threshold":0.6}
+{"lang":"es","description":"Depuracion y resolucion de problemas — trazas, puntos de interrupcion, diagnostico","vocabulary":"depurar depuracion traza breakpoint diagnostico error problema resolver log inspeccionar","embed_threshold":0.63}
+{"lang":"ja","description":"デバッグ、障害の調査と問題解決","vocabulary":"デバッグ ブレークポイント スタックトレース 調査 トラブルシューティング リグレッション クラッシュ バグ","embed_threshold":0.68}

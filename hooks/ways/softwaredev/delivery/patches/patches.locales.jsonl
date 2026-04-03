@@ -1,0 +1,4 @@
+{"lang":"ar","description":"ملفات التصحيح وفروقات Git","vocabulary":"تصحيح رقعة فرق Git ملف تعديل","embed_threshold":0.82}
+{"lang":"de","description":"Patch-Dateien erstellen und anwenden — git diff, Hunks und Patchserien","vocabulary":"Patch Diff anwenden Hunk unified Patchserie format-patch Änderungsdatei Flicken","embed_threshold":0.55}
+{"lang":"es","description":"Archivos de parche — git diff, aplicar parches, formato unificado","vocabulary":"parche diff patch aplicar formato unificado git hunks cambio archivo","embed_threshold":0.68}
+{"lang":"ja","description":"パッチファイルの作成と適用、git diff","vocabulary":"パッチ diff 適用 ハンク 統一形式 format-patch","embed_threshold":0.53}

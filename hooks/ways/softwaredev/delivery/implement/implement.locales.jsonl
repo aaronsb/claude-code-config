@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تخطيط التنفيذ بعد القرار المعماري","vocabulary":"تنفيذ تخطيط بعد قرار معماري خطوات مهام","embed_threshold":0.9}
+{"lang":"de","description":"Umsetzung nach ADR-Entscheidung — Arbeitspakete schneiden und parallelisieren","vocabulary":"implementieren umsetzen bauen beginnen starten ausführen Plan Arbeitspaket aufteilen parallelisieren Umsetzung Durchführung","embed_threshold":0.71}
+{"lang":"es","description":"Planificacion de implementacion post-ADR — desglose de tareas, secuencia, riesgos","vocabulary":"implementar planificar tarea desglose secuencia riesgo alcance fase iteracion post-ADR","embed_threshold":0.7}
+{"lang":"ja","description":"ADR後の実装 — 作業分解、並列化の計画","vocabulary":"実装 構築 開始 実行 計画 作業分解 並列化","embed_threshold":0.74}

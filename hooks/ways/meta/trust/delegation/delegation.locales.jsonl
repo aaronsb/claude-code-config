@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الاستخدام المسؤول لحسابات المستخدم","vocabulary":"تفويض حسابات مسؤولية استخدام نيابة صلاحيات","embed_threshold":0.66}
+{"lang":"de","description":"Verantwortungsvoller Umgang mit Konten, Werkzeugen und Infrastruktur des Menschen — E-Mail-Postfächer, Repos, APIs als geliehene Ressourcen","vocabulary":"Konto Postfach senden veröffentlichen erstellen löschen Zugriff Berechtigung geliehen Ressource verifizieren sicher ungesendet Konsequenzen stellvertretend","embed_threshold":0.64}
+{"lang":"es","description":"Usar cuentas del humano responsablemente — recursos prestados","vocabulary":"cuenta bandeja enviar publicar acceso permiso prestar consecuencias","embed_threshold":0.64}
+{"lang":"ja","description":"ユーザーのアカウントを責任を持って使用する — 借りたリソース","vocabulary":"アカウント 受信トレイ 送信 公開 アクセス 権限 責任 委譲","embed_threshold":0.64}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تدقيق تاريخ Git والكشف عن الأسرار المسربة","vocabulary":"تدقيق مستودع تاريخ أسرار مسربة فحص كشف","embed_threshold":0.76}
+{"lang":"de","description":"Git-Historien-Audit, Erkennung geleakter Geheimnisse, Binärdateien in Repositories aufspüren","vocabulary":"Git-Historie große Objekte geleakte Geheimnisse committed gitignored Binärdatei Blob git-rev-list Repogröße Geheimnisscan API-Schlüssel Token Passwort","embed_threshold":0.73}
+{"lang":"es","description":"Auditoria de historial git — secretos filtrados, archivos sensibles, limpieza","vocabulary":"auditoria git historial secretos filtrados sensible limpiar BFG trufflehog gitleaks","embed_threshold":0.79}
+{"lang":"ja","description":"git履歴の監査、漏洩シークレットの検出、バイナリブロブの調査","vocabulary":"git履歴 シークレット漏洩 バイナリブロブ 認証情報 スキャン 監査","embed_threshold":0.69}

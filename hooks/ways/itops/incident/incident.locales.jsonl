@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الاستجابة للحوادث والتصعيد وتقليل وقت الحل","vocabulary":"حادث استجابة تصعيد وقت حل طوارئ عطل","embed_threshold":0.61}
+{"lang":"de","description":"Incident Response, Eskalationspfade, MTTR-Ziele, Alarmtriage und Behebungsworkflows","vocabulary":"Incident Störung Eskalation Support-Stufe L0 L1 L2 MTTR Alarmtriage Behebung Bereitschaft Ausfall Schweregrad Produktion","embed_threshold":0.52}
+{"lang":"es","description":"Respuesta a incidentes, escalamiento, MTTR, triaje de alertas","vocabulary":"incidente respuesta escalamiento nivel mttr alerta triaje guardia interrupción","embed_threshold":0.59}
+{"lang":"ja","description":"インシデント対応のティア分類、エスカレーション、MTTR、アラートトリアージ","vocabulary":"インシデント 障害対応 エスカレーション アラート トリアージ オンコール 復旧","embed_threshold":0.57}

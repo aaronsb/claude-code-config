@@ -1,0 +1,4 @@
+{"lang":"ar","description":"جودة الكود وإعادة الهيكلة ومبادئ SOLID","vocabulary":"جودة كود إعادة هيكلة مبادئ نظافة صيانة","embed_threshold":0.75}
+{"lang":"de","description":"Codequalität, Refactoring, SOLID-Prinzipien, Code-Review-Standards, technische Schulden, Wartbarkeit","vocabulary":"refaktorisieren Qualität SOLID Prinzip zerlegen Methode extrahieren Verantwortung Kopplung Kohäsion Wartbarkeit Lesbarkeit","embed_threshold":0.86}
+{"lang":"es","description":"Calidad de codigo — refactorizacion, principios SOLID, codigo limpio","vocabulary":"calidad refactorizar SOLID principios limpio legible mantenible acoplamiento cohesion deuda-tecnica","embed_threshold":0.74}
+{"lang":"ja","description":"コード品質の向上、リファクタリング、SOLID原則","vocabulary":"リファクタリング 品質 SOLID 原則 分解 結合度 凝集度 保守性","embed_threshold":0.68}

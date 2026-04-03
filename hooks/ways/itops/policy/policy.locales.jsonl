@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تصنيف العمليات وتطبيق السياسات","vocabulary":"سياسة تصنيف عمليات تطبيق قواعد امتثال","embed_threshold":0.67}
+{"lang":"de","description":"Operationsklassifizierung, Richtliniendurchsetzung, Freigabeschritte, Auswirkungsanalyse und Risikobewertung","vocabulary":"Operationsklasse Richtlinie Durchsetzung Freigabe Genehmigung Auswirkungsradius Risikobewertung Stufe gefährlich sicher kritisch","embed_threshold":0.79}
+{"lang":"es","description":"Clasificación de operaciones, cumplimiento de políticas, puertas de aprobación","vocabulary":"operación política cumplimiento aprobación puerta radio de impacto riesgo","embed_threshold":0.76}
+{"lang":"ja","description":"オペレーション分類、ポリシー適用、承認ゲート管理","vocabulary":"ポリシー 運用ルール 承認 ゲート 影響範囲 リスク 分類","embed_threshold":0.73}

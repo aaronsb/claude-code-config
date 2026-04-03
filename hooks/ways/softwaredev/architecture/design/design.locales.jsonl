@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تصميم الأنظمة وأنماط التصميم ومخططات قواعد البيانات","vocabulary":"تصميم نظام أنماط قاعدة بيانات مخطط نمذجة","embed_threshold":0.74}
+{"lang":"de","description":"Software-Systemdesign, Architekturmuster, Datenbankschema, Komponentenmodellierung, Vorschläge, RFCs, Entwurfsdiskussion","vocabulary":"Architekturmuster Datenbankschema Modellierung Schnittstelle Komponente Module Monolith Microservice Domäne Schicht Kopplung Kohäsion Abstraktion Vorschlag RFC Entwurf Whiteboard","embed_threshold":0.72}
+{"lang":"es","description":"Diseno de sistemas — patrones, esquema de base de datos, modelado de datos","vocabulary":"diseno patron esquema base-de-datos modelado datos relaciones tablas entidades dominio","embed_threshold":0.71}
+{"lang":"ja","description":"ソフトウェアシステム設計、パターン、データベーススキーマ、RFC","vocabulary":"アーキテクチャ パターン データベース スキーマ モデリング インターフェース 設計提案","embed_threshold":0.78}

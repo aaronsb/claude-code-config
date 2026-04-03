@@ -1,0 +1,4 @@
+{"lang":"ar","description":"إعداد بيئة التطوير","vocabulary":"بيئة تطوير إعداد تثبيت أدوات تهيئة","embed_threshold":0.77}
+{"lang":"de","description":"Entwicklungsumgebung einrichten — Konfiguration, Abhängigkeiten, Debugging und SSH","vocabulary":"Umgebung Einrichtung Konfiguration Abhängigkeit installieren Build Werkzeug Debug SSH Entwicklungsumgebung","embed_threshold":0.61}
+{"lang":"es","description":"Entorno de desarrollo — configuracion, herramientas, preparacion del espacio de trabajo","vocabulary":"entorno desarrollo configurar herramientas espacio-de-trabajo preparar instalar requisitos local","embed_threshold":0.59}
+{"lang":"ja","description":"開発環境 — 設定、依存関係、デバッグ、SSH","vocabulary":"環境 セットアップ 設定 依存関係 インストール ビルド ツール デバッグ SSH","embed_threshold":0.67}

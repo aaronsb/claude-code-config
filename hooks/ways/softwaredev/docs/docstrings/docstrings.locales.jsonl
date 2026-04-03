@@ -1,0 +1,4 @@
+{"lang":"ar","description":"توثيق الكود والتعليقات التوضيحية","vocabulary":"توثيق كود تعليقات توضيحية وصف دوال واجهة","embed_threshold":0.71}
+{"lang":"de","description":"Codedokumentation — Docstrings, JSDoc, Inline-Kommentare und Annotationen","vocabulary":"Docstring JSDoc GoDoc PyDoc RustDoc Kommentar Annotation Codedokumentation Inline-Dokumentation Funktionsbeschreibung","embed_threshold":0.69}
+{"lang":"es","description":"Documentacion de codigo — docstrings, comentarios, anotaciones de tipo","vocabulary":"docstring comentario documentar funcion parametro retorno tipo anotacion JSDoc pydoc","embed_threshold":0.63}
+{"lang":"ja","description":"コードドキュメント、docstring、JSDoc、インラインコメント","vocabulary":"docstring JSDoc コメント アノテーション コード文書化 説明","embed_threshold":0.6}

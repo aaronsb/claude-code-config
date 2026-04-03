@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تسطيح تاريخ Git وقطع السجلات","vocabulary":"تاريخ Git تسطيح قطع سجلات تنظيف","embed_threshold":0.79}
+{"lang":"de","description":"Git-Historienbereinigung, Fork-Trennung, BFG-Cleanup, Geheimnisse aus Git-Historie entfernen","vocabulary":"Orphan-Branch Historie abflachen Fork trennen BFG git-reflog gc prune eigenständig Fork löschen Historienbereinigung","embed_threshold":0.7}
+{"lang":"es","description":"Aplanamiento de historial git — squash, rebase, limpieza de ramas","vocabulary":"historial git aplanar squash rebase limpiar rama commits condensar simplificar","embed_threshold":0.48}
+{"lang":"ja","description":"git履歴のフラット化、フォーク切断、BFGクリーンアップ","vocabulary":"孤立ブランチ 履歴切断 フラット化 bfg reflog gc prune","embed_threshold":0.68}

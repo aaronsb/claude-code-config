@@ -1,0 +1,4 @@
+{"lang":"ar","description":"إدارة المهام وبنود العمل","vocabulary":"مهام إدارة بنود عمل متابعة قائمة أولويات","embed_threshold":0.74}
+{"lang":"de","description":"Persönliche Aufgabenverwaltung, Aktionspunkte, Verpflichtungen, Aufgaben erstellen aktualisieren abschließen aufräumen","vocabulary":"Aufgabe Aktionspunkt To-do Verpflichtung verfolgen erstellen erledigen aktualisieren überfällig offen Priorität Fälligkeitsdatum aufräumen","embed_threshold":0.71}
+{"lang":"es","description":"Gestión de tareas personales, acciones pendientes, obligaciones","vocabulary":"tarea acción pendiente lista seguimiento crear completar actualizar prioridad","embed_threshold":0.7}
+{"lang":"ja","description":"個人タスク管理、アクションアイテムの追跡、やることリスト","vocabulary":"タスク アクションアイテム やること 追跡 作成 完了 優先度 管理","embed_threshold":0.63}

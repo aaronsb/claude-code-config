@@ -1,0 +1,4 @@
+{"lang":"ar","description":"أمان سلسلة توريد البرمجيات","vocabulary":"سلسلة توريد أمان برمجيات تبعيات حماية","embed_threshold":0.84}
+{"lang":"de","description":"Lieferkettensicherheit, Repository-Vertrauensbewertung, Code aus unbekannten Quellen evaluieren","vocabulary":"Lieferkette Vertrauensbewertung geforktes Repo unbekanntes Repo Audit Abhängigkeitsscan Schwachstelle Backdoor Herkunft Klon Fork extern Drittanbieter","embed_threshold":0.69}
+{"lang":"es","description":"Seguridad de la cadena de suministro — dependencias, procedencia, integridad","vocabulary":"cadena-de-suministro seguridad dependencias procedencia integridad SBOM firma verificar confianza","embed_threshold":0.68}
+{"lang":"ja","description":"サプライチェーンセキュリティ、リポジトリの信頼性評価","vocabulary":"サプライチェーン 信頼性 評価 監査 依存関係 脆弱性 悪意あるコード","embed_threshold":0.75}

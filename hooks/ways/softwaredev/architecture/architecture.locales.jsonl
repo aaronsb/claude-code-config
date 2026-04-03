@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تصميم الأنظمة والتفكير الهيكلي","vocabulary":"هندسة معمارية تصميم نظام هيكل بنية مكونات","embed_threshold":0.69}
+{"lang":"de","description":"Systemdesign, Architekturentscheidungen und strukturelles Denken über Softwareorganisation","vocabulary":"Architektur Design System Struktur Entscheidung Abwägung Muster Komponente Dienst Modul Schicht Schnittstelle Vertrag Abhängigkeit Kopplung Kohäsion","embed_threshold":0.76}
+{"lang":"es","description":"Diseno de sistemas — estructura, componentes, patrones arquitectonicos","vocabulary":"arquitectura diseno sistema estructura componentes modulos capas patron escalabilidad","embed_threshold":0.6}
+{"lang":"ja","description":"システム設計、アーキテクチャの意思決定、構造的な思考","vocabulary":"アーキテクチャ 設計 システム 構造 判断 パターン コンポーネント モジュール","embed_threshold":0.78}

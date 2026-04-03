@@ -1,0 +1,4 @@
+{"lang":"ar","description":"ترحيل قواعد البيانات","vocabulary":"ترحيل قاعدة بيانات مخطط تحديث هجرة تغيير","embed_threshold":0.54}
+{"lang":"de","description":"Datenbankmigrationen — Schemaänderungen, Rollbacks und Seed-Daten","vocabulary":"Migration Schema Tabelle Spalte Index Rollback Seed DDL Schemaänderung Datenbankmigration Rückführung","embed_threshold":0.57}
+{"lang":"es","description":"Migraciones de base de datos — esquema, versionado, rollback, datos","vocabulary":"migracion base-de-datos esquema versionado rollback ALTER tabla columna datos reversible","embed_threshold":0.58}
+{"lang":"ja","description":"データベースマイグレーション、スキーマ変更、ロールバック","vocabulary":"マイグレーション スキーマ テーブル変更 カラム インデックス ロールバック DDL","embed_threshold":0.71}

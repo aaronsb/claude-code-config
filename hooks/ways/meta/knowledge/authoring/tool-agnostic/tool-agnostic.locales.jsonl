@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تأليف طرق محايدة تجاه الأدوات","vocabulary":"محايد أدوات تأليف طرق عام غير مرتبط","embed_threshold":0.64}
+{"lang":"de","description":"Ways schreiben, die Muster und Absichten beschreiben statt konkrete Werkzeugnamen, MCP-Server oder CLI-Befehle zu referenzieren","vocabulary":"werkzeugunabhängig herstellerneutral portabel abstrakt Absicht Muster MCP CLI spezifisch","embed_threshold":0.57}
+{"lang":"es","description":"Escribir ways con patrones en vez de referencias a herramientas específicas","vocabulary":"agnóstico herramienta neutral portable abstracto intención patrón vendor","embed_threshold":0.62}
+{"lang":"ja","description":"特定ツールに依存しないパターンでwayを書く","vocabulary":"ツール非依存 ベンダー中立 汎用 抽象化 パターン 移植性","embed_threshold":0.61}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"جدولة الاجتماعات والتحقق من التوفر في التقويم","vocabulary":"تقويم اجتماع موعد جدولة توفر حجز","embed_threshold":0.69}
+{"lang":"de","description":"Termine planen, Verfügbarkeit prüfen, Zeitblöcke im Kalender reservieren, Besprechungen erstellen, freie Zeitfenster finden","vocabulary":"Termin Kalender Verfügbarkeit Zeitblock Besprechung Einladung Erinnerung verschieben freier Slot buchen Zeitzone Terminplanung","embed_threshold":0.74}
+{"lang":"es","description":"Agendar reuniones, consultar disponibilidad, bloquear tiempo, eventos del calendario","vocabulary":"agendar calendario disponibilidad bloquear tiempo evento reunión invitación horario","embed_threshold":0.68}
+{"lang":"ja","description":"会議のスケジュール調整、空き時間の確認、カレンダー管理","vocabulary":"スケジュール カレンダー 予定 会議 空き時間 予約 招待 日程調整","embed_threshold":0.76}

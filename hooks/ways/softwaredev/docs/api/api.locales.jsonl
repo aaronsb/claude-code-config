@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تصميم واجهات برمجة التطبيقات REST","vocabulary":"واجهة برمجة تطبيقات REST API تصميم نقاط وصول","embed_threshold":0.62}
+{"lang":"de","description":"API-Entwurf — REST-Endpunkte, HTTP-Schnittstellen, Versionierung und Paginierung","vocabulary":"Endpunkt API REST Route HTTP Paginierung Versionierung GraphQL Webhook Schnittstelle API-Design","embed_threshold":0.5}
+{"lang":"es","description":"Diseno de API REST — endpoints, verbos HTTP, codigos de estado, OpenAPI","vocabulary":"API REST endpoint HTTP GET POST PUT DELETE estado OpenAPI diseno recurso","embed_threshold":0.51}
+{"lang":"ja","description":"REST API設計、HTTPエンドポイント、バージョニング","vocabulary":"エンドポイント API REST ルート HTTP ページネーション バージョニング GraphQL Webhook","embed_threshold":0.46}

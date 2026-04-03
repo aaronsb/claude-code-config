@@ -1,0 +1,4 @@
+{"lang":"ar","description":"أنماط معالجة الأخطاء والاستثناءات","vocabulary":"أخطاء معالجة استثناءات خطأ التقاط رسائل","embed_threshold":0.67}
+{"lang":"de","description":"Fehlerbehandlungsmuster, Ausnahmemanagement, Try-Catch-Grenzen, Fehlerweitergabe und -umhüllung","vocabulary":"Ausnahme Fehlerbehandlung catch throw Grenze umhüllen weiterwerfen Fallback Wiederherstellung Weitergabe unbehandelt","embed_threshold":0.68}
+{"lang":"es","description":"Patrones de manejo de errores — excepciones, codigos de error, recuperacion","vocabulary":"errores excepciones manejo capturar lanzar recuperacion fallo mensaje traza pila","embed_threshold":0.66}
+{"lang":"ja","description":"エラーハンドリングのパターン、例外管理","vocabulary":"例外処理 エラーハンドリング キャッチ スロー ラップ フォールバック 回復","embed_threshold":0.62}

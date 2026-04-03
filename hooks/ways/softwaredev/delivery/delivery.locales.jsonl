@@ -1,0 +1,4 @@
+{"lang":"ar","description":"شحن الكود إلى بيئة الإنتاج","vocabulary":"تسليم شحن إنتاج نشر إطلاق توزيع","embed_threshold":0.48}
+{"lang":"de","description":"Code ausliefern — Commits, Pull Requests, Releases und Deployment in Produktion","vocabulary":"ausliefern deployen veröffentlichen Release Commit pushen mergen Pull-Request Pipeline Produktion Bereitstellung Auslieferung","embed_threshold":0.58}
+{"lang":"es","description":"Entrega de software — enviar codigo a produccion, despliegue, pipeline","vocabulary":"entrega despliegue produccion pipeline enviar lanzar CI CD automatizar flujo","embed_threshold":0.67}
+{"lang":"ja","description":"コードの出荷 — コミット、PR、リリース、本番環境へのデプロイ","vocabulary":"出荷 デリバリー デプロイ リリース コミット プッシュ マージ パイプライン 本番","embed_threshold":0.62}

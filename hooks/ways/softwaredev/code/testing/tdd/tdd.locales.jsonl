@@ -1,0 +1,4 @@
+{"lang":"ar","description":"التطوير الموجه بالاختبارات","vocabulary":"تطوير موجه اختبارات أحمر أخضر إعادة هيكلة دورة","embed_threshold":0.6}
+{"lang":"de","description":"Testgetriebene Entwicklung, TDD Red-Green-Refactor-Zyklus, zuerst den fehlschlagenden Test schreiben","vocabulary":"TDD Red Green Refactor Test zuerst Implementierung fehlschlagend testgetrieben","embed_threshold":0.56}
+{"lang":"es","description":"Desarrollo guiado por pruebas — ciclo rojo-verde-refactorizar, diseno emergente","vocabulary":"TDD desarrollo-guiado-por-pruebas rojo verde refactorizar ciclo primero-prueba diseno emergente","embed_threshold":0.57}
+{"lang":"ja","description":"テスト駆動開発、レッド・グリーン・リファクタのサイクル","vocabulary":"TDD テスト駆動 レッド グリーン リファクタ テストファースト 失敗テスト","embed_threshold":0.63}

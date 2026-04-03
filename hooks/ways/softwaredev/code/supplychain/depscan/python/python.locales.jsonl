@@ -1,0 +1,4 @@
+{"lang":"ar","description":"أمان تبعيات Python","vocabulary":"Python تبعيات أمان pip حزم فحص ثغرات","embed_threshold":0.61}
+{"lang":"de","description":"Python-Abhängigkeitssicherheit, pip-audit, setup.py-Risiken, PyPI-Typosquatting","vocabulary":"pip-audit setup.py pyproject.toml requirements.txt Wheel sdist PyPI Typosquatting Safety pip-install Python Paket","embed_threshold":0.56}
+{"lang":"es","description":"Seguridad de dependencias en Python — pip audit, safety, entornos virtuales","vocabulary":"Python pip audit safety dependencias seguridad requirements virtualenv vulnerabilidad PyPI","embed_threshold":0.6}
+{"lang":"ja","description":"Pythonの依存関係セキュリティ、pip-audit","vocabulary":"pip-audit setup.py pyproject.toml requirements.txt タイポスクワッティング","embed_threshold":0.54}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تحسين الأداء والتنميط","vocabulary":"أداء تحسين تنميط سرعة كفاءة ذاكرة","embed_threshold":0.65}
+{"lang":"de","description":"Performanceoptimierung, Profiling, Benchmarking, Latenz","vocabulary":"optimieren Profiling Benchmark Latenz Durchsatz Speicher Cache Engpass Flamegraph Allokation Heap Geschwindigkeit langsam","embed_threshold":0.5}
+{"lang":"es","description":"Optimizacion de rendimiento — perfilado, cuellos de botella, eficiencia","vocabulary":"rendimiento optimizar perfilado benchmark cuello-de-botella latencia memoria CPU cache eficiencia","embed_threshold":0.61}
+{"lang":"ja","description":"パフォーマンス最適化、プロファイリング、ベンチマーク","vocabulary":"最適化 プロファイル ベンチマーク レイテンシ スループット メモリ キャッシュ ボトルネック","embed_threshold":0.65}

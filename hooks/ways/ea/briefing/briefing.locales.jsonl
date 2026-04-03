@@ -1,0 +1,4 @@
+{"lang":"ar","description":"إعداد الإحاطة الصباحية وملخص الأحداث الليلية","vocabulary":"إحاطة صباحية ملخص ليلي تقرير يومي مستجدات","embed_threshold":0.56}
+{"lang":"de","description":"Morgendliches Briefing, was ist über Nacht passiert, Tagesübersicht über alle Posteingänge und Kalender","vocabulary":"Morgenbriefing Tagesübersicht aufholen was habe ich verpasst Zusammenfassung Prioritäten Posteingang Kalender Überblick","embed_threshold":0.69}
+{"lang":"es","description":"Resumen matutino, ponerse al día con lo que pasó durante la noche","vocabulary":"ponerse al día resumen matutino inicio del día agenda prioridades briefing","embed_threshold":0.62}
+{"lang":"ja","description":"朝のブリーフィング、昨夜の出来事の要約、一日の予定確認","vocabulary":"朝礼 ブリーフィング 要約 まとめ 予定 優先事項 今日のタスク","embed_threshold":0.7}

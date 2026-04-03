@@ -1,0 +1,4 @@
+{"lang":"ar","description":"رسومات بيانية في الطرفية","vocabulary":"رسم بياني طرفية مخطط بيانات عرض","embed_threshold":0.7}
+{"lang":"de","description":"ANSI-Terminaldiagramme rendern — Balken-, Linien- und Sparkline-Grafiken","vocabulary":"Diagramm Grafik Sparkline Histogramm Plot Trend Metrik Balkendiagramm Liniendiagramm Visualisierung","embed_threshold":0.59}
+{"lang":"es","description":"Graficos en terminal — barras, lineas, histogramas, visualizacion de datos","vocabulary":"grafico barra linea histograma terminal datos visualizar sparkline tabla ASCII","embed_threshold":0.75}
+{"lang":"ja","description":"ANSIターミナルチャートの描画 — 棒グラフ、折れ線、スパークライン","vocabulary":"チャート グラフ スパークライン ヒストグラム プロット 傾向 指標 可視化","embed_threshold":0.58}

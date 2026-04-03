@@ -1,0 +1,4 @@
+{"lang":"ar","description":"صياغة الردود على رسائل البريد الإلكتروني","vocabulary":"صياغة رد بريد إلكتروني كتابة رسالة مسودة","embed_threshold":0.67}
+{"lang":"de","description":"E-Mail-Entwürfe schreiben, Schreibstil kalibrieren, Antworten mit korrektem Threading erstellen","vocabulary":"Entwurf Antwort verfassen E-Mail schreiben Nachricht Tonfall Stil Thread Anhang formulieren","embed_threshold":0.76}
+{"lang":"es","description":"Redactar respuestas de correo, estilo de escritura, borradores de email","vocabulary":"borrador respuesta redactar correo escribir mensaje tono estilo hilo","embed_threshold":0.71}
+{"lang":"ja","description":"メールの返信作成、文体調整、下書き","vocabulary":"メール下書き 返信 作成 文体 トーン スレッド 文章","embed_threshold":0.71}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"فرز البريد الإلكتروني ومسح صندوق الوارد","vocabulary":"بريد إلكتروني فرز صندوق وارد تصنيف أولويات","embed_threshold":0.67}
+{"lang":"de","description":"E-Mail-Posteingang sichten, ungelesene Nachrichten scannen, Threads klassifizieren und filtern, was braucht eine Antwort","vocabulary":"Triage Posteingang ungelesen E-Mail scannen Nachrichten filtern Priorität Handlungsbedarf prüfen dringend Antwort Thread sichten","embed_threshold":0.76}
+{"lang":"es","description":"Triaje de correo, revisar bandeja de entrada, clasificar y filtrar hilos","vocabulary":"triaje bandeja entrada no leído correo revisar filtrar prioridad urgente responder","embed_threshold":0.7}
+{"lang":"ja","description":"メールのトリアージ、受信トレイの整理、スレッドの分類とフィルタリング","vocabulary":"トリアージ 受信トレイ 未読 メール 分類 フィルター 優先度 緊急","embed_threshold":0.69}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"رسومات Mermaid في الطرفية","vocabulary":"رسم تخطيطي Mermaid طرفية مخطط تدفق","embed_threshold":0.9}
+{"lang":"de","description":"Mermaid-Diagramme als Terminal-Grafik rendern — Fluss-, Sequenz- und ER-Diagramme","vocabulary":"Mermaid Diagramm Flussdiagramm Sequenzdiagramm Zustandsautomat ER Entitätsbeziehung Terminalkunst Schaubild","embed_threshold":0.9}
+{"lang":"es","description":"Diagramas Mermaid en terminal — flujo, secuencia, arquitectura visual","vocabulary":"diagrama Mermaid terminal flujo secuencia arquitectura visual renderizar ASCII bloque","embed_threshold":0.81}
+{"lang":"ja","description":"Mermaid図をターミナルアートとして描画","vocabulary":"Mermaid 図 フローチャート シーケンス図 状態遷移 ER図 エンティティ","embed_threshold":0.9}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"نظافة ملفات القفل وتثبيت الإصدارات","vocabulary":"ملف قفل إصدارات تثبيت نظافة تبعيات npm","embed_threshold":0.65}
+{"lang":"de","description":"Lockfile-Hygiene, Versionspinning, Supply-Chain-Angriffe durch Abhängigkeitsauflösung verhindern","vocabulary":"Lockfile package-lock.json yarn.lock pnpm-lock pinnen exakte Version Caret Semver npm-ci transitiv Auflösung","embed_threshold":0.62}
+{"lang":"es","description":"Higiene de archivos de bloqueo — package-lock.json, integridad, consistencia","vocabulary":"lockfile bloqueo package-lock integridad consistencia npm yarn pnpm reproducible deterministico","embed_threshold":0.61}
+{"lang":"ja","description":"ロックファイルの衛生管理、バージョン固定、サプライチェーン攻撃対策","vocabulary":"ロックファイル package-lock.json yarn.lock バージョン固定 semver","embed_threshold":0.53}

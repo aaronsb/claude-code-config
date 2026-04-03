@@ -1,0 +1,4 @@
+{"lang":"ar","description":"فحص الثغرات في التبعيات","vocabulary":"تبعيات ثغرات فحص مسح أمان مكتبات","embed_threshold":0.71}
+{"lang":"de","description":"Abhängigkeits-Schwachstellenscanning, Lockfile-Auditing, Paketsicherheit","vocabulary":"osv-scanner pip-audit npm-audit cargo-audit govulncheck Abhängigkeitsscan Schwachstelle CVE Lockfile Requirements Paketsicherheit SBOM","embed_threshold":0.67}
+{"lang":"es","description":"Escaneo de vulnerabilidades en dependencias — auditar, actualizar, parchar","vocabulary":"dependencias vulnerabilidad escaneo auditar CVE parche actualizar SCA composicion","embed_threshold":0.72}
+{"lang":"ja","description":"依存関係の脆弱性スキャン、ロックファイル監査","vocabulary":"脆弱性スキャン 依存関係 監査 CVE osv-scanner pip-audit npm-audit","embed_threshold":0.71}

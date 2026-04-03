@@ -1,0 +1,4 @@
+{"lang":"ar","description":"تتبع المشاريع ومواءمة سجلات القرارات المعمارية","vocabulary":"صحة مشروع تتبع مواءمة قرارات معمارية مراجعة","embed_threshold":0.9}
+{"lang":"de","description":"claude-code-config als Projekt pflegen — Upstream-Tracking gegen Claude-Code-Releases, ADR-Abgleich, Release-Disziplin","vocabulary":"Upstream Changelog Release Version Claude-Code Update ADR Status Abgleich Drift veraltet ausgeliefert Projektgesundheit Audit","embed_threshold":0.66}
+{"lang":"es","description":"Gestión de proyecto — seguimiento upstream, reconciliación de ADRs","vocabulary":"upstream changelog versión actualizar adr estado salud auditoría","embed_threshold":0.6}
+{"lang":"ja","description":"プロジェクト管理 — アップストリーム追跡、ADRの整合性確認","vocabulary":"アップストリーム 変更履歴 リリース バージョン ADR 健全性 監査","embed_threshold":0.7}

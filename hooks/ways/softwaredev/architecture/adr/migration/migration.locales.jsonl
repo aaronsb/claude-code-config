@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الترحيل إلى أدوات سجلات القرارات المعمارية","vocabulary":"ترحيل أدوات سجلات قرارات تحويل انتقال","embed_threshold":0.75}
+{"lang":"de","description":"Migration zu ADR-Werkzeugen, ADR-Einführung, bestehende Entscheidungen konvertieren, adr.yaml einrichten, Architekturaufzeichnungen bootstrappen","vocabulary":"migrieren einführen konvertieren bootstrappen einrichten Greenfield Legacy umbenennen nummerieren Frontmatter YAML Gerüst importieren","embed_threshold":0.61}
+{"lang":"es","description":"Migrar al sistema de herramientas ADR — transicion de formato y flujo de trabajo","vocabulary":"migracion ADR migrar transicion herramientas formato convertir actualizar legacy","embed_threshold":0.6}
+{"lang":"ja","description":"ADRツールへの移行、既存の決定の変換","vocabulary":"移行 導入 変換 ブートストラップ セットアップ レガシー 足場","embed_threshold":0.76}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الموافقة البشرية على العمليات عالية المخاطر","vocabulary":"موافقة بشرية مخاطر عالية اقتراح مراجعة تصريح","embed_threshold":0.7}
+{"lang":"de","description":"Strukturierte Vorschläge zur menschlichen Freigabe vor risikoreichen Operationen, Mensch-in-der-Schleife-Workflows","vocabulary":"Vorschlag Freigabe Genehmigung Mensch Prüfung bestätigen gefährliche Operation Lebenszyklus Anfrage Berechtigung Autorisierung","embed_threshold":0.66}
+{"lang":"es","description":"Propuestas estructuradas para aprobación humana, operaciones de alto riesgo","vocabulary":"propuesta aprobación humano revisar confirmar peligroso autorizar","embed_threshold":0.69}
+{"lang":"ja","description":"高リスク操作の承認フロー、人間による確認が必要な提案","vocabulary":"提案 承認 確認 レビュー 危険操作 認可 承認フロー","embed_threshold":0.79}

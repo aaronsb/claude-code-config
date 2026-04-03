@@ -1,0 +1,4 @@
+{"lang":"ar","description":"نظرة عامة على الأمان والبرمجة الآمنة","vocabulary":"أمان برمجة آمنة حماية ثغرات دفاع","embed_threshold":0.84}
+{"lang":"de","description":"Sicherheitsüberblick, sichere Programmierstandards, Sicherheitscheckliste","vocabulary":"Sicherheit Schwachstelle schützen Verteidigung absichern härten OWASP Sicherheitsüberprüfung","embed_threshold":0.79}
+{"lang":"es","description":"Seguridad general — codificacion segura, revision de vulnerabilidades, defensa en profundidad","vocabulary":"seguridad vulnerable codificacion-segura defensa OWASP auditoria riesgo parche endurecimiento","embed_threshold":0.78}
+{"lang":"ja","description":"セキュリティ概要、セキュアコーディングのデフォルト設定","vocabulary":"セキュリティ 脆弱性 防御 保護 堅牢化 OWASP セキュアコーディング","embed_threshold":0.74}

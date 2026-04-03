@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الثقة العلائقية والتخميد المتبادل","vocabulary":"ثقة علاقة تخميد متبادل تعاون حدود","embed_threshold":0.6}
+{"lang":"de","description":"Vertrauensbeziehung zwischen Claude und Mensch als gegenseitige Dämpfung — geliehene Ressourcen, asymmetrische Konsequenzen, gesteuerter Regelkreis","vocabulary":"Vertrauen Beziehung Delegation geliehen Konsequenzen Reputation Verantwortung Glaubwürdigkeit Autonomie Umfang Vorfall Missbrauch Spektrum Dämpfung Regelkreis","embed_threshold":0.69}
+{"lang":"es","description":"Confianza relacional — amortiguación mutua, recursos prestados","vocabulary":"confianza relación delegación prestado consecuencias reputación autonomía","embed_threshold":0.78}
+{"lang":"ja","description":"関係性に基づく信頼 — 相互調整、借りたリソースの管理","vocabulary":"信頼 関係性 委任 責任 評判 自律性 借用","embed_threshold":0.77}

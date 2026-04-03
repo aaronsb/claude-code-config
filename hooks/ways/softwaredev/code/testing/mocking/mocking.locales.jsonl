@@ -1,0 +1,4 @@
+{"lang":"ar","description":"بدائل الاختبار والمحاكاة","vocabulary":"محاكاة بدائل اختبار وهمي تقليد حقن","embed_threshold":0.74}
+{"lang":"de","description":"Abhängigkeiten mocken, Testdoubles, Fakes, Stubs, Spies, Dependency Injection für Tests","vocabulary":"Mock Fake Stub Spy Double Abhängigkeit injizieren extern isolieren Testdouble","embed_threshold":0.57}
+{"lang":"es","description":"Dobles de prueba — mocks, stubs, espias, inyeccion de dependencias","vocabulary":"mock stub espia doble prueba simular inyeccion dependencia falso aislamiento","embed_threshold":0.76}
+{"lang":"ja","description":"依存関係のモック化、テストダブル、フェイク、スパイ","vocabulary":"モック フェイク スタブ スパイ テストダブル 依存注入 分離","embed_threshold":0.59}

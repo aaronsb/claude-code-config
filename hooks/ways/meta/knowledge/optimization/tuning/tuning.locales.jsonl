@@ -1,0 +1,4 @@
+{"lang":"ar","description":"ضبط عتبات اللغات تلقائياً ومراجعة التمييز وإصلاح الأوصاف الغامضة","vocabulary":"ضبط عتبة تمييز مراجعة غموض إشارة ضوضاء حساسية"}
+{"lang":"de","description":"Schwellenwerte automatisch optimieren, Diskriminierungsaudit, mehrdeutige Beschreibungen korrigieren","vocabulary":"Tuning Schwellenwert Diskriminierung Audit mehrdeutig Signal Rauschen Empfindlichkeit"}
+{"lang":"es","description":"Ajuste automático de umbrales, auditoría de discriminación, corregir descripciones ambiguas","vocabulary":"ajuste umbral discriminación auditoría ambiguo señal ruido sensibilidad"}
+{"lang":"ja","description":"しきい値の自動チューニング、識別監査、曖昧な説明の修正","vocabulary":"チューニング しきい値 識別 監査 曖昧 信号 ノイズ 感度"}

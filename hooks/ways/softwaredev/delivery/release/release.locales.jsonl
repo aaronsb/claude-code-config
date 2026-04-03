@@ -1,0 +1,4 @@
+{"lang":"ar","description":"الإصدارات وسجل التغييرات والإصدار الدلالي","vocabulary":"إصدار سجل تغييرات دلالي نشر ملاحظات","embed_threshold":0.73}
+{"lang":"de","description":"Software-Releases — Changelog, Versionierung und semantische Versionsnummern","vocabulary":"Release Changelog Version Versionsbump Semver Tag veröffentlichen ausliefern Freigabe Versionserhöhung","embed_threshold":0.76}
+{"lang":"es","description":"Lanzamientos — changelog, versionado semantico, etiquetas, notas de version","vocabulary":"lanzamiento release changelog semver versionado etiqueta tag notas version publicar","embed_threshold":0.66}
+{"lang":"ja","description":"ソフトウェアリリース、変更履歴、バージョン管理、semver","vocabulary":"リリース 変更履歴 バージョン semver タグ 公開 出荷","embed_threshold":0.76}

@@ -1,0 +1,4 @@
+{"lang":"ar","description":"إدارة التبعيات والحزم","vocabulary":"تبعيات حزم إدارة تثبيت تحديث إصدارات","embed_threshold":0.76}
+{"lang":"de","description":"Abhängigkeitsverwaltung — Pakete installieren, aktualisieren und auditieren","vocabulary":"Abhängigkeit Paket Bibliothek installieren aktualisieren Audit Schwachstelle Paketmanager Paketverwaltung","embed_threshold":0.61}
+{"lang":"es","description":"Gestion de dependencias — instalar, actualizar, resolver conflictos","vocabulary":"dependencias gestionar instalar actualizar resolver conflicto version paquete gestor lock","embed_threshold":0.59}
+{"lang":"ja","description":"依存関係管理、パッケージのインストール","vocabulary":"依存関係 パッケージ ライブラリ インストール アップグレード 監査 脆弱性","embed_threshold":0.67}
