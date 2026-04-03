@@ -1,6 +1,6 @@
 [package]
 name = "ways"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 description = "Unified CLI for ways — knowledge guidance for Claude Code"
 license = "MIT"
@@ -30,3 +30,6 @@ libc = "0.2.184"
 [profile.release]
 strip = true
 lto = true
+opt-level = "z"
+codegen-units = 1
+panic = "abort"

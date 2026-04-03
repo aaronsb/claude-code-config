@@ -4,9 +4,68 @@ use std::path::PathBuf;
 use crate::bm25;
 use crate::table::{Table, Align};
 
+/// Unified match: embedding first, BM25 fallback.
 pub fn run(query: String, corpus: Option<String>) -> Result<()> {
     let corpus_path = corpus
         .unwrap_or_else(|| default_corpus_path().to_string_lossy().to_string());
+
+    // Try embedding engine first
+    let embed_results = super::scan::scoring::batch_embed_score(&query);
+
+    if let Some(ref results) = embed_results {
+        // Embedding engine ran — show those results
+        if results.is_empty() {
+            eprintln!("no matches above threshold (embedding)");
+            std::process::exit(1);
+        }
+
+        // Deduplicate by way ID, keeping highest score
+        let mut best: std::collections::HashMap<&str, f64> = std::collections::HashMap::new();
+        for (id, score) in results {
+            let entry = best.entry(id.as_str()).or_insert(0.0);
+            if *score > *entry {
+                *entry = *score;
+            }
+        }
+        let mut scored: Vec<(&&str, &f64)> = best.iter().collect();
+        scored.sort_by(|a, b| b.1.partial_cmp(a.1).unwrap_or(std::cmp::Ordering::Equal));
+
+        // Load descriptions from EN corpus (canonical descriptions)
+        let en_corpus = default_en_corpus_path();
+        let descriptions = load_descriptions(en_corpus.to_str().unwrap_or(&corpus_path));
+
+        let mut t = Table::new(&["Way", "Score", "Engine", "Description"]);
+        t.align(1, Align::Right);
+        t.max_width(0, 38);
+        t.max_width(3, 44);
+
+        for (id, score) in scored {
+            let desc = descriptions.get(*id).cloned().unwrap_or_default();
+            t.add_owned(vec![
+                id.to_string(),
+                format!("{score:.4}"),
+                "embed".to_string(),
+                desc,
+            ]);
+        }
+
+        println!();
+        t.print();
+        println!();
+        return Ok(());
+    }
+
+    // Fallback: BM25 — but check if the user's language even supports it
+    let resolved = crate::agents::resolve_language();
+    let lang_code = resolve_to_lang_code(&resolved);
+    if crate::agents::bm25_stemmer_for(&lang_code).is_none() && lang_code != "en" {
+        eprintln!("ERROR: embedding engine unavailable and {} ({}) cannot use BM25 fallback.", resolved, lang_code);
+        eprintln!("       BM25 requires word-boundary stemming which is impossible for this language.");
+        eprintln!("       Install the embedding engine: cd ~/.claude && make setup");
+        std::process::exit(1);
+    }
+
+    eprintln!("(embedding engine unavailable — using BM25 fallback)");
 
     let stemmer = bm25::new_stemmer();
     let corpus = bm25::load_corpus_jsonl(&corpus_path, &stemmer)
@@ -28,10 +87,10 @@ pub fn run(query: String, corpus: Option<String>) -> Result<()> {
 
     scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
 
-    let mut t = Table::new(&["Way", "Score", "Description"]);
+    let mut t = Table::new(&["Way", "Score", "Engine", "Description"]);
     t.align(1, Align::Right);
     t.max_width(0, 38);
-    t.max_width(2, 50);
+    t.max_width(3, 44);
 
     for (idx, score) in &scored {
         let doc = &corpus.docs[*idx];
@@ -40,13 +99,14 @@ pub fn run(query: String, corpus: Option<String>) -> Result<()> {
             t.add_owned(vec![
                 doc.id.clone(),
                 format!("{score:.4}"),
+                "bm25".to_string(),
                 doc.description.clone(),
             ]);
         }
     }
 
     if t.len() == 0 {
-        eprintln!("no matches above threshold");
+        eprintln!("no matches above threshold (BM25)");
         std::process::exit(1);
     }
 
@@ -55,6 +115,56 @@ pub fn run(query: String, corpus: Option<String>) -> Result<()> {
     println!();
 
     Ok(())
+}
+
+/// Load id→description map from corpus JSONL for display purposes.
+fn load_descriptions(corpus_path: &str) -> std::collections::HashMap<String, String> {
+    let mut map = std::collections::HashMap::new();
+    if let Ok(content) = std::fs::read_to_string(corpus_path) {
+        for line in content.lines() {
+            if let Ok(v) = serde_json::from_str::<serde_json::Value>(line) {
+                if let (Some(id), Some(desc)) = (
+                    v.get("id").and_then(|v| v.as_str()),
+                    v.get("description").and_then(|v| v.as_str()),
+                ) {
+                    map.entry(id.to_string()).or_insert_with(|| desc.to_string());
+                }
+            }
+        }
+    }
+    map
+}
+
+fn default_en_corpus_path() -> PathBuf {
+    let xdg = std::env::var("XDG_CACHE_HOME")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| {
+            std::env::var("HOME")
+                .map(|h| PathBuf::from(h).join(".cache"))
+                .unwrap_or_else(|_| PathBuf::from("/tmp"))
+        });
+    xdg.join("claude-ways/user/ways-corpus-en.jsonl")
+}
+
+/// Best-effort language name → code lookup.
+fn resolve_to_lang_code(lang: &str) -> String {
+    let lower = lang.to_lowercase();
+    if lower.len() <= 5 && lower.chars().all(|c| c.is_ascii_lowercase() || c == '-') {
+        return lower;
+    }
+    let parsed: serde_json::Value = match serde_json::from_str(crate::agents::LANGUAGES_JSON) {
+        Ok(v) => v,
+        Err(_) => return "en".to_string(),
+    };
+    if let Some(languages) = parsed.get("languages").and_then(|v| v.as_object()) {
+        for (code, entry) in languages {
+            let name = entry.get("name").and_then(|v| v.as_str()).unwrap_or("");
+            if name.to_lowercase() == lower {
+                return code.clone();
+            }
+        }
+    }
+    "en".to_string()
 }
 
 fn default_corpus_path() -> PathBuf {

@@ -182,7 +182,6 @@ fn scan_way_dirs(
     }
 
     for (id, dir_path) in &way_dirs {
-        let mut embed_model = "en".to_string();
         let mut locales = BTreeSet::new();
 
         // Read all files in this directory
@@ -216,18 +215,16 @@ fn scan_way_dirs(
                     continue;
                 }
 
-                // Main way file — check embed_model
-                if let Ok(fm) = frontmatter::parse(&path) {
-                    if let Some(ref model) = fm.embed_model {
-                        embed_model = model.clone();
-                    }
-                }
+                // embed_model is derived: ways with locale stubs → multilingual
+                // (set below after scanning all files in the directory)
             }
         }
 
+        // Derive model: ways with locale stubs use multilingual, others use EN
+        let derived_model = if locales.is_empty() { "en" } else { "multilingual" };
         ways.push(WayLanguageInfo {
             id: id.clone(),
-            embed_model,
+            embed_model: derived_model.to_string(),
             locales,
         });
     }

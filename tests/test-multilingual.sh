@@ -24,9 +24,9 @@ check() {
   local lang="$1" expected="$2" prompt="$3" rank_limit="${4:-3}"
   TOTAL=$((TOTAL + 1))
 
-  # Get matches, strip ANSI, skip header lines
+  # Get matches (stderr separated), strip ANSI, skip header lines
   local raw output
-  raw=$("$WAYS_BIN" match "$prompt" 2>&1) || true
+  raw=$("$WAYS_BIN" match "$prompt" 2>/dev/null) || true
   output=$(echo "$raw" | sed 's/\x1b\[[0-9;]*m//g' | awk 'NR>3 && NF>0 {if(++n<=20)print}')
 
   if [[ -z "$output" ]]; then

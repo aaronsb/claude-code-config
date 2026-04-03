@@ -28,12 +28,8 @@ way:
       required: optional
       default: 0.35
       role: Cosine similarity threshold for embedding engine (0.0-1.0, higher = stricter)
-    embed_model:
-      type: enum
-      values: [en, multilingual]
-      required: optional
-      default: en
-      role: Which embedding model to match against (en = all-MiniLM-L6-v2, multilingual = paraphrase-multilingual-MiniLM-L12-v2)
+    # embed_model: removed — derived automatically by corpus builder
+    # (.md ways → en model, .locales.jsonl entries → multilingual model)
     pattern:
       type: regex
       required: optional

@@ -4,7 +4,7 @@
 //! scope/precondition gating, parent-threshold lowering, and show (display).
 
 mod candidates;
-mod scoring;
+pub(crate) mod scoring;
 
 use anyhow::Result;
 use regex::Regex;
@@ -51,6 +51,8 @@ pub fn prompt(query: &str, session_id: &str, project: Option<&str>) -> Result<()
     let embed_matches = batch_embed_score(query);
     let bm25_matches = if embed_matches.is_some() {
         Vec::new() // embedding engine is healthy — skip BM25 entirely
+    } else if is_bm25_impossible() {
+        Vec::new() // language has no BM25 stemmer — skip silently
     } else {
         batch_bm25_score(query)
     };
@@ -102,6 +104,8 @@ pub fn task(
     // Batch semantic scoring — embed exclusive when available
     let embed_matches = batch_embed_score(query);
     let bm25_matches = if embed_matches.is_some() {
+        Vec::new()
+    } else if is_bm25_impossible() {
         Vec::new()
     } else {
         batch_bm25_score(query)
@@ -239,6 +243,8 @@ pub fn command(
     let embed_check_matches = batch_embed_score(&query_for_checks);
     let bm25_check_matches = if embed_check_matches.is_some() {
         Vec::new()
+    } else if is_bm25_impossible() {
+        Vec::new()
     } else {
         batch_bm25_score(&query_for_checks)
     };
@@ -325,6 +331,8 @@ pub fn file(filepath: &str, session_id: &str, project: Option<&str>) -> Result<(
     let checks = collect_checks(&project_dir);
     let embed_matches = batch_embed_score(filepath);
     let bm25_matches = if embed_matches.is_some() {
+        Vec::new()
+    } else if is_bm25_impossible() {
         Vec::new()
     } else {
         batch_bm25_score(filepath)
@@ -631,4 +639,32 @@ fn strip_frontmatter(content: &str) -> String {
 
 fn capture_show_core(session_id: &str) -> String {
     crate::cmd::show::core(session_id).unwrap_or_default()
+}
+
+/// Check if the resolved language cannot use BM25 (no stemmer available).
+fn is_bm25_impossible() -> bool {
+    let resolved = crate::agents::resolve_language();
+    let lang_code = resolve_to_lang_code(&resolved);
+    if lang_code == "en" {
+        return false;
+    }
+    crate::agents::bm25_stemmer_for(&lang_code).is_none()
+}
+
+fn resolve_to_lang_code(lang: &str) -> String {
+    let lower = lang.to_lowercase();
+    if lower.len() <= 5 && lower.chars().all(|c| c.is_ascii_lowercase() || c == '-') {
+        return lower;
+    }
+    if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(crate::agents::LANGUAGES_JSON) {
+        if let Some(languages) = parsed.get("languages").and_then(|v| v.as_object()) {
+            for (code, entry) in languages {
+                let name = entry.get("name").and_then(|v| v.as_str()).unwrap_or("");
+                if name.to_lowercase() == lower {
+                    return code.clone();
+                }
+            }
+        }
+    }
+    "en".to_string()
 }
