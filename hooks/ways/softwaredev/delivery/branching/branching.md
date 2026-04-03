@@ -2,6 +2,7 @@
 description: Git branch awareness and branching guidance when editing files
 vocabulary: branch checkout worktree main trunk feature fix refactor
 files: \.(md|rs|sh|py|js|ts|json|yaml|yml|toml|go|rb|java|c|cpp|h|hpp|css|html|sql)$
+redisclose: 10
 macro: prepend
 scope: agent, subagent
 ---
