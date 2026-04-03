@@ -20,3 +20,4 @@ pub mod stats;
 pub mod status;
 pub mod suggest;
 pub mod tree;
+pub mod tune;

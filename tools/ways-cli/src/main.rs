@@ -137,6 +137,9 @@ enum Commands {
         /// Filter to ways supporting this language (code or name)
         #[arg(long)]
         filter: Option<String>,
+        /// Show full per-way coverage detail (default shows uncovered summary)
+        #[arg(long)]
+        audit: bool,
         /// Machine-readable JSON output
         #[arg(long)]
         json: bool,
@@ -210,6 +213,30 @@ enum Commands {
         /// Actually delete (default is dry run that shows what would be cleared)
         #[arg(long)]
         confirm: bool,
+    },
+    /// Tune embed_threshold values for locale stubs based on corpus similarity
+    Tune {
+        /// Ways root directory (default: ~/.claude/hooks/ways)
+        #[arg(long)]
+        ways_dir: Option<String>,
+        /// Filter to ways matching this substring (e.g., "security", "ea/")
+        #[arg(long)]
+        way: Option<String>,
+        /// Write tuned thresholds to .locales.jsonl files
+        #[arg(long)]
+        apply: bool,
+        /// Discrimination audit — flag entries with ambiguous descriptions
+        #[arg(long)]
+        audit: bool,
+        /// Minimum gap for audit (entries below this are flagged, default: 0.15)
+        #[arg(long, default_value = "0.15")]
+        audit_threshold: f64,
+        /// Margin above best non-self score (default: 0.03)
+        #[arg(long, default_value = "0.03")]
+        margin: f64,
+        /// Machine-readable JSON output
+        #[arg(long)]
+        json: bool,
     },
     /// Governance provenance queries — report, trace, control, policy, gaps, stale, active, matrix, lint
     Governance {
@@ -399,7 +426,7 @@ fn main() -> Result<()> {
         Commands::Tree { path, jaccard } => cmd::tree::run(path, jaccard),
         Commands::Provenance { ways_dir } => cmd::provenance::run(ways_dir),
         Commands::Init { project } => cmd::init::run(project.as_deref()),
-        Commands::Language { filter, json } => cmd::language::run(filter.as_deref(), json),
+        Commands::Language { filter, audit, json } => cmd::language::run(filter.as_deref(), audit, json),
         Commands::Stats { days, project, json, global } => {
             cmd::stats::run(days, project.as_deref(), json, global)
         }
@@ -443,6 +470,9 @@ fn main() -> Result<()> {
             }
         },
         Commands::Suggest { file, min_freq } => cmd::suggest::run(file, min_freq),
+        Commands::Tune { ways_dir, way, apply, audit, audit_threshold, margin, json } => {
+            cmd::tune::run(ways_dir, way, apply, audit, audit_threshold, margin, json)
+        }
         Commands::Reset { session, all, confirm } => {
             cmd::reset::run(session.as_deref(), all, confirm)
         }
