@@ -49,6 +49,87 @@ pub fn load_excluded_segments() -> Vec<String> {
         .unwrap_or_default()
 }
 
+/// Extract a locale code from a filename like "security.ja.md" → Some("ja").
+/// Validates against languages.json to avoid false matches (e.g., "foo.setup.md").
+pub fn extract_locale_from_filename(filename: &str) -> Option<String> {
+    if filename.contains(".check.") {
+        return None;
+    }
+    let stem = filename.strip_suffix(".md")?;
+    let parts: Vec<&str> = stem.split('.').collect();
+    if parts.len() >= 2 {
+        let candidate = parts[parts.len() - 1];
+        if candidate.len() >= 2
+            && candidate.len() <= 5
+            && candidate.chars().all(|c| c.is_ascii_lowercase() || c == '-')
+        {
+            // Validate against languages.json
+            let parsed: serde_json::Value =
+                serde_json::from_str(crate::agents::LANGUAGES_JSON).ok()?;
+            if parsed.get("languages")?.as_object()?.contains_key(candidate) {
+                return Some(candidate.to_string());
+            }
+        }
+    }
+    None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn valid_locale_codes() {
+        assert_eq!(extract_locale_from_filename("security.ja.md"), Some("ja".to_string()));
+        assert_eq!(extract_locale_from_filename("security.de.md"), Some("de".to_string()));
+        assert_eq!(extract_locale_from_filename("security.ar.md"), Some("ar".to_string()));
+        assert_eq!(extract_locale_from_filename("security.es.md"), Some("es".to_string()));
+        assert_eq!(extract_locale_from_filename("security.pt-br.md"), Some("pt-br".to_string()));
+        assert_eq!(extract_locale_from_filename("security.zh-tw.md"), Some("zh-tw".to_string()));
+    }
+
+    #[test]
+    fn rejects_non_locale_dotted_names() {
+        // "setup" is not a language code
+        assert_eq!(extract_locale_from_filename("foo.setup.md"), None);
+        // "test" is not a language code
+        assert_eq!(extract_locale_from_filename("bar.test.md"), None);
+        // "main" is not a language code
+        assert_eq!(extract_locale_from_filename("way.main.md"), None);
+    }
+
+    #[test]
+    fn rejects_check_files() {
+        assert_eq!(extract_locale_from_filename("security.check.md"), None);
+        assert_eq!(extract_locale_from_filename("security.ja.check.md"), None);
+    }
+
+    #[test]
+    fn rejects_non_md_extensions() {
+        assert_eq!(extract_locale_from_filename("security.ja.yaml"), None);
+        assert_eq!(extract_locale_from_filename("security.ja.sh"), None);
+    }
+
+    #[test]
+    fn rejects_plain_way_files() {
+        // No dot-separated locale segment
+        assert_eq!(extract_locale_from_filename("security.md"), None);
+        assert_eq!(extract_locale_from_filename("briefing.md"), None);
+    }
+
+    #[test]
+    fn rejects_uppercase_and_numbers() {
+        assert_eq!(extract_locale_from_filename("way.EN.md"), None);
+        assert_eq!(extract_locale_from_filename("way.j2.md"), None);
+    }
+
+    #[test]
+    fn handles_deeply_dotted_names() {
+        // Last segment is the locale candidate
+        assert_eq!(extract_locale_from_filename("some.way.name.ja.md"), Some("ja".to_string()));
+    }
+}
+
 /// Check if a path should be excluded based on schema-defined segments.
 pub fn is_excluded_path(path: &Path, excluded_segments: &[String]) -> bool {
     let path_str = match path.to_str() {

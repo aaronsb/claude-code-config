@@ -210,7 +210,7 @@ fn scan_way_dirs(
                 }
 
                 // Check for locale override files: {name}.{lang}.md
-                if let Some(locale) = extract_locale(&fname) {
+                if let Some(locale) = crate::util::extract_locale_from_filename(&fname) {
                     locales.insert(locale.clone());
                     all_locales.insert(locale);
                     continue;
@@ -233,33 +233,6 @@ fn scan_way_dirs(
     }
 
     Ok(())
-}
-
-/// Extract locale code from filename like "security.ja.md" → "ja"
-/// Validates against languages.json to avoid false matches like ".check.md"
-fn extract_locale(filename: &str) -> Option<String> {
-    // Skip check files explicitly
-    if filename.contains(".check.") {
-        return None;
-    }
-
-    let parts: Vec<&str> = filename.strip_suffix(".md")?.split('.').collect();
-    if parts.len() >= 2 {
-        let candidate = parts[parts.len() - 1];
-        // Validate it looks like a locale code (2-5 chars, lowercase/hyphen)
-        if candidate.len() >= 2
-            && candidate.len() <= 5
-            && candidate.chars().all(|c| c.is_ascii_lowercase() || c == '-')
-        {
-            // Verify against languages.json
-            let parsed: serde_json::Value =
-                serde_json::from_str(agents::LANGUAGES_JSON).ok()?;
-            if parsed.get("languages")?.as_object()?.contains_key(candidate) {
-                return Some(candidate.to_string());
-            }
-        }
-    }
-    None
 }
 
 /// Best-effort reverse lookup: language name → code

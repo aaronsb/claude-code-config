@@ -188,7 +188,7 @@ fn scan_ways_dir(dir: &Path, id_prefix: &str, excluded: &[String], w: &mut impl 
         }
 
         // Detect locale override files ({name}.{lang}.md)
-        if let Some(lang) = detect_locale_in_filename(fname) {
+        if let Some(lang) = crate::util::extract_locale_from_filename(fname) {
             if let Some(parent) = path.parent() {
                 locale_overrides.insert((parent.to_path_buf(), lang));
             }
@@ -269,25 +269,6 @@ fn scan_ways_dir(dir: &Path, id_prefix: &str, excluded: &[String], w: &mut impl 
     }
 
     Ok(count)
-}
-
-/// Detect a locale code in a filename like "security.ja.md" → Some("ja")
-fn detect_locale_in_filename(filename: &str) -> Option<String> {
-    if filename.contains(".check.") {
-        return None;
-    }
-    let stem = filename.strip_suffix(".md")?;
-    let parts: Vec<&str> = stem.split('.').collect();
-    if parts.len() >= 2 {
-        let candidate = parts[parts.len() - 1];
-        if candidate.len() >= 2
-            && candidate.len() <= 5
-            && candidate.chars().all(|c| c.is_ascii_lowercase() || c == '-')
-        {
-            return Some(candidate.to_string());
-        }
-    }
-    None
 }
 
 /// Find the BM25 threshold from the parent way's frontmatter.

@@ -133,6 +133,7 @@ pub fn run(
     // Shared state
     let work_queue: Arc<Mutex<Vec<(String, PathBuf)>>> = Arc::new(Mutex::new(locale_files));
     let completed: Arc<Mutex<usize>> = Arc::new(Mutex::new(0));
+    let failed: Arc<Mutex<usize>> = Arc::new(Mutex::new(0));
     let all_results: Arc<Mutex<Vec<WayTuneResult>>> = Arc::new(Mutex::new(Vec::new()));
 
     // Spawn workers
@@ -141,6 +142,7 @@ pub fn run(
         let queue = Arc::clone(&work_queue);
         let results = Arc::clone(&all_results);
         let completed = Arc::clone(&completed);
+        let failed = Arc::clone(&failed);
         let embed_bin = embed_bin.clone();
         let multi_corpus = multi_corpus.clone();
         let multi_model = multi_model.clone();
@@ -163,7 +165,9 @@ pub fn run(
                         r.push(result);
                     }
                     Err(e) => {
-                        eprintln!("ERROR tuning {}: {}", way_id, e);
+                        eprintln!("\nERROR tuning {}: {}", way_id, e);
+                        let mut f = failed.lock().unwrap();
+                        *f += 1;
                     }
                 }
 
@@ -182,6 +186,11 @@ pub fn run(
         h.join().unwrap();
     }
     eprintln!();
+
+    let fail_count = *failed.lock().unwrap();
+    if fail_count > 0 {
+        eprintln!("WARNING: {} ways failed to tune", fail_count);
+    }
 
     // Collect and sort
     let mut way_results = Arc::try_unwrap(all_results)
