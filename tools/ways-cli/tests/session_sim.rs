@@ -199,7 +199,7 @@ fn clean_markers(session_id: &str) {
 // ── Assertion helpers ──────────────────────────────────────────
 
 fn assert_marker_exists(way_id: &str, session_id: &str) {
-    let path = format!("{}/{session_id}/ways/{way_id}/.marker", sessions_root());
+    let path = format!("{}/{session_id}/ways/{way_id}/.marker.main", sessions_root());
     assert!(
         Path::new(&path).exists(),
         "Expected marker for '{way_id}' but it doesn't exist at {path}"
@@ -207,7 +207,7 @@ fn assert_marker_exists(way_id: &str, session_id: &str) {
 }
 
 fn assert_marker_absent(way_id: &str, session_id: &str) {
-    let path = format!("{}/{session_id}/ways/{way_id}/.marker", sessions_root());
+    let path = format!("{}/{session_id}/ways/{way_id}/.marker.main", sessions_root());
     assert!(
         !Path::new(&path).exists(),
         "Expected NO marker for '{way_id}' but found one at {path}"
